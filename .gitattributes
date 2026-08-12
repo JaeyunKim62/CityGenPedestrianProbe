@@ -97,6 +97,9 @@ Packages/packages-lock.json linguist-generated
 *.stl                   lfs
 *.ztl                   lfs
 
+# Geospatial elevation rasters
+*.hgt                   lfs
+
 # Audio
 *.aif                   lfs
 *.aiff                  lfs
