@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b6036f6501ea0eb48ae4e207e2476c8d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Prefabs/House 02.prefab
+  uploadId: 944460

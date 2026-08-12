@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 3d9c4065b6c42b2448476bf9048b31b0
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Prefabs/Houses.prefab
+  uploadId: 944460

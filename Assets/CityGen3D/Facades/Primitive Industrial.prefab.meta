@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8929c97392e85de4c8f8f540f8f11a0c
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Facades/Primitive Industrial.prefab
+  uploadId: 944460

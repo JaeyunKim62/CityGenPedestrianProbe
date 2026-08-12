@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d258be4e88b898f4bbfa4462331f5bda
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Blueprints/Glass Office Block.prefab
+  uploadId: 944460

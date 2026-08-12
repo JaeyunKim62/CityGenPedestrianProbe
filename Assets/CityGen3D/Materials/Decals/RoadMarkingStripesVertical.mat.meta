@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9eb5f2d4020135a408437ba0c8d22e13
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Materials/Decals/RoadMarkingStripesVertical.mat
+  uploadId: 944460

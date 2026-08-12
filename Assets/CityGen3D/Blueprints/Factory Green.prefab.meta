@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 1fc6364e21092c74187544648f92c585
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Blueprints/Factory Green.prefab
+  uploadId: 944460

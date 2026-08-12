@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 0bc3f9f9883093641b8184148cc018dc
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Blueprints/Shop.prefab
+  uploadId: 944460

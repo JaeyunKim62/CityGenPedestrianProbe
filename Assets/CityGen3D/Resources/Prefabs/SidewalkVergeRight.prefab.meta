@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 78ab8701169c9844c800455590c61c41
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Resources/Prefabs/SidewalkVergeRight.prefab
+  uploadId: 944460

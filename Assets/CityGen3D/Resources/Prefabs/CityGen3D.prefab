@@ -1,0 +1,1494 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1016732772096210
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4941529907810428}
+  - component: {fileID: 114053002164093154}
+  - component: {fileID: 114776457374367524}
+  m_Layer: 16
+  m_Name: MapSurfaces
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &4941529907810428
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1016732772096210}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4176675413206456}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114053002164093154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1016732772096210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -350347745, guid: 8c33fffcd70c4fb418e419a2cfc77ab5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  surfaces:
+  - unique_id: 0
+    name: Allotments
+    colour: {r: 0.8745098, g: 0.7372549, b: 0.6, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 1
+    name: Cemetery
+    colour: {r: 0.6, g: 0.7529412, b: 0.6156863, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 2
+    name: Commercial
+    colour: {r: 0.92156863, g: 0.73333335, b: 0.73333335, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 3
+    name: Construction
+    colour: {r: 0.654902, g: 0.65882355, b: 0.49411765, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 4
+    name: Farmland
+    colour: {r: 0.9254902, g: 0.8666667, b: 0.78431374, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 5
+    name: Footpath
+    colour: {r: 0.8666667, g: 0.8666667, b: 0.9098039, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 6
+    name: Forest
+    colour: {r: 0.56078434, g: 0.7882353, b: 0.43529412, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 7
+    name: Grass
+    colour: {r: 0.8117647, g: 0.92156863, b: 0.65882355, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 8
+    name: Industrial
+    colour: {r: 0.9019608, g: 0.81960785, b: 0.8901961, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 9
+    name: Meadow
+    colour: {r: 0.8117647, g: 0.9254902, b: 0.5803922, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 10
+    name: Park
+    colour: {r: 0.8039216, g: 0.96862745, b: 0.7882353, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 11
+    name: Railway
+    colour: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 12
+    name: Residential
+    colour: {r: 0.8862745, g: 0.8862745, b: 0.8862745, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 13
+    name: Sand
+    colour: {r: 0.94509804, g: 0.8980392, b: 0.72156864, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 14
+    name: Woodland
+    colour: {r: 0.68235296, g: 0.81960785, b: 0.627451, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 15
+    name: Water
+    colour: {r: 0.7058824, g: 0.8156863, b: 0.81960785, a: 1}
+    isRoad: 0
+    isWater: 1
+  - unique_id: 16
+    name: Parking
+    colour: {r: 0.93333334, g: 0.93333334, b: 0.93333334, a: 1}
+    isRoad: 1
+    isWater: 0
+  - unique_id: 17
+    name: Playground
+    colour: {r: 0.8745099, g: 0.98823535, b: 0.8862746, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 18
+    name: Rock
+    colour: {r: 0.93333334, g: 0.8980392, b: 0.8627451, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 19
+    name: Vineyard
+    colour: {r: 0.68235296, g: 0.8745098, b: 0.6392157, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 20
+    name: Swamp
+    colour: {r: 0.6784314, g: 0.81960785, b: 0.61960787, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 21
+    name: Heath
+    colour: {r: 0.8392157, g: 0.8509804, b: 0.62352943, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 22
+    name: Scrub
+    colour: {r: 0.70980394, g: 0.8901961, b: 0.70980394, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 23
+    name: Apron
+    colour: {r: 0.9137255, g: 0.81960785, b: 1, a: 1}
+    isRoad: 1
+    isWater: 0
+  - unique_id: 24
+    name: Road
+    colour: {r: 0, g: 0, b: 0, a: 1}
+    isRoad: 1
+    isWater: 0
+  - unique_id: 25
+    name: Track
+    colour: {r: 0.6627451, g: 0.52156866, b: 0.1764706, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 26
+    name: Nature Reserve
+    colour: {r: 0.80784315, g: 0.87058824, b: 0.7764706, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 27
+    name: Footway
+    colour: {r: 0.8666667, g: 0.8666667, b: 0.9098039, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 28
+    name: Waterway
+    colour: {r: 0.7058824, g: 0.8156863, b: 0.81960785, a: 1}
+    isRoad: 0
+    isWater: 1
+  - unique_id: 29
+    name: Farmyard
+    colour: {r: 0.9607843, g: 0.8627451, b: 0.7294118, a: 1}
+    isRoad: 0
+    isWater: 0
+  - unique_id: 30
+    name: Land
+    colour: {r: 0.9333334, g: 0.92549026, b: 0.91372555, a: 1}
+    isRoad: 0
+    isWater: 0
+  surfaceTags:
+  - tag:
+      key: landuse
+      value: allotments
+    index: 0
+  - tag:
+      key: landuse
+      value: cemetery
+    index: 1
+  - tag:
+      key: amenity
+      value: grave_yard
+    index: 1
+  - tag:
+      key: landuse
+      value: commercial
+    index: 2
+  - tag:
+      key: landuse
+      value: retail
+    index: 2
+  - tag:
+      key: landuse
+      value: construction
+    index: 3
+  - tag:
+      key: landuse
+      value: farmland
+    index: 4
+  - tag:
+      key: landuse
+      value: farmyard
+    index: 29
+  - tag:
+      key: building
+      value: farm
+    index: 4
+  - tag:
+      key: place
+      value: farm
+    index: 4
+  - tag:
+      key: landuse
+      value: forest
+    index: 6
+  - tag:
+      key: landuse
+      value: grass
+    index: 7
+  - tag:
+      key: landuse
+      value: industrial
+    index: 8
+  - tag:
+      key: natural
+      value: water
+    index: 15
+  - tag:
+      key: waterway
+      value: riverbank
+    index: 15
+  - tag:
+      key: landuse
+      value: meadow
+    index: 9
+  - tag:
+      key: leisure
+      value: park
+    index: 10
+  - tag:
+      key: landuse
+      value: railway
+    index: 11
+  - tag:
+      key: landuse
+      value: recreation_ground
+    index: 10
+  - tag:
+      key: landuse
+      value: residential
+    index: 12
+  - tag:
+      key: surface
+      value: sand
+    index: 13
+  - tag:
+      key: natural
+      value: sand
+    index: 13
+  - tag:
+      key: natural
+      value: beach
+    index: 13
+  - tag:
+      key: natural
+      value: wood
+    index: 14
+  - tag:
+      key: landuse
+      value: village_green
+    index: 10
+  - tag:
+      key: landuse
+      value: farm
+    index: 4
+  - tag:
+      key: leisure
+      value: garden
+    index: 10
+  - tag:
+      key: leisure
+      value: pitch
+    index: 10
+  - tag:
+      key: leisure
+      value: recreation_ground
+    index: 10
+  - tag:
+      key: amenity
+      value: parking
+    index: 16
+  - tag:
+      key: amenity
+      value: school
+    index: 12
+  - tag:
+      key: natural
+      value: grassland
+    index: 7
+  - tag:
+      key: natural
+      value: bare_rock
+    index: 18
+  - tag:
+      key: natural
+      value: coastline
+    index: 18
+  - tag:
+      key: natural
+      value: vineyard
+    index: 19
+  - tag:
+      key: natural
+      value: wetland
+    index: 20
+  - tag:
+      key: natural
+      value: heath
+    index: 21
+  - tag:
+      key: natural
+      value: scrub
+    index: 22
+  - tag:
+      key: aeroway
+      value: parking
+    index: 23
+  - tag:
+      key: leisure
+      value: golf_course
+    index: 7
+  - tag:
+      key: landuse
+      value: quarry
+    index: 18
+  - tag:
+      key: place
+      value: islet
+    index: 7
+  - tag:
+      key: waterway
+      value: canal
+    index: 15
+  - tag:
+      key: water
+      value: lake
+    index: 15
+  - tag:
+      key: highway
+      value: footway
+    index: 27
+  - tag:
+      key: landuse
+      value: reservoir
+    index: 15
+  - tag:
+      key: waterway
+      value: dock
+    index: 15
+  - tag:
+      key: leisure
+      value: playground
+    index: 17
+  newType: 7
+  nextPolyId: 0
+--- !u!114 &114776457374367524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1016732772096210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1973788443, guid: 8c33fffcd70c4fb418e419a2cfc77ab5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jsonCoastline: {fileID: 4900000, guid: 0e6e04917f23372478e4bd8d0c1ef432, type: 3}
+  surfaceLand: 7
+--- !u!1 &1115689041585002
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4700168529682434}
+  - component: {fileID: 114993945270029590}
+  m_Layer: 17
+  m_Name: MapRoads
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &4700168529682434
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1115689041585002}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4176675413206456}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114993945270029590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1115689041585002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -2121258495, guid: 8c33fffcd70c4fb418e419a2cfc77ab5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roads:
+  - unique_id: 0
+    name: Motorway
+    colour: {r: 0.91764706, g: 0.5647059, b: 0.627451, a: 1}
+    node: 0
+    surface: 24
+    roadType: 0
+    priority: 1
+    markingLength: 1
+    roadCollider: 1
+    diameter: 0
+    hole: 0
+    lanes: 3
+    laneWidth: 3.5
+    speedLimit: 70
+  - unique_id: 1
+    name: Dual Carriageway
+    colour: {r: 0.9843137, g: 0.69803923, b: 0.6039216, a: 1}
+    node: 0
+    surface: 24
+    roadType: 0
+    priority: 2
+    markingLength: 1
+    roadCollider: 1
+    diameter: 0
+    hole: 0
+    lanes: 2
+    laneWidth: 3.5
+    speedLimit: 70
+  - unique_id: 2
+    name: Main Road
+    colour: {r: 0.1254902, g: 0.1254902, b: 0.1254902, a: 1}
+    node: 0
+    surface: 24
+    roadType: 0
+    priority: 3
+    markingLength: 1
+    roadCollider: 1
+    diameter: 0
+    hole: 0
+    lanes: 2
+    laneWidth: 3.5
+    speedLimit: 30
+  - unique_id: 3
+    name: Minor Road
+    colour: {r: 0.2509804, g: 0.2509804, b: 0.2509804, a: 1}
+    node: 0
+    surface: 24
+    roadType: 0
+    priority: 4
+    markingLength: 1
+    roadCollider: 1
+    diameter: 0
+    hole: 0
+    lanes: 1
+    laneWidth: 3.5
+    speedLimit: 30
+  - unique_id: 4
+    name: Footpath
+    colour: {r: 0.8666667, g: 0.8666667, b: 0.9137255, a: 1}
+    node: 0
+    surface: 5
+    roadType: 2
+    priority: 5
+    markingLength: 1
+    roadCollider: 0
+    diameter: 0
+    hole: 0
+    lanes: 1
+    laneWidth: 1
+    speedLimit: 0
+  - unique_id: 5
+    name: Track
+    colour: {r: 0.6745098, g: 0.5137255, b: 0.15294118, a: 1}
+    node: 0
+    surface: 25
+    roadType: 1
+    priority: 6
+    markingLength: 1
+    roadCollider: 0
+    diameter: 0
+    hole: 0
+    lanes: 1
+    laneWidth: 2
+    speedLimit: 0
+  - unique_id: 6
+    name: Runway
+    colour: {r: 0.73333335, g: 0.73333335, b: 0.8, a: 1}
+    node: 0
+    surface: 24
+    roadType: 0
+    priority: 7
+    markingLength: 4
+    roadCollider: 1
+    diameter: 0
+    hole: 0
+    lanes: 2
+    laneWidth: 12
+    speedLimit: 0
+  - unique_id: 7
+    name: Taxiway
+    colour: {r: 0, g: 0, b: 0, a: 1}
+    node: 0
+    surface: 24
+    roadType: 0
+    priority: 8
+    markingLength: 1
+    roadCollider: 1
+    diameter: 0
+    hole: 0
+    lanes: 2
+    laneWidth: 4
+    speedLimit: 0
+  - unique_id: 8
+    name: Railway
+    colour: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
+    node: 0
+    surface: 11
+    roadType: 1
+    priority: 9
+    markingLength: 1
+    roadCollider: 0
+    diameter: 0
+    hole: 0
+    lanes: 1
+    laneWidth: 5
+    speedLimit: 0
+  - unique_id: 9
+    name: Stream
+    colour: {r: 0.6666667, g: 0.827451, b: 0.8745098, a: 1}
+    node: 0
+    surface: 28
+    roadType: 2
+    priority: 0
+    markingLength: 1
+    roadCollider: 0
+    diameter: 0
+    hole: 0
+    lanes: 1
+    laneWidth: 4
+    speedLimit: 0
+  - unique_id: 10
+    name: River
+    colour: {r: 0.3987629, g: 0.72520936, b: 0.8207547, a: 1}
+    node: 0
+    surface: 28
+    roadType: 2
+    priority: 0
+    markingLength: 1
+    roadCollider: 0
+    diameter: 0
+    hole: 0
+    lanes: 1
+    laneWidth: 6
+    speedLimit: 0
+  - unique_id: 11
+    name: Turning Circle
+    colour: {r: 0.1254902, g: 0.1254902, b: 0.1254902, a: 1}
+    node: 1
+    surface: 24
+    roadType: 0
+    priority: 0
+    markingLength: 1
+    roadCollider: 1
+    diameter: 14
+    hole: 0
+    lanes: 0
+    laneWidth: 0
+    speedLimit: 0
+  - unique_id: 12
+    name: Turning Loop
+    colour: {r: 0.1254902, g: 0.1254902, b: 0.1254902, a: 1}
+    node: 1
+    surface: 24
+    roadType: 0
+    priority: 0
+    markingLength: 1
+    roadCollider: 1
+    diameter: 14
+    hole: 6
+    lanes: 0
+    laneWidth: 0
+    speedLimit: 0
+  roadTags:
+  - tag:
+      key: highway
+      value: trunk
+    index: 1
+  - tag:
+      key: highway
+      value: motorway
+    index: 0
+  - tag:
+      key: highway
+      value: primary
+    index: 2
+  - tag:
+      key: highway
+      value: secondary
+    index: 2
+  - tag:
+      key: highway
+      value: tertiary
+    index: 2
+  - tag:
+      key: highway
+      value: unclassified
+    index: 2
+  - tag:
+      key: highway
+      value: residential
+    index: 2
+  - tag:
+      key: highway
+      value: motorway_link
+    index: 1
+  - tag:
+      key: highway
+      value: trunk_link
+    index: 1
+  - tag:
+      key: highway
+      value: primary_link
+    index: 2
+  - tag:
+      key: highway
+      value: secondary_link
+    index: 2
+  - tag:
+      key: highway
+      value: tertiary_link
+    index: 2
+  - tag:
+      key: highway
+      value: road
+    index: 2
+  - tag:
+      key: highway
+      value: service
+    index: 3
+  - tag:
+      key: highway
+      value: pedestrian
+    index: 4
+  - tag:
+      key: aeroway
+      value: runway
+    index: 6
+  - tag:
+      key: highway
+      value: track
+    index: 5
+  - tag:
+      key: highway
+      value: footway
+    index: 4
+  - tag:
+      key: highway
+      value: cycleway
+    index: 4
+  - tag:
+      key: highway
+      value: path
+    index: 4
+  - tag:
+      key: aeroway
+      value: taxiway
+    index: 7
+  - tag:
+      key: railway
+      value: rail
+    index: 8
+  - tag:
+      key: waterway
+      value: stream
+    index: 9
+  - tag:
+      key: waterway
+      value: river
+    index: 10
+  - tag:
+      key: highway
+      value: turning_circle
+    index: 11
+  - tag:
+      key: highway
+      value: turning_loop
+    index: 12
+  newType: 3
+  deadEnds: 0
+  startPeak: 0.15
+  endPeak: 0.85
+  ignoreBuildingPassages: 1
+--- !u!1 &1233202974684016
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4176675413206456}
+  - component: {fileID: 114792229414907474}
+  - component: {fileID: -8365595884417545163}
+  - component: {fileID: 114372577484695216}
+  - component: {fileID: 1263755510243797296}
+  m_Layer: 0
+  m_Name: CityGen3D
+  m_TagString: CityGen3D
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &4176675413206456
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1233202974684016}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4941529907810428}
+  - {fileID: 4700168529682434}
+  - {fileID: 4533945573940402}
+  - {fileID: 4579697241845532}
+  - {fileID: 1830961591998948646}
+  - {fileID: 4383409459998454}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114792229414907474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1233202974684016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 879514577, guid: 8c33fffcd70c4fb418e419a2cfc77ab5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: {fileID: 114372577484695216}
+  coastline: {fileID: 114776457374367524}
+  mapSurfaces: {fileID: 114053002164093154}
+  mapRoads: {fileID: 114993945270029590}
+  mapBuildings: {fileID: 114658172604805704}
+  mapEntities: {fileID: 114147407352389868}
+  mapFeatures: {fileID: 7241969814624280775}
+  mapTrees: {fileID: 114716871800774162}
+  lockMapEditor: 0
+  lockTransform: 1
+--- !u!114 &-8365595884417545163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1233202974684016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1268783528, guid: 8c33fffcd70c4fb418e419a2cfc77ab5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  layerPostProcessing: 8
+  layerLandscape: 15
+  layerMapSurface: 16
+  layerMapRoad: 17
+  layerMapBuilding: 18
+  layerMapTree: 19
+  layerMapEntity: 20
+  layerMapFeature: 21
+  layerFeature: 27
+  layerEntity: 28
+  layerBuilding: 29
+  layerHighway: 30
+--- !u!114 &114372577484695216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1233202974684016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1431915162, guid: 8c33fffcd70c4fb418e419a2cfc77ab5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  osmUrl: https://www.overpass-api.de/api/
+  mapUrl: https://tile.openstreetmap.org/
+  source: 0
+  filename: New City
+  origin:
+    latitude: 51.5782999006864
+    longitude: -0.240199637586283
+  originAtTileCentre: 1
+  minLocation:
+    latitude: 51.57600021362305
+    longitude: -0.24390000104904175
+  maxLocation:
+    latitude: 51.58059958774975
+    longitude: -0.2364992741235237
+  terrainSize: 512
+  area: 1
+  tile: {x: 0, y: 0}
+  tileMin: {x: -100, y: -100}
+  tileMax: {x: 100, y: 100}
+  generatorProfile: {fileID: 1188812707911806, guid: 5b54fb999c6463349a5dc08a2f700713, type: 3}
+  generatorProfileHDRP: {fileID: 1188812707911806, guid: 4919c6d2c5d924a4d9cc158f65260332, type: 3}
+  maxWaysInRelation: 100
+  recursion: 0
+  query: http://www.overpass-api.de/api/interpreter?data=(node(51.5751018983639,-0.245345455526682,51.5814979030089,-0.235053819645883);<;>;);out
+    meta;
+  osmFile: {fileID: 0}
+  arcTolerance: 0.01
+  process: -1
+  scenesFolder: Scenes
+  terrainsFolder: Terrains
+  databaseFolder: Database
+  absolutePositioning: 1
+  ignoreIncompleteData: 1
+  locationMapAreaShading: {r: 0.25, g: 0, b: 0, a: 0.25}
+  mapTerrainOutlineColor: {r: 1, g: 1, b: 1, a: 1}
+  ignoreRoadLayers: 0
+  mapShaderName: CityGen3D/Unlit
+  db: {fileID: 0}
+  bingKeyValidated: 0
+  edit: 0
+  locationLocked: 0
+  texturePin: {fileID: 2800000, guid: c8761582a46f5794297d8ba324628295, type: 3}
+--- !u!114 &1263755510243797296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1233202974684016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1577189344, guid: 83c45156126aeaa4fb3f5565630c7b01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  apiKey: 
+  urlTerrainTexture: https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/
+  imageResolution: 1024
+  forceDownload: 0
+  urlSearch: https://api.mapbox.com/geocoding/v5/mapbox.places/
+  searchText: 
+  urlHeightmap: https://api.mapbox.com/v4/mapbox.terrain-rgb/
+  highResHeightmap: 1
+  heightmapZoom: 14
+  downloadFailed: 0
+  downloadResponse: 0
+  downloadError: 
+--- !u!1 &1256539601736044
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4383409459998454}
+  - component: {fileID: 114716871800774162}
+  m_Layer: 19
+  m_Name: MapTrees
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &4383409459998454
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1256539601736044}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4176675413206456}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114716871800774162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1256539601736044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1799590916, guid: 8c33fffcd70c4fb418e419a2cfc77ab5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  trees:
+  - unique_id: 0
+    name: Broadleaf
+    icon: {fileID: 2800000, guid: 99d80c9bdc8d4814698bdb350685c3af, type: 3}
+  - unique_id: 1
+    name: Conifer
+    icon: {fileID: 2800000, guid: a7bddd4d810bc034a811d54288814c89, type: 3}
+  - unique_id: 2
+    name: Palm
+    icon: {fileID: 2800000, guid: 107b2fd7d7377024eb9f8a782df6c547, type: 3}
+  treeTags:
+  - tag:
+      key: type
+      value: palm
+    index: 2
+  - tag:
+      key: leaf_type
+      value: needleleaved
+    index: 1
+  - tag:
+      key: leaf_type
+      value: broadleaved
+    index: 0
+  - tag:
+      key: natural
+      value: tree
+    index: 0
+  newType: 0
+--- !u!1 &1264445141447384
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4579697241845532}
+  - component: {fileID: 114147407352389868}
+  m_Layer: 20
+  m_Name: MapEntities
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &4579697241845532
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1264445141447384}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4176675413206456}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114147407352389868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1264445141447384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1963126093, guid: 8c33fffcd70c4fb418e419a2cfc77ab5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  entities:
+  - unique_id: 0
+    name: Bus Stop
+    icon: {fileID: 2800000, guid: 8913fa36b5e3d3e43b2992a7471276ae, type: 3}
+    location: 0
+  - unique_id: 1
+    name: Bench
+    icon: {fileID: 2800000, guid: 20b08c94cf98b6047a77c64049bd2ee0, type: 3}
+    location: 0
+  - unique_id: 2
+    name: Fountain
+    icon: {fileID: 2800000, guid: 0b11403d30758464a99a245cb5b21c45, type: 3}
+    location: 0
+  - unique_id: 3
+    name: Post Box
+    icon: {fileID: 2800000, guid: 3f9c2e452e0ffcf4f84ac738e7a64652, type: 3}
+    location: 0
+  - unique_id: 4
+    name: Mini Roundabout
+    icon: {fileID: 2800000, guid: 0f8024e382ba88e44969404d855888f4, type: 3}
+    location: 0
+  - unique_id: 5
+    name: Litter Bin
+    icon: {fileID: 2800000, guid: 334f89514ad991c45acabdd74c83238d, type: 3}
+    location: 0
+  - unique_id: 6
+    name: Street Lamp
+    icon: {fileID: 2800000, guid: cc350eefd7b5fda46871fb4024d7f962, type: 3}
+    location: 0
+  - unique_id: 7
+    name: Power Tower
+    icon: {fileID: 2800000, guid: d4ac8ba5baac9b94397f1a003f3f01c6, type: 3}
+    location: 0
+  - unique_id: 8
+    name: ATM
+    icon: {fileID: 2800000, guid: bf38c9fed4f33d94da2004ec524b9eef, type: 3}
+    location: 0
+  - unique_id: 9
+    name: Wind Power
+    icon: {fileID: 2800000, guid: 0ac78356c5304bb46bb55572e5d82f70, type: 3}
+    location: 0
+  entityTags:
+  - tag:
+      key: amenity
+      value: bus_stop
+    index: 0
+  - tag:
+      key: amenity
+      value: bench
+    index: 1
+  - tag:
+      key: amenity
+      value: fountain
+    index: 2
+  - tag:
+      key: amenity
+      value: post_box
+    index: 3
+  - tag:
+      key: highway
+      value: mini_roundabout
+    index: 4
+  - tag:
+      key: highway
+      value: bus_stop
+    index: 0
+  - tag:
+      key: amenity
+      value: waste_basket
+    index: 5
+  - tag:
+      key: highway
+      value: street_lamp
+    index: 6
+  - tag:
+      key: power
+      value: tower
+    index: 7
+  - tag:
+      key: amenity
+      value: atm
+    index: 8
+  - tag:
+      key: power:source
+      value: wind
+    index: 9
+  newType: 0
+--- !u!1 &1332438438783898
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4533945573940402}
+  - component: {fileID: 114658172604805704}
+  m_Layer: 18
+  m_Name: MapBuildings
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &4533945573940402
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1332438438783898}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4176675413206456}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114658172604805704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1332438438783898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 948534897, guid: 8c33fffcd70c4fb418e419a2cfc77ab5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildings:
+  - unique_id: 0
+    name: House
+    colour: {r: 0.8509804, g: 0.8156863, b: 0.7882353, a: 1}
+    levels: 2
+    levelHeight: 3
+  - unique_id: 1
+    name: Apartments
+    colour: {r: 0.8509804, g: 0.8156863, b: 0.7882353, a: 1}
+    levels: 4
+    levelHeight: 3
+  - unique_id: 2
+    name: Church
+    colour: {r: 0.85098046, g: 0.81568635, b: 0.78823537, a: 1}
+    levels: 2
+    levelHeight: 4
+  - unique_id: 3
+    name: Office
+    colour: {r: 0.8509804, g: 0.8156863, b: 0.7882353, a: 1}
+    levels: 3
+    levelHeight: 5
+  - unique_id: 4
+    name: Shop
+    colour: {r: 0.85098046, g: 0.81568635, b: 0.78823537, a: 1}
+    levels: 2
+    levelHeight: 3
+  - unique_id: 5
+    name: School
+    colour: {r: 0.85098046, g: 0.81568635, b: 0.78823537, a: 1}
+    levels: 2
+    levelHeight: 3
+  - unique_id: 6
+    name: Museum
+    colour: {r: 0.85098046, g: 0.81568635, b: 0.78823537, a: 1}
+    levels: 3
+    levelHeight: 5
+  - unique_id: 7
+    name: Bank
+    colour: {r: 0.85098046, g: 0.81568635, b: 0.78823537, a: 1}
+    levels: 2
+    levelHeight: 5
+  - unique_id: 8
+    name: Government
+    colour: {r: 0.85098046, g: 0.81568635, b: 0.78823537, a: 1}
+    levels: 2
+    levelHeight: 5
+  - unique_id: 9
+    name: Supermarket
+    colour: {r: 0.85098046, g: 0.81568635, b: 0.78823537, a: 1}
+    levels: 2
+    levelHeight: 5
+  - unique_id: 10
+    name: Building
+    colour: {r: 0.85098046, g: 0.81568635, b: 0.78823537, a: 1}
+    levels: 2
+    levelHeight: 3
+  - unique_id: 11
+    name: Restaurant
+    colour: {r: 0.85098046, g: 0.81568635, b: 0.78823537, a: 1}
+    levels: 2
+    levelHeight: 5
+  - unique_id: 12
+    name: University
+    colour: {r: 0.8509804, g: 0.8156863, b: 0.7882353, a: 1}
+    levels: 3
+    levelHeight: 4
+  - unique_id: 13
+    name: Hotel
+    colour: {r: 0.85098046, g: 0.81568635, b: 0.78823537, a: 1}
+    levels: 6
+    levelHeight: 3
+  - unique_id: 14
+    name: Post Office
+    colour: {r: 0.85098046, g: 0.81568635, b: 0.78823537, a: 1}
+    levels: 2
+    levelHeight: 3
+  - unique_id: 15
+    name: Warehouse
+    colour: {r: 0.85098046, g: 0.81568635, b: 0.78823537, a: 1}
+    levels: 4
+    levelHeight: 5
+  - unique_id: 16
+    name: Industrial
+    colour: {r: 0.85098046, g: 0.81568635, b: 0.78823537, a: 1}
+    levels: 2
+    levelHeight: 4
+  buildingTags:
+  - tag:
+      key: building
+      value: residential
+    index: 0
+  - tag:
+      key: building
+      value: office
+    index: 3
+  - tag:
+      key: building
+      value: church
+    index: 2
+  - tag:
+      key: building
+      value: school
+    index: 5
+  - tag:
+      key: building
+      value: apartments
+    index: 1
+  - tag:
+      key: amenity
+      value: post_office
+    index: 14
+  - tag:
+      key: building
+      value: commercial
+    index: 4
+  - tag:
+      key: building
+      value: house
+    index: 0
+  - tag:
+      key: amenity
+      value: place_of_worship
+    index: 2
+  - tag:
+      key: building
+      value: shop
+    index: 4
+  - tag:
+      key: shop
+      value: convenience
+    index: 4
+  - tag:
+      key: building
+      value: public
+    index: 8
+  - tag:
+      key: building
+      value: supermarket
+    index: 9
+  - tag:
+      key: amenity
+      value: restaurant
+    index: 11
+  - tag:
+      key: landuse
+      value: military
+    index: 8
+  - tag:
+      key: building
+      value: terrace
+    index: 0
+  - tag:
+      key: building
+      value: university
+    index: 12
+  - tag:
+      key: building
+      value: hotel
+    index: 13
+  - tag:
+      key: tourism
+      value: hotel
+    index: 13
+  - tag:
+      key: building
+      value: government
+    index: 8
+  - tag:
+      key: building
+      value: tower
+    index: 8
+  - tag:
+      key: building
+      value: retail
+    index: 4
+  - tag:
+      key: building
+      value: warehouse
+    index: 15
+  - tag:
+      key: building
+      value: industrial
+    index: 16
+  - tag:
+      key: building
+      value: yes
+    index: 10
+  clipWithRoads: 1
+  newType: 0
+--- !u!1 &5066009315827492072
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1830961591998948646}
+  - component: {fileID: 7241969814624280775}
+  m_Layer: 21
+  m_Name: MapFeatures
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &1830961591998948646
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5066009315827492072}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4176675413206456}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7241969814624280775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5066009315827492072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 887792582, guid: 8c33fffcd70c4fb418e419a2cfc77ab5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  features:
+  - unique_id: 0
+    name: Railway
+    colour: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
+    clipWithRoads: 0
+  - unique_id: 1
+    name: Wooden Fence
+    colour: {r: 0.47058824, g: 0.3137255, b: 0.11764706, a: 1}
+    clipWithRoads: 1
+  - unique_id: 2
+    name: Chain-Link Fence
+    colour: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
+    clipWithRoads: 1
+  - unique_id: 3
+    name: Hedge
+    colour: {r: 0.68235296, g: 0.81960785, b: 0.627451, a: 1}
+    clipWithRoads: 1
+  - unique_id: 4
+    name: Brick Wall
+    colour: {r: 0.8113208, g: 0.77687794, b: 0.77687794, a: 1}
+    clipWithRoads: 1
+  - unique_id: 5
+    name: Guard Rail
+    colour: {r: 0.6862745, g: 0.68235296, b: 0.6666667, a: 1}
+    clipWithRoads: 1
+  - unique_id: 6
+    name: Metal Fence
+    colour: {r: 0.4509804, g: 0.4509804, b: 0.54901963, a: 1}
+    clipWithRoads: 1
+  - unique_id: 7
+    name: Concrete Wall
+    colour: {r: 0.7607843, g: 0.78431374, b: 0.76862746, a: 1}
+    clipWithRoads: 1
+  - unique_id: 8
+    name: Construction Site
+    colour: {r: 0.78039217, g: 0.78039217, b: 0.7058824, a: 1}
+    clipWithRoads: 1
+  - unique_id: 9
+    name: Playground
+    colour: {r: 0.8745098, g: 0.9882353, b: 0.8862745, a: 1}
+    clipWithRoads: 1
+  featureTags:
+  - tag:
+      key: railway
+      value: rail
+    index: 0
+  - tag:
+      key: fence_type
+      value: wood
+    index: 1
+  - tag:
+      key: fence_type
+      value: chain_link
+    index: 2
+  - tag:
+      key: barrier
+      value: hedge
+    index: 3
+  - tag:
+      key: barrier
+      value: wall
+    index: 4
+  - tag:
+      key: barrier
+      value: guard_rail
+    index: 5
+  - tag:
+      key: fence_type
+      value: railing
+    index: 6
+  - tag:
+      key: fence_type
+      value: bars
+    index: 6
+  - tag:
+      key: fence_type
+      value: metal
+    index: 6
+  - tag:
+      key: fence_type
+      value: brick
+    index: 4
+  - tag:
+      key: fence_type
+      value: concrete
+    index: 7
+  - tag:
+      key: barrier
+      value: fence
+    index: 2
+  - tag:
+      key: landuse
+      value: construction
+    index: 8
+  - tag:
+      key: leisure
+      value: playground
+    index: 9
+  clipWithRoads: 1
+  newType: 0

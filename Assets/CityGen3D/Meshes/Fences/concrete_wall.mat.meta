@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: de2c101c109ba4c48875d717662136de
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Meshes/Fences/concrete_wall.mat
+  uploadId: 944460

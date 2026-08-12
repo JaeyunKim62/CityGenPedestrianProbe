@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 229ff50172476a346b40eb8bc2896de1
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Materials/Terrain/AsphaltCracked.mat
+  uploadId: 944460

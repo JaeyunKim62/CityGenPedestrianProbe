@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4919c6d2c5d924a4d9cc158f65260332
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Prefabs/Generators/Generator HDRP.prefab
+  uploadId: 944460

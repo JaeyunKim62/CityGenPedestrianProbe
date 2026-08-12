@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 70e5745d6a76f0a41abb8d1ddd9f2821
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Resources/Prefabs/HDRP/FreeCam HDRP.prefab
+  uploadId: 944460

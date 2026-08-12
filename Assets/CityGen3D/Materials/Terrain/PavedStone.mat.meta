@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: fbafde70391399d45a80e5cfed5615ff
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Materials/Terrain/PavedStone.mat
+  uploadId: 944460

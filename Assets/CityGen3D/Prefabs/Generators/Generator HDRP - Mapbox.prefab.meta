@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 7b0cd83177538d945bef00779be6b322
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Prefabs/Generators/Generator HDRP - Mapbox.prefab
+  uploadId: 944460

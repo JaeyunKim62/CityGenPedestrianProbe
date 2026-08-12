@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 48dfe91331e9a8d4b850e87114b06ac1
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Blueprints/Red Brick House.prefab
+  uploadId: 944460

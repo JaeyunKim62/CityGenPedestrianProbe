@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: e5ad2ee623becb149963018198996af5
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Blueprints/Factory Red.prefab
+  uploadId: 944460

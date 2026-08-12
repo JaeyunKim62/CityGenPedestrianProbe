@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: acf3799fd699fe2449346a8037ddc839
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Blueprints/Primitive Industrial.prefab
+  uploadId: 944460

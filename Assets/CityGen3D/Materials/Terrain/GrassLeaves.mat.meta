@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b9f08a278d743674dbf008e62a2f9ccc
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Materials/Terrain/GrassLeaves.mat
+  uploadId: 944460

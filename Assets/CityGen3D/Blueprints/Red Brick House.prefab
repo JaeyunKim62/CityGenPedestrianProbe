@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6089629953288193905
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6404241953351199448}
+  - component: {fileID: 5849625376805674824}
+  m_Layer: 0
+  m_Name: Red Brick House
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6404241953351199448
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6089629953288193905}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5849625376805674824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6089629953288193905}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1833605183, guid: 8c33fffcd70c4fb418e419a2cfc77ab5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  seed: 0
+  createBasement: 1
+  storeys:
+  - plan: {fileID: 8535145007362806621, guid: f4f517df9487e7e49a970916b04ac760, type: 3}
+    floor: 0
+    facades: 040000000100000003000000
+    repeatFromElement: 1
+    segmentIndex: 0
+  - plan: {fileID: 8535145007362806621, guid: f4f517df9487e7e49a970916b04ac760, type: 3}
+    floor: 1
+    facades: 040000000200000002000000030000000200000002000000
+    repeatFromElement: 1
+    segmentIndex: 0
+  - plan: {fileID: 8535145007362806621, guid: f4f517df9487e7e49a970916b04ac760, type: 3}
+    floor: 2
+    facades: 0500000006000000
+    repeatFromElement: 1
+    segmentIndex: 15
+  roofType: 1
+  roofPitch: 8
+  roofOverhang: 0.2
+  roofCorner: 0
+  roofUnderside: 1
+  roofMaterials:
+  - {fileID: 2100000, guid: 18373ea3427c7a84190d5755b1c22710, type: 2}
+  - {fileID: 2100000, guid: 4ea848c2d85a34b438287d0a104af55d, type: 2}
+  - {fileID: 2100000, guid: 83c759293d8640e4d9f2a2429eb0278b, type: 2}
+  undersideMaterial: {fileID: 2100000, guid: 278ffae95112fbc41b70195f3370cb87, type: 2}

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ecff240b702e2f0408177cdddf642593
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Materials/Decals/RoadMarkingDoubleWhite.mat
+  uploadId: 944460

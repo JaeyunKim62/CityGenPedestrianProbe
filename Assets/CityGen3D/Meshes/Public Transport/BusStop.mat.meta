@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 052a9e9f38924244785943d6fdd93c45
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Meshes/Public Transport/BusStop.mat
+  uploadId: 944460

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: efe356844024c1945972bf99ef202557
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Materials/Water/FreshWater.mat
+  uploadId: 944460

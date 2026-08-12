@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 54a762339c5a86347bd9614297ea5026
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Meshes/Plants/Buttercup.mat
+  uploadId: 944460

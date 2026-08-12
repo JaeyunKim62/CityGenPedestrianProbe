@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b847e71a9579e7c4f873febf177417c6
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Resources/Prefabs/SidewalkRight.prefab
+  uploadId: 944460

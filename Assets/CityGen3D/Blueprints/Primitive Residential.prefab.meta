@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b1be59489f244ed418ef076be7550e12
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Blueprints/Primitive Residential.prefab
+  uploadId: 944460

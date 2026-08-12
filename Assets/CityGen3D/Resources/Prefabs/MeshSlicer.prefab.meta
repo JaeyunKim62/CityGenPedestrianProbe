@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 64f840c50cf0f4c489cb676052dc17f7
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Resources/Prefabs/MeshSlicer.prefab
+  uploadId: 944460

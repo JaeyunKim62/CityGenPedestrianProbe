@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4493b426ab2b1064090a7b03fc4f34dc
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Prefabs/Ambient-Occlusion/Willow.prefab
+  uploadId: 944460

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 36e39b352af4e9940945053e4dfa5f5e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Prefabs/LitterBin.prefab
+  uploadId: 944460

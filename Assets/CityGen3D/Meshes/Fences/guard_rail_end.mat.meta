@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7eeec4cc36e68bc448319e49b9dd6130
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Meshes/Fences/guard_rail_end.mat
+  uploadId: 944460

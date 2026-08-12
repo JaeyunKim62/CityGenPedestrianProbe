@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c7481ee0065b6b64dba8cb1f5d6eb18e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Resources/Prefabs/MapIcon.prefab
+  uploadId: 944460

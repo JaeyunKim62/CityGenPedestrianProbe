@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 043e298cca137d1448595e5251eb039e
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 862c8ee402d99b743ab1c589e9c38ab3, type: 3}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Shaders/Facade4x4.citygenshader
+  uploadId: 944460

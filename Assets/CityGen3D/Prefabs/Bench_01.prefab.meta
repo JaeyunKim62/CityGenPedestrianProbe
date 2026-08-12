@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 33811c8f048192649bc7bd3829f37d2b
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Prefabs/Bench_01.prefab
+  uploadId: 944460

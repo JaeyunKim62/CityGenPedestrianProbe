@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 785985ad249c36542b9c6cfcfe544497
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Meshes/Ambient-Occlusion/Willow.mat
+  uploadId: 944460

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4c14b8efa125ead4f8358403ce8b89d7
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Prefabs/Ambient-Occlusion/Birch.prefab
+  uploadId: 944460

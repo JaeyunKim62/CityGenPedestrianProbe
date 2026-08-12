@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4aa4ecfe52578964b9e484b6174f0d7a
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Blueprints/Superstore Blue.prefab
+  uploadId: 944460

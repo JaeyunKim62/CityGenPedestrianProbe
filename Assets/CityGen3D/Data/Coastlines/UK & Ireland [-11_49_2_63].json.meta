@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: a7d35f4c8d6f2ae488fb4988e79de757
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Data/Coastlines/UK & Ireland [-11_49_2_63].json
+  uploadId: 944460

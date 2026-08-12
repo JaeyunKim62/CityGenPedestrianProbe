@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: de4fcfe78ec5d524692f14f1f7930d0e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Blueprints/Primitive Commercial.prefab
+  uploadId: 944460

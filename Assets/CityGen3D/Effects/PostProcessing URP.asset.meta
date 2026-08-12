@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: cd7c08a45a4cc2e4c87471998571fe8b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Effects/PostProcessing URP.asset
+  uploadId: 944460

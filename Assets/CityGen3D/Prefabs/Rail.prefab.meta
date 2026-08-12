@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 21626b84f4896674e8983e193822478f
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Prefabs/Rail.prefab
+  uploadId: 944460

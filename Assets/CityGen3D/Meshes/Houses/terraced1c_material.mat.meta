@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e7eea94d832e65d4aad08dc43323b6f3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Meshes/Houses/terraced1c_material.mat
+  uploadId: 944460

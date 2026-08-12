@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 77b9100424cb74e43860826297b2b440
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Prefabs/PowerTower.prefab
+  uploadId: 944460

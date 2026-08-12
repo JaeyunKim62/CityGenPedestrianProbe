@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 6b99824f5ad34eb4cbbaa5ce2efadf6a
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Blueprints/Church.prefab
+  uploadId: 944460

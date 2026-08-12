@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 3e93e60aadefd3844abe480be0995cda
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Scripts/Editor/EditorFreeCam.cs
+  uploadId: 944460

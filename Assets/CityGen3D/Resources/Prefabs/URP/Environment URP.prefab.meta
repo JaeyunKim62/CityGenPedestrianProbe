@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 541eea4cea460114bbb028ad073bc15a
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Resources/Prefabs/URP/Environment URP.prefab
+  uploadId: 944460

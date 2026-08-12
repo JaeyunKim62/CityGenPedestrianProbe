@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: eaecdc9af8e96ce4e9b8803ad96f6c8f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Scripts/RoadInfo.cs
+  uploadId: 944460

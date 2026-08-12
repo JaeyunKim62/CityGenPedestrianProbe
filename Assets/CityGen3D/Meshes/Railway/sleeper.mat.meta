@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ff65371ae73495e4c9724a4a4e3985b7
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Meshes/Railway/sleeper.mat
+  uploadId: 944460

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 16754c74163a8a14cbfb7633390df932
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Shaders/ShaderPackager/Editor/RenderPipelineDefine.cs
+  uploadId: 944460

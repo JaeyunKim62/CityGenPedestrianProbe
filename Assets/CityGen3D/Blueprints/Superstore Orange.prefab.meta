@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 9c467a57f1e8d89499640af2f4c53a0d
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Blueprints/Superstore Orange.prefab
+  uploadId: 944460

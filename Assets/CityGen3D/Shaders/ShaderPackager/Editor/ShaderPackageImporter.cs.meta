@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 862c8ee402d99b743ab1c589e9c38ab3
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Shaders/ShaderPackager/Editor/ShaderPackageImporter.cs
+  uploadId: 944460

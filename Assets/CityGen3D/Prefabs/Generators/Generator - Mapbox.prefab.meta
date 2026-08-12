@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: def136dc2b3f64645b75cebf01c4708b
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Prefabs/Generators/Generator - Mapbox.prefab
+  uploadId: 944460

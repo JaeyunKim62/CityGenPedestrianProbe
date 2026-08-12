@@ -1,0 +1,2207 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1135113303916478
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4986144814042882}
+  - component: {fileID: 114242729356071604}
+  m_Layer: 4
+  m_Name: Water
+  m_TagString: EditorOnly
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &4986144814042882
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1135113303916478}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4237422134702580}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114242729356071604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1135113303916478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 577760313, guid: 83c45156126aeaa4fb3f5565630c7b01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  overlap: 2
+  generateWaterways: 1
+  minSize: 200
+  seaLevel: 0.475
+  oceanPrefab: {fileID: 1772412273820502, guid: bfe34913111d39044aeb7be316e2e7e5, type: 3}
+  waterPrefabs:
+  - {fileID: 1772412273820502, guid: c0692f73068c39349b7974b8d1b741c9, type: 3}
+  waterRules:
+  - surface: 268468224
+    prefabIndex: 0
+  waterSegmentSplitting: 0
+  waterMaxPolyArea: 250
+  waterMinAngle: 20
+  waySegmentSplitting: 0
+  wayMaxPolyArea: 0
+  wayMinAngle: 0
+  riverLevel: -1
+--- !u!1 &1148926278319180
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4697161682325012}
+  - component: {fileID: 114593904395985072}
+  m_Layer: 0
+  m_Name: Highways
+  m_TagString: EditorOnly
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &4697161682325012
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148926278319180}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4237422134702580}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114593904395985072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148926278319180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -472880865, guid: 83c45156126aeaa4fb3f5565630c7b01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sidewalkPrefabs:
+  - {fileID: 6932477150152402606, guid: 6afe58bfd31b6ef42967267b3b481bbc, type: 3}
+  - {fileID: 4172828631319607028, guid: b847e71a9579e7c4f873febf177417c6, type: 3}
+  sidewalkMaterials:
+  - {fileID: 2100000, guid: c6d8959632f4b2c419800a289731df8c, type: 2}
+  curbMaterials:
+  - {fileID: 2100000, guid: 6c9a90e02e293944cbfbf9171aff0cde, type: 2}
+  vergeMaterials:
+  - {fileID: 2100000, guid: 1f7987b225b23a14e9a314e87d0c3a8a, type: 2}
+  sidewalkResolution: 4
+  sidewalkOffset: 0.05
+  textureRules:
+  - surface: 0
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    textureIndex: 0
+    textureIndex1: 0
+    textureIndex2: 2
+    textureIndex3: 3
+  markingMaterials:
+  - {fileID: 2100000, guid: b6ba222c7f5af2642920a68ad4c9f5ea, type: 2}
+  - {fileID: 2100000, guid: 367c6522250f009479534cdc9db8e9b8, type: 2}
+  - {fileID: 2100000, guid: cd939bba770f7214eb50da592195953a, type: 2}
+  - {fileID: 2100000, guid: 24c2c585b6ffac846900ce7fadd9ccee, type: 2}
+  - {fileID: 2100000, guid: 9df2705b44e2ded4c85e0a7c7f1d12a1, type: 2}
+  markingRules:
+  - roadType: 7
+    edgeIndex: 1
+    dividerIndex: 0
+  - roadType: 6152
+    edgeIndex: 2
+    dividerIndex: 0
+  - roadType: 128
+    edgeIndex: 2
+    dividerIndex: 3
+  - roadType: 64
+    edgeIndex: 1
+    dividerIndex: 4
+  defaultRoadSurface: 24
+  gapFillMaterial: {fileID: 2100000, guid: 9eb5f2d4020135a408437ba0c8d22e13, type: 2}
+  gapOutlineMaterial: {fileID: 2100000, guid: 367c6522250f009479534cdc9db8e9b8, type: 2}
+  gapRules:
+  - bitmask: 0
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 200
+      max: 1000
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 0
+    width: 1
+    minCapLength: 0
+    interval: 4
+    offset: {x: 0, y: 0}
+    prefabIndex: 07000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  - bitmask: 0
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 200
+      max: 1000
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 2
+    width: 0.15
+    minCapLength: 0
+    interval: 2
+    offset: {x: 0, y: 0}
+    prefabIndex: 01000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  roadColliderOffset: 0.05
+  gizmoShowRoads: 0
+  gizmoShowLanes: 0
+  digHighways: 1
+  meshSegmentSplitting: 0
+  meshMaxPolyArea: 5
+  meshMinAngle: 20
+--- !u!1 &1165143714505572
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4938940164059106}
+  - component: {fileID: 114179453902844448}
+  m_Layer: 0
+  m_Name: Heightmap
+  m_TagString: EditorOnly
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &4938940164059106
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1165143714505572}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4237422134702580}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114179453902844448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1165143714505572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1144677423, guid: 83c45156126aeaa4fb3f5565630c7b01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  provider: 0
+  nasaSource: https://step.esa.int/auxdata/dem/SRTMGL1/
+  nasaFileType: .SRTMGL1.hgt.zip
+  nasaFileLowerCase: 0
+  nasaFileUnzip: 1
+  nasaUsername: 
+  nasaPassword: 
+  nasaPath: Assets/CityGen3D/Data/HGT
+  peak: 500
+  nadir: -50
+  waterDepth: 10
+  offset: {x: 0, y: 0}
+  samplingMode: 1
+  interpolation: 1
+  autoRange: 0
+  sampleSpacing: 16
+  heightRules:
+  - surface: 262144
+    heightOffset: 0.002
+    protectHighways: 1
+  - surface: 8192
+    heightOffset: -0.003
+    protectHighways: 1
+  - surface: 1048576
+    heightOffset: -0.002
+    protectHighways: 1
+  - surface: 268435456
+    heightOffset: -0.004
+    protectHighways: 0
+  - surface: 32768
+    heightOffset: -0.004
+    protectHighways: 1
+  - surface: 0
+    heightOffset: -0.01
+    protectHighways: 1
+  smoothingBrush: {fileID: 0}
+  smoothingIterations: 10
+  smoothingBrushSize: 64
+  smoothingBrushFalloff: 5
+  smoothingVerticality: 1
+  smoothingKernelSize: 10
+  flatteningLayerMask: 536870912
+  flatteningRadius: 4
+  highwayLevellingIterations: 8
+  highwayLevellingRadius: 4
+  highwayLevellingSample: 16
+  plotLevellingIterations: 8
+  plotLevellingRadius: 4
+  plotLevellingSample: 16
+  perlinScale: 10
+  perlinOffset: {x: 0, y: 0}
+  downloadFailed: 0
+  downloadResponse: 0
+  downloadError: 
+  updated: 1
+--- !u!1 &1188812707911806
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4237422134702580}
+  - component: {fileID: 114552442779619636}
+  m_Layer: 0
+  m_Name: Generator
+  m_TagString: EditorOnly
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &4237422134702580
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188812707911806}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4938940164059106}
+  - {fileID: 8207451464342943065}
+  - {fileID: 4986144814042882}
+  - {fileID: 4697161682325012}
+  - {fileID: 7306435675008918339}
+  - {fileID: 8575653238520772320}
+  - {fileID: 4792302826904182}
+  - {fileID: 7993337711183467646}
+  - {fileID: 1408341355493012022}
+  - {fileID: 3199778666442205669}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114552442779619636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188812707911806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1437620288, guid: 83c45156126aeaa4fb3f5565630c7b01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  heightmap: {fileID: 114179453902844448}
+  splatmap: {fileID: 4727862552352294365}
+  water: {fileID: 114242729356071604}
+  highways: {fileID: 114593904395985072}
+  buildings: {fileID: 8686258284887892667}
+  roadside: {fileID: 8154484660953287973}
+  entities: {fileID: 114352845052675802}
+  features: {fileID: 6421228905653057958}
+  trees: {fileID: 5253486931454836585}
+  details: {fileID: 5301127007750959277}
+  terrainSelection: 01
+  saveAsScenes: 0
+  actions: 010000001e00000002000000030000000500000007000000090000000b0000000d0000000e000000100000001200000014000000160000001700000019000000
+  lockTransform: 1
+  currentLandscape: {fileID: 0}
+--- !u!1 &1652157165472016
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4792302826904182}
+  - component: {fileID: 114352845052675802}
+  m_Layer: 0
+  m_Name: Entities
+  m_TagString: EditorOnly
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &4792302826904182
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1652157165472016}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4237422134702580}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114352845052675802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1652157165472016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1322171083, guid: 83c45156126aeaa4fb3f5565630c7b01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  entityPrefabs:
+  - {fileID: 1386974680370514, guid: 0574096caf621134b811519a9581b9af, type: 3}
+  - {fileID: 3970537022673032347, guid: b4c5e27f2a1a12a42b00ae0bfd69f194, type: 3}
+  - {fileID: 2656285008577171184, guid: 77b9100424cb74e43860826297b2b440, type: 3}
+  - {fileID: 88500690564467445, guid: 36e39b352af4e9940945053e4dfa5f5e, type: 3}
+  - {fileID: 8370454440663723913, guid: 33811c8f048192649bc7bd3829f37d2b, type: 3}
+  entityRules:
+  - bitmask: 1
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    entityIndex: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+    location: 1
+    rotation: 2
+  - bitmask: 8
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    entityIndex: 01000000000000000000000000000000
+    location: 2
+    rotation: 1
+  - bitmask: 128
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    entityIndex: 02000000000000000000000000000000
+    location: 0
+    rotation: 0
+  - bitmask: 32
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    entityIndex: 03000000000000000000000000000000
+    location: 2
+    rotation: 0
+  - bitmask: 2
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    entityIndex: 04000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+    location: 0
+    rotation: 1
+--- !u!1 &2226048995279335333
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7993337711183467646}
+  - component: {fileID: 6421228905653057958}
+  m_Layer: 0
+  m_Name: Features
+  m_TagString: EditorOnly
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &7993337711183467646
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2226048995279335333}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4237422134702580}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6421228905653057958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2226048995279335333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1583214109, guid: 83c45156126aeaa4fb3f5565630c7b01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  featurePrefabs:
+  - {fileID: 123730, guid: e7335e38469bbf243982b2f2c7934be7, type: 3}
+  - {fileID: 100570, guid: cc36945fc8e7c7e428d1104b6a5c2459, type: 3}
+  - {fileID: 111962, guid: b331272671146f748b0cc11c1735a99d, type: 3}
+  - {fileID: 175952, guid: 735c8c9a6ed212f4489d0b6ff52df24f, type: 3}
+  - {fileID: 4824650144618966602, guid: 97bf9edb725250e478f59ecd374b6343, type: 3}
+  - {fileID: 6493579399717666118, guid: c0793e53ee4310b4c9d9c4d7743521e4, type: 3}
+  - {fileID: 979244967750209224, guid: d6ecc8d561297a644b1292be6bbaf018, type: 3}
+  - {fileID: 8445053478954655632, guid: e624643a20d99d942ad7e35d9fa635d4, type: 3}
+  - {fileID: 4585699875204797398, guid: 5730461859620e94a9cb808bce18b0d5, type: 3}
+  - {fileID: 7455584786110133523, guid: 9e093213460355c4bba5680b819469ba, type: 3}
+  - {fileID: 4218976160177677683, guid: 37f300c1328f04343bafe2717ce31389, type: 3}
+  featureExtrusions:
+  - {fileID: 2504637238222214363, guid: 21626b84f4896674e8983e193822478f, type: 3}
+  - {fileID: 8722779775986839623, guid: c8f5e7a00049ffc4684285d660061b39, type: 3}
+  - {fileID: 666897609629149897, guid: ffdcd3c9db70caf4282d8911b2c0802d, type: 3}
+  - {fileID: 3061080122427981746, guid: 07fd2c217f9091346b33c8be941b7c74, type: 3}
+  - {fileID: 1949042108930428098, guid: 275670eb5a173c54c9435541e3e4458f, type: 3}
+  - {fileID: 7364599348006237361, guid: 0cb85fa20ff5bcb48959663277fa7ba8, type: 3}
+  - {fileID: 3223456783262023349, guid: b5271915c0709e548bcdc71aaa1b1daa, type: 3}
+  - {fileID: 6357943175563428797, guid: 8906d6faade785c408da27097194ae7d, type: 3}
+  - {fileID: 8873816573324894055, guid: 962121a9f432a014eabec8799fc6f81f, type: 3}
+  - {fileID: 3798427743806305349, guid: b758b3de37df0894fa7ddee042eae9a0, type: 3}
+  - {fileID: 7798571526550509896, guid: ff6387eeaa63b0e45a0038cbc3eda6a7, type: 3}
+  - {fileID: 4727243585461228610, guid: adf155197e2f3e24b834a3d8829e4c4c, type: 3}
+  - {fileID: 2725756065805146086, guid: 64b7a2ac11e13fe42b0ed9d30c96d419, type: 3}
+  - {fileID: 3993254157915599439, guid: 85588c0f998f8e042b9b51e61190c13f, type: 3}
+  featureRules:
+  - bitmask: 1
+    noiseFilter:
+      mode: 0
+      outputs: 4
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.25
+      threshold2: 0.5
+      threshold3: 0.75
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 0
+    width: 1
+    minCapLength: 0
+    interval: 1
+    offset: {x: 0, y: -0.05}
+    prefabIndex: 00000000010000000200000003000000
+  - bitmask: 1
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 2
+    width: 0.2
+    minCapLength: 0
+    interval: 2
+    offset: {x: 0.8175, y: 0.06}
+    prefabIndex: 00000000000000000000000000000000
+  - bitmask: 1
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 2
+    width: 0.2
+    minCapLength: 0
+    interval: 2
+    offset: {x: -0.6175, y: 0.06}
+    prefabIndex: 00000000000000000000000000000000
+  - bitmask: 8
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 0
+    width: 1.5
+    minCapLength: 0
+    interval: 1.6
+    offset: {x: 0, y: 0}
+    prefabIndex: 04000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  - bitmask: 32
+    noiseFilter:
+      mode: 5
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 1
+    width: 1
+    minCapLength: 0
+    interval: 2
+    offset: {x: 0, y: 0}
+    prefabIndex: 0f000000070000000f00000000000000
+  - bitmask: 32
+    noiseFilter:
+      mode: 5
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 3
+    width: 0.15
+    minCapLength: 0.3
+    interval: 2
+    offset: {x: 0, y: 0}
+    prefabIndex: 09000000010000000a00000000000000
+  - bitmask: 64
+    noiseFilter:
+      mode: 5
+      outputs: 3
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 1
+    width: 1
+    minCapLength: 0
+    interval: 5
+    offset: {x: 0, y: 0}
+    prefabIndex: 08000000090000000800000000000000
+  - bitmask: 64
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 2
+    width: 0.05
+    minCapLength: 0
+    interval: 5
+    offset: {x: 0, y: 0.1}
+    prefabIndex: 04000000000000000000000000000000
+  - bitmask: 64
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 2
+    width: 0.2
+    minCapLength: 0
+    interval: 5
+    offset: {x: 0, y: 0}
+    prefabIndex: 05000000000000000000000000000000
+  - bitmask: 128
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 2
+    width: 0.2
+    minCapLength: 0
+    interval: 2
+    offset: {x: 0, y: 0}
+    prefabIndex: 0d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  - bitmask: 2
+    noiseFilter:
+      mode: 0
+      outputs: 2
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 2
+    width: 0.2
+    minCapLength: 0
+    interval: 2
+    offset: {x: 0, y: 0}
+    prefabIndex: 02000000030000000000000000000000
+  - bitmask: 2
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 0
+    width: 1
+    minCapLength: 0
+    interval: 2
+    offset: {x: 0.1, y: 0}
+    prefabIndex: 06000000000000000000000000000000
+  - bitmask: 16
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 2
+    width: 0.2
+    minCapLength: 0
+    interval: 2
+    offset: {x: 0, y: 0}
+    prefabIndex: 0b000000000000000000000000000000
+  - bitmask: 16
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 2
+    width: 0.2
+    minCapLength: 0
+    interval: 1
+    offset: {x: 0, y: 2.2}
+    prefabIndex: 0c000000000000000000000000000000
+  - bitmask: 16
+    noiseFilter:
+      mode: 5
+      outputs: 2
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 1
+    width: 1
+    minCapLength: 0
+    interval: 1
+    offset: {x: 0, y: 0}
+    prefabIndex: 0a0000000f0000000a00000000000000
+  - bitmask: 260
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 0
+    width: 1
+    minCapLength: 0
+    interval: 4
+    offset: {x: 0, y: 0}
+    prefabIndex: 05000000000000000000000000000000
+  - bitmask: 260
+    noiseFilter:
+      mode: 0
+      outputs: 3
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.8
+      threshold2: 0.9
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    mode: 2
+    width: 0.2
+    minCapLength: 0
+    interval: 4
+    offset: {x: 0, y: 0}
+    prefabIndex: 06000000070000000800000000000000
+  crossSection: {fileID: 2100000, guid: bb1810d39f301054abfbcef012eb0883, type: 2}
+--- !u!1 &3401200092316084451
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7306435675008918339}
+  - component: {fileID: 8686258284887892667}
+  m_Layer: 0
+  m_Name: Buildings
+  m_TagString: EditorOnly
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &7306435675008918339
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3401200092316084451}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4237422134702580}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8686258284887892667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3401200092316084451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 194120999, guid: 83c45156126aeaa4fb3f5565630c7b01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blueprints:
+  - {fileID: 5849625376805674824, guid: 48dfe91331e9a8d4b850e87114b06ac1, type: 3}
+  - {fileID: 5849625376805674824, guid: e03091f214179e946ad9d1aa3d798b9e, type: 3}
+  - {fileID: -6627479540461715301, guid: ec3c8283680d86a44bb4940c2b9541b1, type: 3}
+  - {fileID: -6627479540461715301, guid: d258be4e88b898f4bbfa4462331f5bda, type: 3}
+  - {fileID: -6627479540461715301, guid: 6b99824f5ad34eb4cbbaa5ce2efadf6a, type: 3}
+  - {fileID: -6627479540461715301, guid: 0bc3f9f9883093641b8184148cc018dc, type: 3}
+  - {fileID: -6627479540461715301, guid: ccf11abff0e3495498df6ec178fdbab5, type: 3}
+  - {fileID: -6627479540461715301, guid: 4aa4ecfe52578964b9e484b6174f0d7a, type: 3}
+  - {fileID: -6627479540461715301, guid: c6fff96c1d8337f4facd54f0963a2365, type: 3}
+  - {fileID: -6627479540461715301, guid: 57bc4f55b1742d8408b9f8fc6d4b610d, type: 3}
+  - {fileID: -6627479540461715301, guid: 9c467a57f1e8d89499640af2f4c53a0d, type: 3}
+  - {fileID: -6627479540461715301, guid: cc9b25ed7c76eb6468dd432ebe880e0f, type: 3}
+  - {fileID: -6627479540461715301, guid: 1fc6364e21092c74187544648f92c585, type: 3}
+  - {fileID: -6627479540461715301, guid: e5ad2ee623becb149963018198996af5, type: 3}
+  - {fileID: -6627479540461715301, guid: a14e8b6a7ace0244196454132d6ccef5, type: 3}
+  buildingRules:
+  - buildingType: -1
+    surfaceType: -1
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    heightMin: 50
+    sizeMin: 1000
+    blueprintIndex: 03000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  - buildingType: 10282
+    surfaceType: -1
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    heightMin: 10
+    sizeMin: 0
+    blueprintIndex: 02000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  - buildingType: -1
+    surfaceType: -1
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    heightMin: 10
+    sizeMin: 0
+    blueprintIndex: 0e000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  - buildingType: 1
+    surfaceType: -1
+    noiseFilter:
+      mode: 0
+      outputs: 2
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.2
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    heightMin: 0
+    sizeMin: 0
+    blueprintIndex: 01000000000000000000000000000000
+  - buildingType: 4
+    surfaceType: -1
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    heightMin: 0
+    sizeMin: 0
+    blueprintIndex: 04000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  - buildingType: 2064
+    surfaceType: -1
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.7
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    heightMin: 0
+    sizeMin: 0
+    blueprintIndex: 05000000060000000000000000000000
+  - buildingType: 448
+    surfaceType: -1
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    heightMin: 0
+    sizeMin: 0
+    blueprintIndex: 06000000000000000000000000000000
+  - buildingType: 512
+    surfaceType: -1
+    noiseFilter:
+      mode: 0
+      outputs: 4
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.25
+      threshold2: 0.5
+      threshold3: 0.75
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    heightMin: 0
+    sizeMin: 0
+    blueprintIndex: 0700000008000000090000000a000000
+  - buildingType: 2
+    surfaceType: -1
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    heightMin: 0
+    sizeMin: 0
+    blueprintIndex: 0e000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  - buildingType: -1
+    surfaceType: 4096
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    heightMin: 10
+    sizeMin: 0
+    blueprintIndex: 0e000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  - buildingType: -1
+    surfaceType: 4096
+    noiseFilter:
+      mode: 0
+      outputs: 2
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.2
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    heightMin: 0
+    sizeMin: 100
+    blueprintIndex: 01000000000000000000000000000000
+  - buildingType: -1
+    surfaceType: 4
+    noiseFilter:
+      mode: 0
+      outputs: 4
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.25
+      threshold2: 0.5
+      threshold3: 0.75
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    heightMin: 0
+    sizeMin: 1750
+    blueprintIndex: 0700000008000000090000000a000000
+  - buildingType: -1
+    surfaceType: 4
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.8
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    heightMin: 0
+    sizeMin: 100
+    blueprintIndex: 05000000060000000000000000000000
+  - buildingType: -1
+    surfaceType: 256
+    noiseFilter:
+      mode: 0
+      outputs: 3
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.4
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    heightMin: 0
+    sizeMin: 100
+    blueprintIndex: 0b0000000c0000000d00000000000000
+  - buildingType: -1
+    surfaceType: -1
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.2
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    heightMin: 0
+    sizeMin: 100
+    blueprintIndex: 020000000e0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  prefabBuildingLOD0: {fileID: 8898835836060777723, guid: 4770145f5a7d90047ab8cb338c3d42a9, type: 3}
+  prefabBuildingLOD1: {fileID: 8898835836060777723, guid: bfd109581e32a4146a97ce5fcd8ac513, type: 3}
+  meshResolution: 1
+  lodMode: 0
+  spawnPrefabs: 0
+  prefabLayerMask: 2013265920
+  forceUnderside: 0
+  undersideInflation: 0.2
+  prefabs:
+  - {fileID: 5510173710379197402, guid: 3d9c4065b6c42b2448476bf9048b31b0, type: 3}
+  prefabRules:
+  - buildingType: 1025
+    surfaceType: 4096
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    sizeMin: 0.5
+    sizeMax: 1
+    heightMin: 0.5
+    heightMax: 2
+    prefabIndex: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+--- !u!1 &5920902599721113781
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3199778666442205669}
+  - component: {fileID: 5301127007750959277}
+  m_Layer: 0
+  m_Name: Detail
+  m_TagString: EditorOnly
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &3199778666442205669
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5920902599721113781}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4237422134702580}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5301127007750959277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5920902599721113781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 359613093, guid: 83c45156126aeaa4fb3f5565630c7b01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detailPatchResolution: 32
+  detailObjectDistance: 256
+  detailObjectDensity: 1
+  terrainPrefabs:
+  - prefab: {fileID: 0}
+    texture: {fileID: 2800000, guid: c63a9aeccb6c80548bb3cd756e712af2, type: 3}
+    dryColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
+    healthyColor: {r: 1, g: 1, b: 1, a: 1}
+    minWidth: 0.5
+    maxWidth: 1
+    minHeight: 0.5
+    maxHeight: 1
+    noiseSpread: 1
+    density: 4
+    mode: 2
+  - prefab: {fileID: 100000, guid: 35fe2018adb056d49947b7cc35c395c9, type: 3}
+    texture: {fileID: 2800000, guid: 4ae5da1f51621904eb3ee9234ce69975, type: 3}
+    dryColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
+    healthyColor: {r: 1, g: 1, b: 1, a: 1}
+    minWidth: 1
+    maxWidth: 2
+    minHeight: 1
+    maxHeight: 2
+    noiseSpread: 1
+    density: 1
+    mode: 4
+  - prefab: {fileID: 1453904681535648, guid: 774c26b50ba0c664f956edeedb822424, type: 3}
+    texture: {fileID: 2800000, guid: 53f3456821ffada49a04afce0d07bbfe, type: 3}
+    dryColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
+    healthyColor: {r: 1, g: 1, b: 1, a: 1}
+    minWidth: 1
+    maxWidth: 2
+    minHeight: 1
+    maxHeight: 2
+    noiseSpread: 1
+    density: 1
+    mode: 4
+  - prefab: {fileID: 100000, guid: 640e7cbc22e780848adcb55a40e51c98, type: 3}
+    texture: {fileID: 2800000, guid: 3f6af3ad8a01d764f8cf5248c7626cb3, type: 3}
+    dryColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
+    healthyColor: {r: 1, g: 1, b: 1, a: 1}
+    minWidth: 1
+    maxWidth: 2
+    minHeight: 1
+    maxHeight: 2
+    noiseSpread: 1
+    density: 1
+    mode: 4
+  - prefab: {fileID: 100000, guid: 87db6ccba24e8924cb8a58ad6f410e1a, type: 3}
+    texture: {fileID: 2800000, guid: 2128e258f661e234d9659ab5b39714ad, type: 3}
+    dryColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
+    healthyColor: {r: 1, g: 1, b: 1, a: 1}
+    minWidth: 1
+    maxWidth: 2
+    minHeight: 1
+    maxHeight: 2
+    noiseSpread: 1
+    density: 1
+    mode: 4
+  - prefab: {fileID: 5463410393762506269, guid: f2eadac19a09ee04ab54559a52f2a5e4, type: 3}
+    texture: {fileID: 2800000, guid: 774c1e74ee570a44bb9d2e0a5446feb1, type: 3}
+    dryColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
+    healthyColor: {r: 1, g: 1, b: 1, a: 1}
+    minWidth: 0.8
+    maxWidth: 1.2
+    minHeight: 0.8
+    maxHeight: 1.2
+    noiseSpread: 1
+    density: 1
+    mode: 4
+  - prefab: {fileID: 0}
+    texture: {fileID: 2800000, guid: 50e62105f7a31fc4b94364f62b897354, type: 3}
+    dryColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
+    healthyColor: {r: 1, g: 1, b: 1, a: 1}
+    minWidth: 0.75
+    maxWidth: 1.5
+    minHeight: 0.75
+    maxHeight: 1.5
+    noiseSpread: 1
+    density: 2
+    mode: 2
+  - prefab: {fileID: 0}
+    texture: {fileID: 2800000, guid: 6b5b2db103b2b404480f1f59c7d8592f, type: 3}
+    dryColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
+    healthyColor: {r: 1, g: 1, b: 1, a: 1}
+    minWidth: 0.2
+    maxWidth: 0.5
+    minHeight: 0.2
+    maxHeight: 0.5
+    noiseSpread: 1
+    density: 4
+    mode: 2
+  detailRules:
+  - surface: 1065536
+    noiseFilter:
+      mode: 1
+      outputs: 2
+      scale: 0.001
+      offset: {x: 0, y: 0}
+      threshold: 0.6
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    layer: 0
+  - surface: 6307904
+    noiseFilter:
+      mode: 1
+      outputs: 2
+      scale: 0.001
+      offset: {x: 0, y: 0}
+      threshold: 0.1
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    layer: 1
+  - surface: 6307904
+    noiseFilter:
+      mode: 1
+      outputs: 2
+      scale: 0.002
+      offset: {x: 0, y: 0}
+      threshold: 0.1
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    layer: 2
+  - surface: 6307904
+    noiseFilter:
+      mode: 1
+      outputs: 2
+      scale: 0.003
+      offset: {x: 0, y: 0}
+      threshold: 0.1
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    layer: 3
+  - surface: 6307904
+    noiseFilter:
+      mode: 1
+      outputs: 2
+      scale: 0.05
+      offset: {x: 0, y: 0}
+      threshold: 0.2
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    layer: 4
+  - surface: 512
+    noiseFilter:
+      mode: 1
+      outputs: 2
+      scale: 0.1
+      offset: {x: 0, y: 0}
+      threshold: 0.2
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    layer: 5
+  - surface: 16
+    noiseFilter:
+      mode: 1
+      outputs: 2
+      scale: 0.001
+      offset: {x: 0, y: 0}
+      threshold: 0.9
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    layer: 6
+--- !u!1 &6034784605139076831
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8207451464342943065}
+  - component: {fileID: 4727862552352294365}
+  m_Layer: 0
+  m_Name: Splatmap
+  m_TagString: EditorOnly
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &8207451464342943065
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6034784605139076831}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4237422134702580}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4727862552352294365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6034784605139076831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -145224966, guid: 83c45156126aeaa4fb3f5565630c7b01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  terrainMaterials:
+  - {fileID: 2100000, guid: abc45d94bbfe2e543b2b773aea903a85, type: 2}
+  - {fileID: 2100000, guid: 1f7987b225b23a14e9a314e87d0c3a8a, type: 2}
+  - {fileID: 2100000, guid: b9f08a278d743674dbf008e62a2f9ccc, type: 2}
+  - {fileID: 2100000, guid: e5cc2ac764ee1aa4f8d2552d4d6a5294, type: 2}
+  - {fileID: 2100000, guid: 0f3e9d866943df945a61fe1efe5aef05, type: 2}
+  - {fileID: 2100000, guid: fa291ae0f3cd90545b95401542ebacde, type: 2}
+  - {fileID: 2100000, guid: 3a6582abe71002949ab7d758afee1143, type: 2}
+  - {fileID: 2100000, guid: 3da8d8f35fe854843a2daef6c9ef990f, type: 2}
+  - {fileID: 2100000, guid: e74da8c75e05aaf43a909a6451200409, type: 2}
+  - {fileID: 2100000, guid: 543875c093f85bc428ccb7ea99e34bd8, type: 2}
+  - {fileID: 2100000, guid: c6d8959632f4b2c419800a289731df8c, type: 2}
+  - {fileID: 2100000, guid: 7d40eb535e3d76f47b624608e5d2442a, type: 2}
+  - {fileID: 2100000, guid: fbafde70391399d45a80e5cfed5615ff, type: 2}
+  - {fileID: 2100000, guid: 229ff50172476a346b40eb8bc2896de1, type: 2}
+  - {fileID: 2100000, guid: 88050144bbed80241b2c719520e46ac4, type: 2}
+  textureRules:
+  - surface: 25231360
+    noiseFilter:
+      mode: 1
+      outputs: 2
+      scale: 0.002
+      offset: {x: 0, y: 0}
+      threshold: 0.6
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    textureIndex: 0
+    textureIndex1: 13
+    textureIndex2: 2
+    textureIndex3: 3
+  - surface: 135200
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.8
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    textureIndex: 10
+    textureIndex1: 12
+    textureIndex2: 11
+    textureIndex3: 3
+  - surface: 16448
+    noiseFilter:
+      mode: 3
+      outputs: 2
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.9
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    textureIndex: 2
+    textureIndex1: 5
+    textureIndex2: 4
+    textureIndex3: 3
+  - surface: 8192
+    noiseFilter:
+      mode: 3
+      outputs: 2
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.9
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    textureIndex: 9
+    textureIndex1: 5
+    textureIndex2: 2
+    textureIndex3: 3
+  - surface: 6424194
+    noiseFilter:
+      mode: 3
+      outputs: 2
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.9
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    textureIndex: 1
+    textureIndex1: 5
+    textureIndex2: 2
+    textureIndex3: 3
+  - surface: 4
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    textureIndex: 12
+    textureIndex1: 1
+    textureIndex2: 2
+    textureIndex3: 3
+  - surface: 256
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    textureIndex: 7
+    textureIndex1: 1
+    textureIndex2: 2
+    textureIndex3: 3
+  - surface: 33554440
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    textureIndex: 8
+    textureIndex1: 1
+    textureIndex2: 2
+    textureIndex3: 3
+  - surface: 524305
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    textureIndex: 6
+    textureIndex1: 1
+    textureIndex2: 2
+    textureIndex3: 3
+  - surface: 268468224
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    textureIndex: 11
+    textureIndex1: 1
+    textureIndex2: 2
+    textureIndex3: 3
+  - surface: 134217728
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    textureIndex: 4
+    textureIndex1: 1
+    textureIndex2: 2
+    textureIndex3: 3
+  - surface: 2048
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    textureIndex: 3
+    textureIndex1: 1
+    textureIndex2: 2
+    textureIndex3: 0
+  - surface: 262144
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    textureIndex: 5
+    textureIndex1: 1
+    textureIndex2: 2
+    textureIndex3: 3
+  - surface: 1048576
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    textureIndex: 14
+    textureIndex1: 1
+    textureIndex2: 2
+    textureIndex3: 3
+  - surface: 1073741824
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    textureIndex: 15
+    textureIndex1: 1
+    textureIndex2: 2
+    textureIndex3: 3
+  - surface: 0
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.7
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    textureIndex: 9
+    textureIndex1: 1
+    textureIndex2: 2
+    textureIndex3: 3
+  optimizeTerrainLayers: 1
+--- !u!1 &6405968550895595274
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8575653238520772320}
+  - component: {fileID: 8154484660953287973}
+  m_Layer: 0
+  m_Name: Roadside
+  m_TagString: EditorOnly
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &8575653238520772320
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6405968550895595274}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4237422134702580}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8154484660953287973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6405968550895595274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1377068232, guid: 83c45156126aeaa4fb3f5565630c7b01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roadsidePrefabs:
+  - {fileID: 1330275953748778, guid: 5505b27d6de13464897d5d8b21589d2b, type: 3}
+  - {fileID: 166944, guid: bb4fa75606d209147821b323c7f29096, type: 3}
+  - {fileID: 153784, guid: b6036f6501ea0eb48ae4e207e2476c8d, type: 3}
+  - {fileID: 172120, guid: 581499851eb16704c8dc22b7e6ff5da7, type: 3}
+  - {fileID: 101136, guid: 14c876fff3121a4428d69e0dd79e10c0, type: 3}
+  - {fileID: 101136, guid: 3f7a545c9a74dab4181b7f392bc06baf, type: 3}
+  - {fileID: 8445053478954655632, guid: e624643a20d99d942ad7e35d9fa635d4, type: 3}
+  roadsideExtrusions:
+  - {fileID: 3798427743806305349, guid: b758b3de37df0894fa7ddee042eae9a0, type: 3}
+  - {fileID: 8722779775986839623, guid: c8f5e7a00049ffc4684285d660061b39, type: 3}
+  - {fileID: 7798571526550509896, guid: ff6387eeaa63b0e45a0038cbc3eda6a7, type: 3}
+  roadsideRules:
+  - surface: -1
+    roadType: 7
+    offset: 0
+    mode: 0
+    interval: 50
+    layerMask: 805306384
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    alignment: 0
+    checkTolerance: 0
+    tolerance: 2
+    width: 1
+    minCapLength: 0
+    prefabIndex: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  - surface: -1
+    roadType: 3
+    offset: 0
+    mode: 0
+    interval: 4
+    layerMask: 536870912
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    alignment: 0
+    checkTolerance: 0
+    tolerance: 2
+    width: 1
+    minCapLength: 0
+    prefabIndex: 06000000000000000000000000000000
+  - surface: -1
+    roadType: 3
+    offset: 0
+    mode: 3
+    interval: 2
+    layerMask: 0
+    noiseFilter:
+      mode: 5
+      outputs: 3
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    alignment: 0
+    checkTolerance: 0
+    tolerance: 2
+    width: 0.15
+    minCapLength: 0.3
+    prefabIndex: 00000000010000000200000000000000
+  - surface: 0
+    roadType: 0
+    offset: 0
+    mode: 0
+    interval: 8.1
+    layerMask: 2013265937
+    noiseFilter:
+      mode: 0
+      outputs: 4
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.25
+      threshold2: 0.5
+      threshold3: 0.75
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    alignment: 1
+    checkTolerance: 0
+    tolerance: 2
+    width: 1
+    minCapLength: 0
+    prefabIndex: 01000000020000000300000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+--- !u!1 &7123175915182542488
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1408341355493012022}
+  - component: {fileID: 5253486931454836585}
+  m_Layer: 0
+  m_Name: Trees
+  m_TagString: EditorOnly
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &1408341355493012022
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7123175915182542488}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4237422134702580}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5253486931454836585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7123175915182542488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 981346151, guid: 83c45156126aeaa4fb3f5565630c7b01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  treePrefabs:
+  - prefab: {fileID: 5955833421623216503, guid: c9a15dd97fdc65e459a77c870ac22925, type: 3}
+    minHeight: 0.8
+    maxHeight: 1.2
+    minWidth: -0.2
+    maxWidth: 0.2
+  - prefab: {fileID: 3590094688922057202, guid: bec2a34d99ee8d44a9bef1f79c1d83b9, type: 3}
+    minHeight: 0.8
+    maxHeight: 1.2
+    minWidth: -0.2
+    maxWidth: 0.2
+  - prefab: {fileID: 5169026034044370671, guid: a01fa0d1c44d1bc49ba25c0aec66429a, type: 3}
+    minHeight: 0.8
+    maxHeight: 1.2
+    minWidth: -0.2
+    maxWidth: 0.2
+  - prefab: {fileID: 2339090969231012870, guid: 4493b426ab2b1064090a7b03fc4f34dc, type: 3}
+    minHeight: 0.8
+    maxHeight: 1.2
+    minWidth: -0.2
+    maxWidth: 0.2
+  - prefab: {fileID: 8026434600431179482, guid: 4c14b8efa125ead4f8358403ce8b89d7, type: 3}
+    minHeight: 0.8
+    maxHeight: 1.2
+    minWidth: -0.2
+    maxWidth: 0.2
+  treeRules:
+  - bitmask: 16448
+    density: 5000
+    noiseFilter:
+      mode: 1
+      outputs: 4
+      scale: 0.05
+      offset: {x: 0, y: 0}
+      threshold: 0.33
+      threshold2: 0.66
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    treeIndex: 02000000000000000400000003000000
+  - bitmask: 1152
+    density: 1000
+    noiseFilter:
+      mode: 4
+      outputs: 4
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.33
+      threshold2: 0.66
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    treeIndex: 02000000000000000400000003000000
+  treeRulesIndividual:
+  - bitmask: 1
+    density: 1000
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    treeIndex: 00000000000000000000000000000000
+  - bitmask: 2
+    density: 1000
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    treeIndex: 02000000000000000000000000000000
+  - bitmask: 4
+    density: 1000
+    noiseFilter:
+      mode: 0
+      outputs: 1
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0
+      threshold2: 0.5
+      threshold3: 0.8
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    treeIndex: 01000000000000000000000000000000
+  - bitmask: 0
+    density: 1000
+    noiseFilter:
+      mode: 4
+      outputs: 4
+      scale: 1
+      offset: {x: 0, y: 0}
+      threshold: 0.5
+      threshold2: 0.7
+      threshold3: 0.9
+      min: 0
+      max: 1
+      thickness: 2
+      gap: 2
+      angle: 90
+    treeIndex: 00000000020000000400000003000000
+  renderDistance: 2048
+  billboardDistance: 128
+  crossFade: 32
+  maxHighPoly: 50

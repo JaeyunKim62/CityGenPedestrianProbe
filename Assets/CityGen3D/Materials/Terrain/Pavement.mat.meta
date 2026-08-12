@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c6d8959632f4b2c419800a289731df8c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Materials/Terrain/Pavement.mat
+  uploadId: 944460

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 624f2dd566df01b469bb1be1054f7145
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Resources/Prefabs/Shape.prefab
+  uploadId: 944460

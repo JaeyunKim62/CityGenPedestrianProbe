@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c6f075e8ef1ed7a4ba3dc982412335c8
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Effects/Sun.mat
+  uploadId: 944460

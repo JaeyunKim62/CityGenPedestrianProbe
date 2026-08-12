@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 39c304bedf77da6429a8b83ddbceffe9
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Scripts/Editor/JunctionsOutput.cs
+  uploadId: 944460

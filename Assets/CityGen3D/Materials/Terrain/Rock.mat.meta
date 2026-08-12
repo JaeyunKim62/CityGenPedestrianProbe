@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: fa291ae0f3cd90545b95401542ebacde
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Materials/Terrain/Rock.mat
+  uploadId: 944460

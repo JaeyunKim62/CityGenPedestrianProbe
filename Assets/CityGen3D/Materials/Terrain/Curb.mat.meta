@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6c9a90e02e293944cbfbf9171aff0cde
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Materials/Terrain/Curb.mat
+  uploadId: 944460

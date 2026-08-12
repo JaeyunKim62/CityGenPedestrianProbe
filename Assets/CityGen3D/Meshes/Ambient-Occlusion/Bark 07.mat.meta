@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9cdf30eac244d9a45ad38b410259a59d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Meshes/Ambient-Occlusion/Bark 07.mat
+  uploadId: 944460

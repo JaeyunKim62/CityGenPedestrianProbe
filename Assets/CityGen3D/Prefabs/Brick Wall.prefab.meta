@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: adf155197e2f3e24b834a3d8829e4c4c
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Prefabs/Brick Wall.prefab
+  uploadId: 944460

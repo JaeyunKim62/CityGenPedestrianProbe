@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 67d3a0fde124ef448a60e955b87b45cc
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162468
+  packageName: CityGen3D
+  packageVersion: 1.20
+  assetPath: Assets/CityGen3D/Facades/Primitive Commercial.prefab
+  uploadId: 944460
