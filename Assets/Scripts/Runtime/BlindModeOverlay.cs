@@ -16,6 +16,9 @@ namespace CityGenPedestrianProbe
         [SerializeField] private bool logStateToConsole = true;
         private Texture2D blackTexture;
         private GUIStyle debugStyle;
+        private GUIStyle mapLabelStyle;
+        private SemanticDebugMapRenderer mapRenderer;
+        private bool localMapView;
         private float nextConsoleLog;
 
         public event Action<bool> BlindModeChanged;
@@ -29,6 +32,7 @@ namespace CityGenPedestrianProbe
 
         private void Awake()
         {
+            mapRenderer = new SemanticDebugMapRenderer();
             blackTexture = new Texture2D(1, 1, TextureFormat.RGB24, false);
             blackTexture.SetPixel(0, 0, Color.black);
             blackTexture.Apply();
@@ -44,6 +48,17 @@ namespace CityGenPedestrianProbe
                        Keyboard.current.bKey.wasPressedThisFrame);
 #else
             pressed = Input.GetKeyDown(KeyCode.F1) || Input.GetKeyDown(KeyCode.B);
+#endif
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            bool mapPressed;
+#if ENABLE_INPUT_SYSTEM
+            mapPressed = Keyboard.current != null && Keyboard.current.mKey.wasPressedThisFrame;
+#else
+            mapPressed = Input.GetKeyDown(KeyCode.M);
+#endif
+            if (mapPressed)
+                localMapView = !localMapView;
 #endif
             if (pressed)
             {
@@ -82,7 +97,35 @@ namespace CityGenPedestrianProbe
                 };
             }
             GUI.Box(new Rect(12f, 12f, 650f, 230f), BuildStatusText(true), debugStyle);
+            DrawSemanticMap();
 #endif
+        }
+
+        private void DrawSemanticMap()
+        {
+            float size = Mathf.Min(520f, Screen.height - 50f, Screen.width * 0.44f);
+            if (size < 180f)
+                return;
+            Rect mapRect = new Rect(Screen.width - size - 18f, 18f, size, size);
+            SemanticHit current = semanticMap.ClassifyWorld(player.position);
+            SemanticHit nearest = FindNearestOther(
+                semanticMap.QueryNearbyWorld(player.position, 30f), current);
+            mapRenderer.Draw(semanticMap, player, mapRect, localMapView, 40f, nearest);
+
+            if (mapLabelStyle == null)
+            {
+                mapLabelStyle = new GUIStyle(GUI.skin.label)
+                {
+                    fontSize = 14,
+                    normal = { textColor = Color.white }
+                };
+            }
+            GUI.Label(new Rect(mapRect.x + 8f, mapRect.y + 6f, mapRect.width - 16f, 24f),
+                localMapView ? "LOCAL 40m (M: full map)" : "FULL 256m (M: local map)",
+                mapLabelStyle);
+            GUI.Label(new Rect(mapRect.x + 8f, mapRect.yMax - 27f, mapRect.width - 16f, 22f),
+                "Road  ■ red   Sidewalk  ■ blue   Curb  ■ orange   Crosswalk  ■ yellow   Player  ▲ green",
+                mapLabelStyle);
         }
 
         private string BuildStatusText(bool includeHeader)
@@ -147,6 +190,7 @@ namespace CityGenPedestrianProbe
         {
             if (blackTexture != null)
                 Destroy(blackTexture);
+            mapRenderer?.Dispose();
         }
     }
 }
