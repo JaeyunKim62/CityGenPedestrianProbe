@@ -96,6 +96,17 @@ namespace CityGenPedestrianProbe.Editor.Tests
                 new Vector2(roundTrip.x, roundTrip.z)), Is.LessThan(0.25f));
         }
 
+        [TestCase("NYC Union Square", "NYC_Union_Square")]
+        [TestCase("nyc/union:square", "nyc_union_square")]
+        [TestCase("  Seoul City Hall  ", "Seoul_City_Hall")]
+        [TestCase("", "location")]
+        public void LocationId_IsSafeForGeneratedAssetNames(string input,
+            string expected)
+        {
+            Assert.That(PedestrianProbeLocationResolver.SanitizeLocationId(input),
+                Is.EqualTo(expected));
+        }
+
         private static SemanticFeature Quad(SemanticSpaceKind kind, long id,
             float minX, float minY, float maxX, float maxY, string sourceClass = "")
         {

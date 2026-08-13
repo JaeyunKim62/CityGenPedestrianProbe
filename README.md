@@ -21,6 +21,7 @@ CityGen3D로 생성한 실제 도시 공간을 보행자 관점의 semantic 공�
 | 기능 | 상태 | 설명 |
 | --- | --- | --- |
 | CityGen 원본 클래스 수집 | 완료 | Scene에서 발견한 `CityGen3D.*` 클래스를 피처에 보존 |
+| 장소별 Database 및 출력 선택 | 완료 | 열린 Scene의 `CityGen3D.Data.db`를 기준으로 자동 결정 |
 | 2D semantic map 베이크 | 완료 | Scene 메시를 XZ 삼각형·경계·공간 인덱스로 변환 |
 | Terrain 좌표 정렬 | 완료 | 실제 Terrain 경계와 지도 좌표 오프셋 반영 |
 | 런타임 위치 및 주변 질의 | 완료 | 현재 레이어와 가장 가까운 다른 피처 판정 |
@@ -64,7 +65,7 @@ CityGen3D로 생성한 실제 도시 공간을 보행자 관점의 semantic 공�
 
 0.1 m 격자로 피처 내부 중복을 제거해 분석하면, 원본 피처는 전체 실험 영역의 약 88.72%를 덮습니다. 어떤 원본 피처도 덮지 않는 영역은 약 11.28%이고, 현재 네 보행 semantic 중 하나가 정의된 합집합 영역은 약 18.82%입니다. 클래스와 semantic은 서로 겹칠 수 있으므로 개별 점유율을 단순 합산할 수 없습니다.
 
-클래스별 컴포넌트 수, 피처 수, 삼각형 수와 누적 투영 면적의 전체 표는 [CityGenSourceClassStatistics.csv](Assets/Generated/Semantics/CityGenSourceClassStatistics.csv)에 생성됩니다. 이 CSV의 투영 면적은 피처 간 겹침을 포함합니다.
+클래스별 컴포넌트 수, 피처 수, 삼각형 수와 누적 투영 면적의 전체 표는 [SeoulCityHall_256m_SourceClassStatistics.csv](Assets/Generated/Semantics/SeoulCityHall_256m_SourceClassStatistics.csv)에 생성됩니다. 이 CSV의 투영 면적은 피처 간 겹침을 포함합니다.
 
 ## 처리 파이프라인
 
@@ -82,6 +83,8 @@ OpenStreetMap data
 베이커는 각 `MeshFilter`에서 부모 방향으로 가장 가까운 `CityGen3D.*` 컴포넌트를 찾아 `sourceClass`로 기록합니다. 보행 의미 매핑이 없는 피처도 버리지 않고 `Unknown`으로 보존하므로, 이후 분류 규칙을 확장해도 원본 클래스까지 추적할 수 있습니다.
 
 CityGen의 `Map*`, `Highway`, OSM 좌표에는 Terrain 월드 원점 오프셋을 적용하고, 삼각형은 실제 Terrain 경계로 자릅니다. 런타임 질의를 위해 각 피처의 외곽 edge와 5 m 공간 인덱스를 생성합니다.
+
+장소는 현재 열린 Scene의 `CityGen3D.Data.db` 참조로 판별합니다. 같은 Database GUID로 이미 만든 semantic asset이 있으면 그 파일을 갱신하고, 처음 보는 Database이면 `{Database 이름}_{Terrain 크기}m.asset`과 위치별 통계 CSV를 새로 만듭니다. 따라서 서울과 다른 도시의 결과를 서로 덮어쓰지 않고 함께 유지할 수 있습니다.
 
 ### 현재 보완 규칙
 
@@ -138,7 +141,7 @@ Play 시작 시 화면은 블라인드 상태입니다. 디버그 화면은 Edit
 - Crosswalk 5개는 실제 marking 메시가 아니라 OSM node에서 만든 규격화된 형상입니다.
 - 원본 `MapSurface`, `Plot`, `MapBuilding`, `Landscape`의 상당 부분은 아직 `Unknown`입니다.
 - 통계 CSV의 투영 면적은 피처 간 중복을 제거하지 않습니다.
-- Scene, Database와 출력 asset 경로는 현재 서울 데이터셋에 고정되어 있습니다.
+- 장소별 Database와 출력 선택은 서울시청 256m와 NYC Doyers Chinatown 256m에서 생성·베이크·실행을 확인했습니다.
 - 음향 패턴과 confidence는 사용자 실험으로 검증되지 않았습니다.
 
 다음 단계는 원본 `sourceClass`를 유지하면서 OSM tag와 형상 정보를 함께 사용해 보행 가능 영역, 광장/공터, 녹지, 건물과 건물 진입부를 구분하는 것입니다. 그 뒤 semantic별 위치 판정 정확도와 음향 안내의 이해도를 실제 사용자 실험으로 평가할 예정입니다.
@@ -147,9 +150,11 @@ Play 시작 시 화면은 블라인드 상태입니다. 디버그 화면은 Edit
 
 | 경로 | 역할 |
 | --- | --- |
-| `Assets/Generated/Semantics/SeoulCityHall_256m.asset` | 현재 semantic map asset |
-| `Assets/Generated/Semantics/CityGenSourceClassStatistics.csv` | 최신 원본 클래스 통계 |
+| `Assets/Generated/Semantics/SeoulCityHall_256m.asset` | 서울시청 semantic map asset |
+| `Assets/Generated/Semantics/SeoulCityHall_256m_SourceClassStatistics.csv` | 서울시청 원본 클래스 통계 |
+| `Assets/Generated/Semantics/NYC_DoyersChinatown_256m_SourceClassStatistics.csv` | NYC Doyers Chinatown 원본 클래스 통계 |
 | `Assets/Editor/SemanticMapBaker.cs` | Scene을 semantic asset과 통계로 베이크 |
+| `Assets/Editor/PedestrianProbeLocationResolver.cs` | Scene의 Database·Terrain과 장소별 출력 경로 결정 |
 | `Assets/Scripts/Semantics/SemanticSpaceMap.cs` | 피처 데이터, 공간 질의와 좌표 변환 |
 | `Assets/Scripts/Runtime/SemanticDebugMapRenderer.cs` | 원본 클래스/보행 의미 미니맵 |
 | `Assets/Scripts/Runtime/BlindModeOverlay.cs` | 블라인드·디버그 UI와 입력 |

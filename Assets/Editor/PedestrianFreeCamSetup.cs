@@ -10,24 +10,47 @@ namespace CityGenPedestrianProbe.Editor
     {
         private const string PrefabPath =
             "Assets/CityGen3D/Resources/Prefabs/URP/FreeCam URP.prefab";
-        private const string MapPath =
-            "Assets/Generated/Semantics/SeoulCityHall_256m.asset";
         private const string CameraName = "Pedestrian FreeCam";
 
         [MenuItem("Tools/Pedestrian Probe/Setup Scene", priority = 20)]
         public static void SetupFromMenu()
         {
             Scene scene = SceneManager.GetActiveScene();
-            if (!scene.IsValid() || !scene.isLoaded)
-            {
-                Debug.LogError("Open the generated Seoul scene before setting up Pedestrian Probe.");
+            if (!PedestrianProbeLocationResolver.TryResolve(scene, out
+                    PedestrianProbeLocationContext location))
                 return;
-            }
 
-            SemanticSpaceMap map = AssetDatabase.LoadAssetAtPath<SemanticSpaceMap>(MapPath);
+            SemanticSpaceMap map = AssetDatabase.LoadAssetAtPath<SemanticSpaceMap>(
+                location.SemanticMapPath);
             if (map == null)
             {
-                Debug.LogError("Semantic map is missing. Run Tools > Pedestrian Probe > Bake Semantic Map first.");
+                Debug.LogError($"Semantic map is missing for {location.LocationId}: " +
+                               $"{location.SemanticMapPath}. Run Tools > Pedestrian Probe > " +
+                               "Bake Semantic Map first.");
+                return;
+            }
+            Setup(map, location);
+        }
+
+        internal static void Setup(SemanticSpaceMap map)
+        {
+            Scene scene = SceneManager.GetActiveScene();
+            if (!PedestrianProbeLocationResolver.TryResolve(scene, out
+                    PedestrianProbeLocationContext location))
+                return;
+            Setup(map, location);
+        }
+
+        private static void Setup(SemanticSpaceMap map,
+            PedestrianProbeLocationContext location)
+        {
+            Scene scene = location.Scene;
+            string expectedDatabaseId = AssetDatabase.AssetPathToGUID(location.DatabasePath);
+            if (!string.Equals(map.SourceDatabaseId, expectedDatabaseId,
+                    System.StringComparison.Ordinal))
+            {
+                Debug.LogError("The selected semantic map belongs to a different CityGen " +
+                               "Database. Bake the current scene again.");
                 return;
             }
 
@@ -58,7 +81,7 @@ namespace CityGenPedestrianProbe.Editor
             if (controller == null)
                 controller = Undo.AddComponent<SemanticPedestrianController>(cameraObject);
 
-            Terrain terrain = FindTerrain(scene);
+            Terrain terrain = location.Terrain;
             controller.Configure(map, terrain);
             cameraObject.transform.SetPositionAndRotation(FindSpawn(map, terrain),
                 Quaternion.Euler(0f, 45f, 0f));
@@ -82,7 +105,8 @@ namespace CityGenPedestrianProbe.Editor
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             Selection.activeGameObject = cameraObject;
-            Debug.Log("Pedestrian Probe scene setup complete. Play starts blind; B or F1 toggles debug view in Editor.");
+            Debug.Log($"Pedestrian Probe scene setup complete for {location.LocationId}. " +
+                      "Play starts blind; B or F1 toggles debug view in Editor.");
         }
 
         private static Vector3 FindSpawn(SemanticSpaceMap map, Terrain terrain)
@@ -110,17 +134,6 @@ namespace CityGenPedestrianProbe.Editor
             else
                 position.y = 1.7f;
             return position;
-        }
-
-        private static Terrain FindTerrain(Scene scene)
-        {
-            foreach (GameObject root in scene.GetRootGameObjects())
-            {
-                Terrain terrain = root.GetComponentInChildren<Terrain>(true);
-                if (terrain != null)
-                    return terrain;
-            }
-            return null;
         }
 
         private static GameObject FindInScene(Scene scene, string objectName)

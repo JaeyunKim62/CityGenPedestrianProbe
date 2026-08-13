@@ -15,35 +15,20 @@ namespace CityGenPedestrianProbe.Editor
 {
     internal static class SemanticMapBaker
     {
-        private const string DatabasePath = "Assets/Database/seoul (0, 0).asset";
-        private const string OutputFolder = "Assets/Generated/Semantics";
-        private const string OutputPath = OutputFolder + "/SeoulCityHall_256m.asset";
-        private const string StatisticsPath = OutputFolder + "/CityGenSourceClassStatistics.csv";
         private const float MinimumTriangleArea = 0.0025f;
 
         [MenuItem("Tools/Pedestrian Probe/Bake Semantic Map", priority = 10)]
-        public static void BakeSemanticMap()
+        public static void BakeSemanticMap() => BakeSemanticMapInternal();
+
+        private static SemanticSpaceMap BakeSemanticMapInternal()
         {
-            Database database = AssetDatabase.LoadAssetAtPath<Database>(DatabasePath);
-            if (database == null)
-            {
-                Debug.LogError($"CityGen database not found: {DatabasePath}");
-                return;
-            }
-
             Scene scene = SceneManager.GetActiveScene();
-            if (!scene.IsValid() || !scene.isLoaded)
-            {
-                Debug.LogError("Open the generated Seoul scene before baking semantics.");
-                return;
-            }
+            if (!PedestrianProbeLocationResolver.TryResolve(scene, out
+                    PedestrianProbeLocationContext location))
+                return null;
 
-            Terrain studyTerrain = FindStudyTerrain(scene);
-            if (studyTerrain == null || studyTerrain.terrainData == null)
-            {
-                Debug.LogError("Semantic bake requires an active Terrain with TerrainData.");
-                return;
-            }
+            Database database = location.Database;
+            Terrain studyTerrain = location.Terrain;
             Vector3 terrainPosition = studyTerrain.transform.position;
             Vector3 terrainSize = studyTerrain.terrainData.size;
             float studySize = Mathf.Min(terrainSize.x, terrainSize.z);
@@ -97,28 +82,32 @@ namespace CityGenPedestrianProbe.Editor
                 Debug.LogError("Semantic bake stopped because required categories are empty: " +
                                string.Join(", ", missing) + ". Candidates: " + summary +
                                ". Confirm CityGen Generate completed and inspect generated object names.");
-                return;
+                return null;
             }
 
             EnsureFolder("Assets", "Generated");
             EnsureFolder("Assets/Generated", "Semantics");
-            SemanticSpaceMap map = AssetDatabase.LoadAssetAtPath<SemanticSpaceMap>(OutputPath);
+            SemanticSpaceMap map = AssetDatabase.LoadAssetAtPath<SemanticSpaceMap>(
+                location.SemanticMapPath);
             if (map == null)
             {
                 map = ScriptableObject.CreateInstance<SemanticSpaceMap>();
-                AssetDatabase.CreateAsset(map, OutputPath);
+                AssetDatabase.CreateAsset(map, location.SemanticMapPath);
             }
-            map.SetData("3", AssetDatabase.AssetPathToGUID(DatabasePath),
+            map.SetData("3", AssetDatabase.AssetPathToGUID(location.DatabasePath),
                 database.origin.latitude, database.origin.longitude, originWorld, center,
                 studySize, 5f, features, cityGenComponentCounts.Keys,
                 cityGenComponentCounts);
-            WriteSourceClassStatistics(map.SourceClassStatistics);
+            WriteSourceClassStatistics(location.StatisticsPath, map.SourceClassStatistics);
             EditorUtility.SetDirty(map);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Selection.activeObject = map;
             var report = new StringBuilder();
-            report.AppendLine($"Semantic map baked to {OutputPath}. {summary}.");
+            report.AppendLine($"Semantic map baked for {location.LocationId} to " +
+                              $"{location.SemanticMapPath}. {summary}.");
+            report.AppendLine($"Database={location.DatabasePath}, " +
+                              $"statistics={location.StatisticsPath}.");
             report.AppendLine($"Center=({center.x:F2}, {center.y:F2}), " +
                               $"terrain bounds={studyBounds}, total features={features.Count}.");
             report.AppendLine("CityGen source class statistics:");
@@ -129,32 +118,40 @@ namespace CityGenPedestrianProbe.Editor
                                   $"triangles={statistic.TriangleCount}, " +
                                   $"area={statistic.ProjectedAreaSquareMeters:F1}m2");
             Debug.Log(report.ToString());
+            return map;
         }
 
         [MenuItem("Tools/Pedestrian Probe/Bake && Setup Scene", priority = 0)]
         public static void BakeAndSetupScene()
         {
-            BakeSemanticMap();
-            SemanticSpaceMap map = AssetDatabase.LoadAssetAtPath<SemanticSpaceMap>(OutputPath);
+            SemanticSpaceMap map = BakeSemanticMapInternal();
             if (map == null)
             {
                 Debug.LogError("Pedestrian Probe setup was not run because the semantic bake failed. " +
                                "Fix the missing semantic categories shown above and try again.");
                 return;
             }
-            PedestrianFreeCamSetup.SetupFromMenu();
+            PedestrianFreeCamSetup.Setup(map);
         }
 
         public static void BakeAndSetupForAutomation()
         {
-            EditorSceneManager.OpenScene("Assets/Scenes/seoul.unity", OpenSceneMode.Single);
+            OpenAutomationSceneIfConfigured();
             BakeAndSetupScene();
         }
 
         public static void BakeForAutomation()
         {
-            EditorSceneManager.OpenScene("Assets/Scenes/seoul.unity", OpenSceneMode.Single);
+            OpenAutomationSceneIfConfigured();
             BakeSemanticMap();
+        }
+
+        private static void OpenAutomationSceneIfConfigured()
+        {
+            string scenePath = Environment.GetEnvironmentVariable(
+                "PEDESTRIAN_PROBE_SCENE");
+            if (!string.IsNullOrWhiteSpace(scenePath))
+                EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
         }
 
         private static SemanticSpaceKind ClassifyMesh(Transform transform)
@@ -205,25 +202,6 @@ namespace CityGenPedestrianProbe.Editor
             (sourceClass.StartsWith("CityGen3D.Map", StringComparison.Ordinal) ||
              string.Equals(sourceClass, "CityGen3D.Highway", StringComparison.Ordinal));
 
-        private static Terrain FindStudyTerrain(Scene scene)
-        {
-            Terrain best = null;
-            float bestArea = -1f;
-            foreach (GameObject root in scene.GetRootGameObjects())
-            foreach (Terrain terrain in root.GetComponentsInChildren<Terrain>(true))
-            {
-                if (!terrain.gameObject.activeInHierarchy || terrain.terrainData == null)
-                    continue;
-                Vector3 size = terrain.terrainData.size;
-                float area = size.x * size.z;
-                if (area <= bestArea)
-                    continue;
-                best = terrain;
-                bestArea = area;
-            }
-            return best;
-        }
-
         private static Dictionary<string, int> CountCityGenComponents(Scene scene)
         {
             var counts = new Dictionary<string, int>();
@@ -242,7 +220,7 @@ namespace CityGenPedestrianProbe.Editor
             return counts;
         }
 
-        private static void WriteSourceClassStatistics(
+        private static void WriteSourceClassStatistics(string statisticsPath,
             IEnumerable<CityGenSourceClassStatistic> statistics)
         {
             var csv = new StringBuilder();
@@ -256,7 +234,7 @@ namespace CityGenPedestrianProbe.Editor
                     .Append(',').AppendLine(statistic.ProjectedAreaSquareMeters
                         .ToString("F3", CultureInfo.InvariantCulture));
             }
-            File.WriteAllText(StatisticsPath, csv.ToString(), new UTF8Encoding(true));
+            File.WriteAllText(statisticsPath, csv.ToString(), new UTF8Encoding(true));
         }
 
         private static SemanticFeature BuildFeatureFromMesh(MeshFilter filter,
