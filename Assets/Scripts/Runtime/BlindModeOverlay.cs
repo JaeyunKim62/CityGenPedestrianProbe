@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -14,6 +15,8 @@ namespace CityGenPedestrianProbe
         [SerializeField] private SemanticSpaceMap semanticMap;
         [SerializeField] private Transform player;
         [SerializeField] private bool logStateToConsole = true;
+        [SerializeField] private bool showMap = true;
+        [SerializeField] private bool sourceClassView = true;
         private Texture2D blackTexture;
         private GUIStyle debugStyle;
         private GUIStyle mapLabelStyle;
@@ -59,6 +62,26 @@ namespace CityGenPedestrianProbe
 #endif
             if (mapPressed)
                 localMapView = !localMapView;
+
+            bool mapVisibilityPressed;
+#if ENABLE_INPUT_SYSTEM
+            mapVisibilityPressed = Keyboard.current != null &&
+                                   Keyboard.current.nKey.wasPressedThisFrame;
+#else
+            mapVisibilityPressed = Input.GetKeyDown(KeyCode.N);
+#endif
+            if (mapVisibilityPressed)
+                showMap = !showMap;
+
+            bool classViewPressed;
+#if ENABLE_INPUT_SYSTEM
+            classViewPressed = Keyboard.current != null &&
+                               Keyboard.current.cKey.wasPressedThisFrame;
+#else
+            classViewPressed = Input.GetKeyDown(KeyCode.C);
+#endif
+            if (classViewPressed)
+                sourceClassView = !sourceClassView;
 #endif
             if (pressed)
             {
@@ -96,8 +119,9 @@ namespace CityGenPedestrianProbe
                     normal = { textColor = Color.white }
                 };
             }
-            GUI.Box(new Rect(12f, 12f, 650f, 230f), BuildStatusText(true), debugStyle);
-            DrawSemanticMap();
+            GUI.Box(new Rect(12f, 12f, 720f, 255f), BuildStatusText(true), debugStyle);
+            if (showMap)
+                DrawSemanticMap();
 #endif
         }
 
@@ -110,7 +134,8 @@ namespace CityGenPedestrianProbe
             SemanticHit current = semanticMap.ClassifyWorld(player.position);
             SemanticHit nearest = FindNearestOther(
                 semanticMap.QueryNearbyWorld(player.position, 30f), current);
-            mapRenderer.Draw(semanticMap, player, mapRect, localMapView, 40f, nearest);
+            mapRenderer.Draw(semanticMap, player, mapRect, localMapView, 40f, nearest,
+                sourceClassView);
 
             if (mapLabelStyle == null)
             {
@@ -121,11 +146,15 @@ namespace CityGenPedestrianProbe
                 };
             }
             GUI.Label(new Rect(mapRect.x + 8f, mapRect.y + 6f, mapRect.width - 16f, 24f),
-                localMapView ? "LOCAL 40m (M: full map)" : "FULL 256m (M: local map)",
+                (sourceClassView ? "SOURCE CLASSES  |  " : "PEDESTRIAN SEMANTICS  |  ") +
+                (localMapView ? "LOCAL 40m (M: full map)" : "FULL 256m (M: local map)"),
                 mapLabelStyle);
-            GUI.Label(new Rect(mapRect.x + 8f, mapRect.yMax - 27f, mapRect.width - 16f, 22f),
-                "Road  ■ red   Sidewalk  ■ blue   Curb  ■ orange   Crosswalk  ■ yellow   Player  ▲ green",
-                mapLabelStyle);
+            string legend = sourceClassView
+                ? "Surface green | Plot purple | Building gray | MapRoad red\n" +
+                  "Highway blue | Landscape brown | OSM_Node yellow | C: semantics"
+                : "Road red | Sidewalk blue | Curb orange | Crosswalk yellow | C: sources";
+            GUI.Label(new Rect(mapRect.x + 8f, mapRect.yMax - 48f,
+                mapRect.width - 16f, 44f), legend, mapLabelStyle);
         }
 
         private string BuildStatusText(bool includeHeader)
@@ -134,28 +163,42 @@ namespace CityGenPedestrianProbe
             SemanticHit current = semanticMap.ClassifyWorld(position);
             IReadOnlyList<SemanticHit> nearby = semanticMap.QueryNearbyWorld(position, 20f);
             SemanticHit nearest = FindNearestOther(nearby, current);
+            string currentLayers = string.Join(", ", nearby
+                .Where(hit => hit.Contains && hit.HasClassification)
+                .Select(hit => hit.DisplayClass)
+                .Distinct()
+                .OrderBy(className => className));
+            if (string.IsNullOrEmpty(currentLayers))
+                currentLayers = "None";
             semanticMap.WorldToGeo(position, out double latitude, out double longitude);
 
             string nearestText = "None";
-            if (nearest.Kind != SemanticSpaceKind.Unknown)
+            if (nearest.HasClassification)
             {
                 Vector3 toTarget = nearest.NearestPointWorld - position;
                 toTarget.y = 0f;
                 float worldBearing = Mathf.Atan2(toTarget.x, toTarget.z) * Mathf.Rad2Deg;
                 if (worldBearing < 0f) worldBearing += 360f;
                 float relativeBearing = Mathf.DeltaAngle(player.eulerAngles.y, worldBearing);
-                nearestText = $"{nearest.Kind}  {nearest.DistanceMeters:F2}m  " +
+                nearestText = $"{nearest.DisplayClass}  {nearest.DistanceMeters:F2}m  " +
                               $"relative={relativeBearing:+0.0;-0.0;0.0}deg ({DirectionName(relativeBearing)})";
             }
 
-            string header = includeHeader ? "PEDESTRIAN PROBE STATUS (B/F1: blind)\n" :
+            string header = includeHeader
+                ? "PEDESTRIAN PROBE STATUS (B/F1: blind, N: map, M: scale, C: classes)\n"
+                :
                 "[PedestrianProbe] ";
+            string semanticText = current.Kind == SemanticSpaceKind.Unknown
+                ? string.Empty
+                : $"  semantic={current.Kind}";
             return header +
                    $"Position XYZ: {position.x:F2}, {position.y:F2}, {position.z:F2}\n" +
                    $"Geo: {latitude:F8}, {longitude:F8}\n" +
                    $"Heading: {player.eulerAngles.y:F1}deg\n" +
-                   $"Current: {current.Kind}  id={current.FeatureId}  " +
+                   $"Current: {current.DisplayClass}{semanticText}  " +
+                   $"id={current.FeatureId}  " +
                    $"confidence={current.Confidence:F2}  edge={FormatDistance(current.DistanceMeters)}\n" +
+                   $"Current layers: {currentLayers}\n" +
                    $"Nearest other: {nearestText}\n" +
                    $"Study bounds X: {semanticMap.StudyBounds.xMin:F1}..{semanticMap.StudyBounds.xMax:F1}, " +
                    $"Z: {semanticMap.StudyBounds.yMin:F1}..{semanticMap.StudyBounds.yMax:F1}";
@@ -167,7 +210,9 @@ namespace CityGenPedestrianProbe
             for (int i = 0; i < nearby.Count; i++)
             {
                 SemanticHit hit = nearby[i];
-                if (!hit.Contains && hit.Kind != current.Kind)
+                if (!hit.Contains &&
+                    (hit.Kind != current.Kind || !string.Equals(hit.SourceClass,
+                        current.SourceClass, StringComparison.Ordinal)))
                     return hit;
             }
             return SemanticHit.Unknown(Vector3.zero);

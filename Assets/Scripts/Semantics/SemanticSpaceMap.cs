@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace CityGenPedestrianProbe
@@ -32,9 +33,26 @@ namespace CityGenPedestrianProbe
         public readonly bool Contains;
         public readonly float DistanceMeters;
         public readonly Vector3 NearestPointWorld;
+        public readonly string SourceClass;
+
+        public bool HasClassification => Kind != SemanticSpaceKind.Unknown ||
+                                         !string.IsNullOrEmpty(SourceClass);
+        public string DisplayClass
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(SourceClass))
+                    return Kind.ToString();
+                const string prefix = "CityGen3D.";
+                return SourceClass.StartsWith(prefix, StringComparison.Ordinal)
+                    ? SourceClass.Substring(prefix.Length)
+                    : SourceClass;
+            }
+        }
 
         public SemanticHit(SemanticSpaceKind kind, long featureId, float confidence,
-            bool contains, float distanceMeters, Vector3 nearestPointWorld)
+            bool contains, float distanceMeters, Vector3 nearestPointWorld,
+            string sourceClass = "")
         {
             Kind = kind;
             FeatureId = featureId;
@@ -42,6 +60,7 @@ namespace CityGenPedestrianProbe
             Contains = contains;
             DistanceMeters = distanceMeters;
             NearestPointWorld = nearestPointWorld;
+            SourceClass = sourceClass ?? string.Empty;
         }
 
         public static SemanticHit Unknown(Vector3 position) =>
@@ -54,6 +73,7 @@ namespace CityGenPedestrianProbe
     {
         [SerializeField] private SemanticSpaceKind kind;
         [SerializeField] private long featureId;
+        [SerializeField] private string sourceClass;
         [SerializeField, Range(0f, 1f)] private float confidence = 1f;
         [SerializeField] private Vector2[] vertices = Array.Empty<Vector2>();
         [SerializeField] private int[] triangles = Array.Empty<int>();
@@ -62,16 +82,39 @@ namespace CityGenPedestrianProbe
 
         public SemanticSpaceKind Kind => kind;
         public long FeatureId => featureId;
+        public string SourceClass => sourceClass ?? string.Empty;
         public float Confidence => confidence;
         public IReadOnlyList<Vector2> Vertices => vertices;
         public IReadOnlyList<int> Triangles => triangles;
         public Rect Bounds => bounds;
+        public int TriangleCount => triangles == null ? 0 : triangles.Length / 3;
+        public float ProjectedAreaSquareMeters
+        {
+            get
+            {
+                float area = 0f;
+                if (triangles == null)
+                    return area;
+                for (int i = 0; i + 2 < triangles.Length; i += 3)
+                {
+                    int ia = triangles[i];
+                    int ib = triangles[i + 1];
+                    int ic = triangles[i + 2];
+                    if (!ValidVertex(ia) || !ValidVertex(ib) || !ValidVertex(ic))
+                        continue;
+                    area += Mathf.Abs(Cross(vertices[ib] - vertices[ia],
+                        vertices[ic] - vertices[ia])) * 0.5f;
+                }
+                return area;
+            }
+        }
 
         public SemanticFeature(SemanticSpaceKind kind, long featureId, float confidence,
-            Vector2[] vertices, int[] triangles)
+            Vector2[] vertices, int[] triangles, string sourceClass = "")
         {
             this.kind = kind;
             this.featureId = featureId;
+            this.sourceClass = sourceClass ?? string.Empty;
             this.confidence = Mathf.Clamp01(confidence);
             this.vertices = vertices ?? Array.Empty<Vector2>();
             this.triangles = triangles ?? Array.Empty<int>();
@@ -206,6 +249,32 @@ namespace CityGenPedestrianProbe
         }
     }
 
+    [Serializable]
+    public sealed class CityGenSourceClassStatistic
+    {
+        [SerializeField] private string sourceClass;
+        [SerializeField] private int componentCount;
+        [SerializeField] private int featureCount;
+        [SerializeField] private int triangleCount;
+        [SerializeField] private float projectedAreaSquareMeters;
+
+        public string SourceClass => sourceClass ?? string.Empty;
+        public int ComponentCount => componentCount;
+        public int FeatureCount => featureCount;
+        public int TriangleCount => triangleCount;
+        public float ProjectedAreaSquareMeters => projectedAreaSquareMeters;
+
+        public CityGenSourceClassStatistic(string sourceClass, int componentCount,
+            int featureCount, int triangleCount, float projectedAreaSquareMeters)
+        {
+            this.sourceClass = sourceClass ?? string.Empty;
+            this.componentCount = Mathf.Max(0, componentCount);
+            this.featureCount = Mathf.Max(0, featureCount);
+            this.triangleCount = Mathf.Max(0, triangleCount);
+            this.projectedAreaSquareMeters = Mathf.Max(0f, projectedAreaSquareMeters);
+        }
+    }
+
     [CreateAssetMenu(menuName = "Pedestrian Probe/Semantic Space Map")]
     public sealed class SemanticSpaceMap : ScriptableObject
     {
@@ -218,6 +287,9 @@ namespace CityGenPedestrianProbe
         [SerializeField] private float studySizeMeters = 256f;
         [SerializeField] private float gridCellMeters = 5f;
         [SerializeField] private List<SemanticFeature> features = new List<SemanticFeature>();
+        [SerializeField] private List<string> sourceClasses = new List<string>();
+        [SerializeField] private List<CityGenSourceClassStatistic> sourceClassStatistics =
+            new List<CityGenSourceClassStatistic>();
 
         private readonly Dictionary<Vector2Int, List<int>> grid =
             new Dictionary<Vector2Int, List<int>>();
@@ -232,12 +304,16 @@ namespace CityGenPedestrianProbe
         public Rect StudyBounds => new Rect(studyCenterXZ - Vector2.one * studySizeMeters * 0.5f,
             Vector2.one * studySizeMeters);
         public IReadOnlyList<SemanticFeature> Features => features;
+        public IReadOnlyList<string> SourceClasses => sourceClasses;
+        public IReadOnlyList<CityGenSourceClassStatistic> SourceClassStatistics =>
+            sourceClassStatistics;
 
         private void OnEnable() => gridReady = false;
 
         public void SetData(string version, string databaseId, double latitude, double longitude,
             Vector2 worldOrigin, Vector2 center, float size, float cellSize,
-            List<SemanticFeature> bakedFeatures)
+            List<SemanticFeature> bakedFeatures, IEnumerable<string> cityGenClasses = null,
+            IReadOnlyDictionary<string, int> componentCounts = null)
         {
             bakeVersion = version;
             sourceDatabaseId = databaseId;
@@ -248,9 +324,34 @@ namespace CityGenPedestrianProbe
             studySizeMeters = size;
             gridCellMeters = Mathf.Max(1f, cellSize);
             features = bakedFeatures ?? new List<SemanticFeature>();
+            sourceClasses = (cityGenClasses ?? Enumerable.Empty<string>())
+                .Concat(features.Select(feature => feature.SourceClass))
+                .Where(sourceClass => !string.IsNullOrEmpty(sourceClass))
+                .Distinct()
+                .OrderBy(sourceClass => sourceClass)
+                .ToList();
             foreach (SemanticFeature feature in features)
                 feature.RebuildDerivedData();
+            sourceClassStatistics = BuildSourceClassStatistics(componentCounts);
             gridReady = false;
+        }
+
+        private List<CityGenSourceClassStatistic> BuildSourceClassStatistics(
+            IReadOnlyDictionary<string, int> componentCounts)
+        {
+            var result = new List<CityGenSourceClassStatistic>();
+            foreach (string sourceClass in sourceClasses)
+            {
+                SemanticFeature[] classFeatures = features.Where(feature =>
+                    string.Equals(feature.SourceClass, sourceClass,
+                        StringComparison.Ordinal)).ToArray();
+                int components = 0;
+                componentCounts?.TryGetValue(sourceClass, out components);
+                result.Add(new CityGenSourceClassStatistic(sourceClass, components,
+                    classFeatures.Length, classFeatures.Sum(feature => feature.TriangleCount),
+                    classFeatures.Sum(feature => feature.ProjectedAreaSquareMeters)));
+            }
+            return result;
         }
 
         public SemanticHit ClassifyWorld(Vector3 position)
@@ -273,7 +374,7 @@ namespace CityGenPedestrianProbe
                 return SemanticHit.Unknown(position);
             float distance = winner.NearestBoundary(point, out Vector2 nearest);
             return new SemanticHit(winner.Kind, winner.FeatureId, winner.Confidence, true,
-                distance, new Vector3(nearest.x, position.y, nearest.y));
+                distance, new Vector3(nearest.x, position.y, nearest.y), winner.SourceClass);
         }
 
         public SemanticHit ClassifyGeo(double latitude, double longitude)
@@ -298,7 +399,7 @@ namespace CityGenPedestrianProbe
                     continue;
                 queryBuffer.Add(new SemanticHit(feature.Kind, feature.FeatureId,
                     feature.Confidence, contains, distance,
-                    new Vector3(nearest.x, position.y, nearest.y)));
+                    new Vector3(nearest.x, position.y, nearest.y), feature.SourceClass));
             }
             queryBuffer.Sort((a, b) => a.DistanceMeters.CompareTo(b.DistanceMeters));
             return queryBuffer;

@@ -8,7 +8,7 @@ namespace CityGenPedestrianProbe
         private Material material;
 
         public void Draw(SemanticSpaceMap map, Transform player, Rect screenRect,
-            bool localView, float localSizeMeters, SemanticHit nearest)
+            bool localView, float localSizeMeters, SemanticHit nearest, bool sourceClassView)
         {
             if (map == null || player == null || Event.current.type != EventType.Repaint)
                 return;
@@ -28,18 +28,23 @@ namespace CityGenPedestrianProbe
             GL.LoadPixelMatrix(0f, Screen.width, Screen.height, 0f);
             DrawQuad(screenRect, new Color(0.025f, 0.03f, 0.04f, 0.96f));
 
-            DrawKind(map.Features, SemanticSpaceKind.Road, worldBounds, screenRect,
-                new Color(0.42f, 0.18f, 0.18f, 0.92f));
-            DrawKind(map.Features, SemanticSpaceKind.Sidewalk, worldBounds, screenRect,
-                new Color(0.14f, 0.45f, 0.68f, 0.9f));
-            DrawKind(map.Features, SemanticSpaceKind.Curb, worldBounds, screenRect,
-                new Color(1f, 0.58f, 0.08f, 0.96f));
-            DrawKind(map.Features, SemanticSpaceKind.Crosswalk, worldBounds, screenRect,
-                new Color(0.9f, 0.9f, 0.12f, 0.98f));
+            if (sourceClassView)
+                DrawSourceClasses(map.Features, worldBounds, screenRect);
+            else
+            {
+                DrawKind(map.Features, SemanticSpaceKind.Road, worldBounds, screenRect,
+                    new Color(0.42f, 0.18f, 0.18f, 0.92f));
+                DrawKind(map.Features, SemanticSpaceKind.Sidewalk, worldBounds, screenRect,
+                    new Color(0.14f, 0.45f, 0.68f, 0.9f));
+                DrawKind(map.Features, SemanticSpaceKind.Curb, worldBounds, screenRect,
+                    new Color(1f, 0.58f, 0.08f, 0.96f));
+                DrawKind(map.Features, SemanticSpaceKind.Crosswalk, worldBounds, screenRect,
+                    new Color(0.9f, 0.9f, 0.12f, 0.98f));
+            }
 
             Vector2 playerPoint = WorldToScreen(new Vector2(player.position.x, player.position.z),
                 worldBounds, screenRect);
-            if (nearest.Kind != SemanticSpaceKind.Unknown)
+            if (nearest.HasClassification)
             {
                 Vector2 target = WorldToScreen(new Vector2(nearest.NearestPointWorld.x,
                     nearest.NearestPointWorld.z), worldBounds, screenRect);
@@ -99,6 +104,85 @@ namespace CityGenPedestrianProbe
                 }
             }
             GL.End();
+        }
+
+        private static void DrawSourceClasses(IReadOnlyList<SemanticFeature> features,
+            Rect worldBounds, Rect screenRect)
+        {
+            for (int order = 0; order <= 7; order++)
+            {
+                GL.Begin(GL.TRIANGLES);
+                for (int featureIndex = 0; featureIndex < features.Count; featureIndex++)
+                {
+                    SemanticFeature feature = features[featureIndex];
+                    if (string.IsNullOrEmpty(feature.SourceClass) ||
+                        SourceClassDrawOrder(feature.SourceClass) != order ||
+                        !feature.Bounds.Overlaps(worldBounds, true))
+                        continue;
+                    GL.Color(SourceClassColor(feature.SourceClass));
+                    DrawFeature(feature, worldBounds, screenRect);
+                }
+                GL.End();
+            }
+        }
+
+        private static void DrawFeature(SemanticFeature feature, Rect worldBounds,
+            Rect screenRect)
+        {
+            IReadOnlyList<Vector2> vertices = feature.Vertices;
+            IReadOnlyList<int> triangles = feature.Triangles;
+            for (int i = 0; i + 2 < triangles.Count; i += 3)
+            {
+                int ia = triangles[i];
+                int ib = triangles[i + 1];
+                int ic = triangles[i + 2];
+                if (ia < 0 || ib < 0 || ic < 0 || ia >= vertices.Count ||
+                    ib >= vertices.Count || ic >= vertices.Count)
+                    continue;
+                Vertex(WorldToScreen(vertices[ia], worldBounds, screenRect));
+                Vertex(WorldToScreen(vertices[ib], worldBounds, screenRect));
+                Vertex(WorldToScreen(vertices[ic], worldBounds, screenRect));
+            }
+        }
+
+        internal static Color SourceClassColor(string sourceClass)
+        {
+            switch (sourceClass)
+            {
+                case "CityGen3D.Landscape": return new Color(0.42f, 0.32f, 0.20f, 0.72f);
+                case "CityGen3D.MapSurface": return new Color(0.20f, 0.62f, 0.32f, 0.82f);
+                case "CityGen3D.Plot": return new Color(0.58f, 0.30f, 0.72f, 0.76f);
+                case "CityGen3D.MapBuilding": return new Color(0.64f, 0.68f, 0.72f, 0.90f);
+                case "CityGen3D.MapRoad": return new Color(0.78f, 0.20f, 0.18f, 0.90f);
+                case "CityGen3D.Highway": return new Color(0.16f, 0.48f, 0.90f, 0.92f);
+                case "CityGen3D.OSM_Node": return new Color(0.96f, 0.88f, 0.12f, 0.98f);
+                default:
+                    unchecked
+                    {
+                        int hash = 17;
+                        foreach (char character in sourceClass ?? string.Empty)
+                            hash = hash * 31 + character;
+                        float hue = (hash & 0x7fffffff) % 360 / 360f;
+                        Color color = Color.HSVToRGB(hue, 0.62f, 0.88f);
+                        color.a = 0.82f;
+                        return color;
+                    }
+            }
+        }
+
+        private static int SourceClassDrawOrder(string sourceClass)
+        {
+            switch (sourceClass)
+            {
+                case "CityGen3D.Landscape": return 1;
+                case "CityGen3D.MapSurface": return 2;
+                case "CityGen3D.Plot": return 3;
+                case "CityGen3D.MapBuilding": return 4;
+                case "CityGen3D.MapRoad": return 5;
+                case "CityGen3D.Highway": return 6;
+                case "CityGen3D.OSM_Node": return 7;
+                default: return 0;
+            }
         }
 
         private static Vector2 WorldToScreen(Vector2 world, Rect worldBounds, Rect screenRect)

@@ -51,6 +51,40 @@ namespace CityGenPedestrianProbe.Editor.Tests
         }
 
         [Test]
+        public void ClassifyWorld_PreservesRawCityGenClassForUnmappedGeometry()
+        {
+            map.SetData("test", "db", 37.5, 127.0, Vector2.zero, Vector2.zero,
+                256f, 5f, new List<SemanticFeature>
+                {
+                    Quad(SemanticSpaceKind.Unknown, 7, -2f, -2f, 2f, 2f,
+                        "CityGen3D.MapBuilding")
+                }, new[] { "CityGen3D.Landscape" }, new Dictionary<string, int>
+                {
+                    { "CityGen3D.Landscape", 3 },
+                    { "CityGen3D.MapBuilding", 2 }
+                });
+
+            SemanticHit hit = map.ClassifyWorld(Vector3.zero);
+
+            Assert.That(hit.Contains, Is.True);
+            Assert.That(hit.Kind, Is.EqualTo(SemanticSpaceKind.Unknown));
+            Assert.That(hit.SourceClass, Is.EqualTo("CityGen3D.MapBuilding"));
+            Assert.That(hit.HasClassification, Is.True);
+            Assert.That(hit.DisplayClass, Is.EqualTo("MapBuilding"));
+            CollectionAssert.AreEqual(new[]
+            {
+                "CityGen3D.Landscape", "CityGen3D.MapBuilding"
+            }, map.SourceClasses);
+            Assert.That(map.SourceClassStatistics[0].ComponentCount, Is.EqualTo(3));
+            Assert.That(map.SourceClassStatistics[0].FeatureCount, Is.Zero);
+            Assert.That(map.SourceClassStatistics[1].ComponentCount, Is.EqualTo(2));
+            Assert.That(map.SourceClassStatistics[1].FeatureCount, Is.EqualTo(1));
+            Assert.That(map.SourceClassStatistics[1].TriangleCount, Is.EqualTo(2));
+            Assert.That(map.SourceClassStatistics[1].ProjectedAreaSquareMeters,
+                Is.EqualTo(16f).Within(0.001f));
+        }
+
+        [Test]
         public void GeoWorldRoundTrip_IsWithinQuarterMeter()
         {
             map.SetData("test", "db", 37.5665, 126.978, new Vector2(128f, 128f),
@@ -63,7 +97,7 @@ namespace CityGenPedestrianProbe.Editor.Tests
         }
 
         private static SemanticFeature Quad(SemanticSpaceKind kind, long id,
-            float minX, float minY, float maxX, float maxY)
+            float minX, float minY, float maxX, float maxY, string sourceClass = "")
         {
             return new SemanticFeature(kind, id, 1f,
                 new[]
@@ -71,7 +105,7 @@ namespace CityGenPedestrianProbe.Editor.Tests
                     new Vector2(minX, minY), new Vector2(maxX, minY),
                     new Vector2(maxX, maxY), new Vector2(minX, maxY)
                 },
-                new[] { 0, 1, 2, 0, 2, 3 });
+                new[] { 0, 1, 2, 0, 2, 3 }, sourceClass);
         }
     }
 }
