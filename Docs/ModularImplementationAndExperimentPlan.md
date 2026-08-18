@@ -235,24 +235,27 @@ profile layer는 module 구현에 의존하지 않고 `FeedbackCoordinator.SetMo
 
 ### v0 질문
 
-> 현재 위치 중심의 수동 좌우 스위프로 얻은 첫 semantic 경계 hit가, 기존 최근접 경계 알림보다 통로 폭·개구부·경계 형태 재구성을 돕는가?
+> 사용자 위치·수평 상대각·최대 거리를 주었을 때, 특정 도시 데이터 구조에 결합하지 않은 질의가 첫 공간 분류 변화의 대상과 실제 거리를 안정적으로 반환하는가?
 
 ### 포함
 
-- 단일 수동 레이
+- 단일 수평 레이
 - 사용자 위치 원점
-- player heading 기준 상대각
-- 최대 거리 한 개
-- 첫 semantic transition 또는 첫 경계 hit
-- hit 지점의 짧은 월드 고정 공간음
+- player heading 기준 상대각 parameter
+- 조절 가능한 최대 거리, 초기값 5 m
+- 첫 spatial classification transition
+- hit 여부·대상 label·feature ID·거리·월드 위치 결과
+- `SemanticSpaceMap`을 일반 공간 질의로 바꾸는 adapter
 - module on/off
-- profile 적용
-- 스위프 입력과 hit 로그
-- development build의 선택적 ray debug 표시
+- 결과 변화 event log
+- Inspector의 각도·거리 조절과 read-only 결과 표시
+- development build의 ray/hit debug 표시
 
 ### 제외
 
-- 햅틱 실제 출력
+- 키보드·마우스·gamepad 입력 연결
+- 공간음과 햅틱 출력
+- 거리-음량 mapping
 - semantic 종류별 음색
 - 다중 hit와 거리층
 - 자동 왕복
@@ -261,17 +264,18 @@ profile layer는 module 구현에 의존하지 않고 `FeedbackCoordinator.SetMo
 - landmark 저장
 - 인지 그래프
 
-햅틱은 v0 detection이 안정된 뒤 별도 renderer 또는 후속 module로 연결한다. 하드웨어가 정해지지 않은 상태에서 특정 진동 API를 첫 구현에 결합하지 않는다.
+상호작용과 피드포워드는 v0 detection이 안정된 뒤 별도 input/output interface로 연결한다. 입력 장치와 음향·햅틱 표현을 첫 감지 구현에 결합하지 않는다.
 
-### 입력 추상화
+### 후속 입력 인터페이스
 
-기능 코드가 특정 키를 직접 읽지 않게 다음 action을 정의한다.
+감지 결과가 안정된 뒤 기능 코드가 특정 키를 직접 읽지 않게 다음 action을 연결한다.
 
 - `ProbeActive`: 누르고 있는 동안 probe 활성
-- `ProbeSweep`: `-1..+1` 연속 좌우 입력
+- `ProbeAzimuth`: 연속 좌우 각도 입력
+- `ProbeRange`: 최대 탐색 거리 입력
 - `ProbeReset`: 중앙으로 복귀
 
-키보드·마우스와 gamepad는 action binding에서 연결한다. 이후 햅틱 controller를 사용해도 module 코드를 바꾸지 않는다.
+키보드·마우스와 gamepad는 후속 action binding에서 연결한다. 감지 계층은 현재 Inspector와 public setter로 임의 각도·거리를 받을 수 있어야 한다.
 
 ### 감지 구현
 
@@ -280,9 +284,9 @@ profile layer는 module 구현에 의존하지 않고 `FeedbackCoordinator.SetMo
 1. 현재 위치의 semantic을 구한다.
 2. 상대 sweep 각도를 player heading에 더한다.
 3. 레이 위를 작은 step으로 샘플링한다.
-4. semantic 또는 feature ID가 처음 변하는 지점을 찾는다.
+4. semantic category가 처음 변하는 지점을 찾는다. 같은 category 안의 source class 또는 feature ID 변화는 경계로 세지 않는다.
 5. 이분 탐색으로 경계 거리를 보정한다.
-6. `SweepProbeHit`을 반환한다.
+6. `SpatialProbeHit`을 반환한다.
 
 초기 step 후보는 0.25–0.5 m지만, 이는 검증된 인간 지각값이 아니라 계산 성능과 오차를 확인하기 위한 공학적 시작값이다.
 
@@ -292,11 +296,13 @@ profile layer는 module 구현에 의존하지 않고 `FeedbackCoordinator.SetMo
 
 | 코드 | 책임 |
 | --- | --- |
-| `SemanticRayProbe` | 순수 계산으로 첫 semantic hit 반환 |
-| `SweepProbeHit` | 각도·거리·월드점·feature 정보 |
-| `EgocentricSweepFeedback` | 입력, 계산 호출, 공간음, 로그 |
+| `ISpatialProbeField` | 도시 구현에 비의존적인 위치 sample 계약 |
+| `RayBoundaryProbe` | 순수 계산으로 첫 classification hit 반환 |
+| `SpatialProbeHit` | hit 여부·거리·월드점·전후 분류 정보 |
+| `SemanticSpaceMapProbeField` | 기존 semantic map adapter |
+| `EgocentricSweepProbe` | parameter 보관, 계산 호출, 결과 로그와 개발 진단 |
 
-`SemanticRayProbe`는 `MonoBehaviour`와 오디오에 의존하지 않게 만들어 EditMode test가 가능하도록 한다.
+`RayBoundaryProbe`는 `MonoBehaviour`, CityGen, 입력 장치, 오디오에 의존하지 않게 만들어 EditMode test가 가능하도록 한다.
 
 ## 8. 첫 브랜치별 작업
 
@@ -330,38 +336,42 @@ profile layer는 module 구현에 의존하지 않고 `FeedbackCoordinator.SetMo
 
 #### 구현
 
-- `SemanticRayProbe`
-- `SweepProbeHit`
-- `EgocentricSweepFeedback`
-- 스위프 input actions
+- `ISpatialProbeField`
+- `RayBoundaryProbe`
+- `SpatialProbeHit`
+- `SemanticSpaceMapProbeField`
+- `EgocentricSweepProbe`
+- 기본 5 m 및 Inspector/API 각도·거리 parameter
 - ray/hit debug 표시
-- event 기반 sweep log
+- event 기반 probe result log
 
 #### 자동 테스트
 
 - 직선 레이가 첫 semantic transition을 반환
 - miss가 명시적으로 반환됨
 - 최대 거리 밖의 경계는 제외됨
-- player heading + 상대각 변환이 정확함
+- 호출자가 지정한 수평 방향이 정확히 사용됨
 - coarse step 뒤 보정된 hit 오차가 허용 범위 안임
-- module OFF이면 ray query와 음향 재생이 없음
+- 같은 분류 안의 feature/source 변화는 경계로 세지 않음
+- 기본 최대 거리가 5 m임
+- module OFF이면 ray query가 없음
 - sweep toggle이 다른 module 상태를 바꾸지 않음
 
 #### 수동 기술 테스트
 
-- 좌우 움직임과 음원 방향이 일치
-- 머리를 돌려도 hit 음원이 월드 위치에 남음
-- sweep 정지 시 음원이 즉시 중단 또는 정리됨
-- hit 없음과 로그 누락이 구분됨
+- Inspector에서 상대각과 최대 거리를 바꾸면 결과가 갱신됨
+- Inspector에 hit 대상·거리·feature ID가 표시됨
+- hit 없음은 `N/A` 거리와 요청 범위로 구분됨
+- Scene/Game Gizmo에서 레이 끝과 hit 위치가 일치함
 - 장시간 사용 시 log 폭증이나 GC spike가 없음
 
-#### 병합 게이트
+#### 보류 게이트
 
-- module 기본 OFF
-- 기존 semantic module을 끈 상태가 기존 module OFF 기준선과 동일
-- sweep-only profile이 독립 실행됨
-- 계산·입력·음향·로그 각각을 끊어 재현 가능
+- 계산이 기존 semantic module과 독립 실행됨
+- 감지 core에 CityGen·입력·음향 의존성이 없음
+- 전체 EditMode test가 통과함
 - 알려진 제한을 문서화
+- infra와 feature branch는 사용자가 결정할 때까지 `main`에 병합하지 않음
 
 ## 9. 첫 자체 실험
 
