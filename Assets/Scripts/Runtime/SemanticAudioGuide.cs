@@ -5,7 +5,7 @@ using UnityEngine;
 namespace CityGenPedestrianProbe
 {
     [DisallowMultipleComponent]
-    public sealed class SemanticAudioGuide : MonoBehaviour
+    public sealed class SemanticAudioGuide : FeedbackModule
     {
         private const float QueryInterval = 0.1f;
         private const float StableSeconds = 0.2f;
@@ -30,7 +30,7 @@ namespace CityGenPedestrianProbe
         private float candidateSince;
         private long activeApproachId;
 
-        public void Configure(SemanticSpaceMap map, Transform listenerTransform,
+        public override void Configure(SemanticSpaceMap map, Transform listenerTransform,
             SemanticSessionLogger logger)
         {
             semanticMap = map;
@@ -60,7 +60,7 @@ namespace CityGenPedestrianProbe
             UpdateApproach(current);
         }
 
-        public void PlayBoundaryWarning(Vector3 attemptedDirection)
+        public override void OnBoundaryContact(Vector3 attemptedDirection)
         {
             if (listener == null || boundarySource == null)
                 return;

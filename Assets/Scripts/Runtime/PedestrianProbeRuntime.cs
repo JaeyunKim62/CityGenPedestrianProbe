@@ -49,11 +49,10 @@ namespace CityGenPedestrianProbe
             overlay.BlindModeChanged += blind => logger.LogEvent("blind_mode",
                 semanticMap.ClassifyWorld(player.transform.position), blind ? "on" : "off");
 
-            SemanticAudioGuide audioGuide = GetComponent<SemanticAudioGuide>();
-            if (audioGuide == null)
-                audioGuide = gameObject.AddComponent<SemanticAudioGuide>();
-            audioGuide.Configure(semanticMap, camera.transform, logger);
-            player.BoundaryContact += audioGuide.PlayBoundaryWarning;
+            FeedbackCoordinator feedback = GetComponent<FeedbackCoordinator>();
+            if (feedback == null)
+                feedback = gameObject.AddComponent<FeedbackCoordinator>();
+            feedback.Configure(semanticMap, camera.transform, logger, player);
         }
     }
 }
