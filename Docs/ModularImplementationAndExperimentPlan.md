@@ -117,14 +117,14 @@
 
 ```text
 ModuleId                 안정된 문자열 ID
-IsExperimentEnabled      현재 실험 조건에서의 상태
+IsFeedbackEnabled        현재 피드백 활성 상태
 Configure(context)       공통 의존성 전달
-SetExperimentEnabled()   시작·중단·음원 정리·toggle log
+SetFeedbackEnabled()     시작·중단·음원 정리 lifecycle
 ```
 
 초기 module ID 예시:
 
-- `semantic.proximity`
+- `semantic.audio`
 - `probe.egocentric_sweep.audio`
 - `boundary.flow.audio`
 - `junction.topology.audio`
@@ -134,7 +134,7 @@ SetExperimentEnabled()   시작·중단·음원 정리·toggle log
 
 ID는 클래스명을 바꾸더라도 유지한다. 분석 데이터와 profile이 이 ID를 참조하기 때문이다.
 
-`MonoBehaviour.enabled`만 직접 바꾸는 방식은 피한다. 모듈별 `SetExperimentEnabled`를 거쳐야 재생 중인 음원을 멈추고, 입력 구독을 해제하고, toggle 이유를 로그에 남길 수 있다.
+`MonoBehaviour.enabled`만 직접 바꾸는 방식은 피한다. coordinator의 `SetModuleEnabled`를 거쳐야 모듈 lifecycle이 실행되고 toggle 이유가 로그에 남는다.
 
 ### FeedbackCoordinator 책임
 
@@ -358,7 +358,7 @@ profile layer는 module 구현에 의존하지 않고 `FeedbackCoordinator.SetMo
 #### 병합 게이트
 
 - module 기본 OFF
-- baseline profile과 결과가 동일
+- 기존 semantic module을 끈 상태가 기존 module OFF 기준선과 동일
 - sweep-only profile이 독립 실행됨
 - 계산·입력·음향·로그 각각을 끊어 재현 가능
 - 알려진 제한을 문서화
