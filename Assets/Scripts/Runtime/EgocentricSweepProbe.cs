@@ -28,10 +28,12 @@ namespace CityGenPedestrianProbe
         private SemanticSpaceMap semanticMap;
         private Transform listener;
         private SemanticSessionLogger sessionLogger;
+        private FeedbackSignalBus signalBus;
         private SemanticSpaceMapProbeField field;
         private readonly RayBoundaryProbe probe = new RayBoundaryProbe();
         private SpatialProbeHit currentHit;
         private bool hasCurrentResult;
+        private SpatialProbeObservation currentObservation;
         private float nextQuery;
         private bool hasLoggedResult;
         private bool lastLoggedHasHit;
@@ -46,14 +48,16 @@ namespace CityGenPedestrianProbe
         public float RangeMeters => rangeMeters;
         public bool HasCurrentResult => hasCurrentResult;
         public SpatialProbeHit CurrentHit => currentHit;
+        public SpatialProbeObservation CurrentObservation => currentObservation;
+        public event Action<SpatialProbeObservation> ObservationSampled;
 
-        public override void Configure(SemanticSpaceMap map, Transform listenerTransform,
-            SemanticSessionLogger logger)
+        public override void Configure(in FeedbackContext context)
         {
-            semanticMap = map;
-            listener = listenerTransform;
-            sessionLogger = logger;
-            field = new SemanticSpaceMapProbeField(map);
+            semanticMap = context.Map;
+            listener = context.Listener;
+            sessionLogger = context.Logger;
+            signalBus = context.SignalBus;
+            field = new SemanticSpaceMapProbeField(context.Map);
             ClampSettings();
             ResetRuntimeState();
         }
@@ -93,7 +97,10 @@ namespace CityGenPedestrianProbe
                 new Vector2(worldDirection.x, worldDirection.z), rangeMeters,
                 sampleStepMeters, refinementIterations);
             currentHit = probe.Probe(field, request);
+            currentObservation = new SpatialProbeObservation(request.Origin,
+                request.Direction, relativeAngleDegrees, currentHit);
             hasCurrentResult = true;
+            ObservationSampled?.Invoke(currentObservation);
 
             if (drawDebugRay)
                 DrawProbe(request, currentHit, listener.position.y);

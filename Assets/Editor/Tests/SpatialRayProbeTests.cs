@@ -141,6 +141,23 @@ namespace CityGenPedestrianProbe.Editor.Tests
             }
         }
 
+        [Test]
+        public void Observation_PreservesNormalizedDirectionAngleRangeAndHit()
+        {
+            var hit = new SpatialProbeHit(true, new Vector2(3f, 4f), 4.5f, 5f,
+                Sample("Sidewalk", "Highway", 10), Sample("Road", "MapRoad", 20));
+
+            var observation = new SpatialProbeObservation(new Vector2(1f, 2f),
+                new Vector2(3f, 4f), -30f, hit);
+
+            Assert.That(observation.Origin, Is.EqualTo(new Vector2(1f, 2f)));
+            Assert.That(observation.Direction.magnitude, Is.EqualTo(1f).Within(0.0001f));
+            Assert.That(observation.RelativeAngleDegrees, Is.EqualTo(-30f));
+            Assert.That(observation.RequestedRangeMeters, Is.EqualTo(5f));
+            Assert.That(observation.HasHit, Is.True);
+            Assert.That(observation.Hit.To.DisplayLabel, Is.EqualTo("Road / MapRoad"));
+        }
+
         private static SpatialProbeSample Sample(string category, string source, long id) =>
             new SpatialProbeSample(true, category, source, id, 1f);
 

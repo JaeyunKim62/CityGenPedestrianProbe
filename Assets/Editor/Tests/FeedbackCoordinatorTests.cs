@@ -145,18 +145,41 @@ namespace CityGenPedestrianProbe.Editor.Tests
             Assert.That(coordinator.SignalBus.RendererCount, Is.EqualTo(0));
         }
 
+        [Test]
+        public void ProbeObservation_IsSentOnlyToEnabledSinkModules()
+        {
+            var counter = runtimeObject.AddComponent<CountingFeedbackModule>();
+            Configure();
+            MethodInfo handle = typeof(FeedbackCoordinator).GetMethod("HandleProbeObservation",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.That(handle, Is.Not.Null);
+            var hit = SpatialProbeHit.NoHit(new Vector2(0f, 5f), 5f,
+                SpatialProbeSample.Unknown);
+            var observation = new SpatialProbeObservation(Vector2.zero, Vector2.up, 0f, hit);
+
+            handle.Invoke(coordinator, new object[] { observation });
+            Assert.That(counter.ObservationCount, Is.EqualTo(1));
+            Assert.That(counter.LastObservation.RequestedRangeMeters, Is.EqualTo(5f));
+
+            coordinator.SetModuleEnabled(CountingFeedbackModule.StableId, false, "test");
+            handle.Invoke(coordinator, new object[] { observation });
+            Assert.That(counter.ObservationCount, Is.EqualTo(1));
+        }
+
         private void Configure() => coordinator.Configure(map, runtimeObject.transform,
             logger, player);
     }
 
-    public sealed class CountingFeedbackModule : FeedbackModule
+    public sealed class CountingFeedbackModule : FeedbackModule, ISpatialProbeObservationSink
     {
         public const string StableId = "test.counter";
         public override string ModuleId => StableId;
         public int ConfigureCount { get; private set; }
         public int StateChangeCount { get; private set; }
         public int BoundaryCount { get; private set; }
+        public int ObservationCount { get; private set; }
         public FeedbackContext LastContext { get; private set; }
+        public SpatialProbeObservation LastObservation { get; private set; }
 
         public override void Configure(in FeedbackContext context)
         {
@@ -172,6 +195,12 @@ namespace CityGenPedestrianProbe.Editor.Tests
         public override void OnBoundaryContact(Vector3 attemptedDirection)
         {
             BoundaryCount++;
+        }
+
+        public void OnSpatialProbeObservation(SpatialProbeObservation observation)
+        {
+            ObservationCount++;
+            LastObservation = observation;
         }
     }
 

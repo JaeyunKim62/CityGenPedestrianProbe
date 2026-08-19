@@ -14,6 +14,7 @@ namespace CityGenPedestrianProbe
         private SemanticSpaceMap semanticMap;
         private SemanticSessionLogger sessionLogger;
         private SemanticPedestrianController player;
+        private EgocentricSweepProbe sweepProbe;
 
         public int ModuleCount => modulesById.Count;
         public FeedbackSignalBus SignalBus => signalBus;
@@ -23,6 +24,8 @@ namespace CityGenPedestrianProbe
         {
             if (player != null)
                 player.BoundaryContact -= HandleBoundaryContact;
+            if (sweepProbe != null)
+                sweepProbe.ObservationSampled -= HandleProbeObservation;
 
             semanticMap = map;
             sessionLogger = logger;
@@ -36,6 +39,10 @@ namespace CityGenPedestrianProbe
             signalBus.SetRenderers(GetComponents<ISignalRenderer>());
 
             RegisterModules(new FeedbackContext(map, listener, logger, signalBus));
+
+            sweepProbe = GetComponent<EgocentricSweepProbe>();
+            if (sweepProbe != null)
+                sweepProbe.ObservationSampled += HandleProbeObservation;
 
             if (player != null)
                 player.BoundaryContact += HandleBoundaryContact;
@@ -72,6 +79,8 @@ namespace CityGenPedestrianProbe
         {
             if (player != null)
                 player.BoundaryContact -= HandleBoundaryContact;
+            if (sweepProbe != null)
+                sweepProbe.ObservationSampled -= HandleProbeObservation;
             signalBus.StopAll();
             signalBus.SetRenderers(null);
         }
@@ -83,6 +92,17 @@ namespace CityGenPedestrianProbe
                 FeedbackModule module = modules[i];
                 if (module != null && module.IsFeedbackEnabled && module.isActiveAndEnabled)
                     module.OnBoundaryContact(attemptedDirection);
+            }
+        }
+
+        private void HandleProbeObservation(SpatialProbeObservation observation)
+        {
+            for (int i = 0; i < modules.Length; i++)
+            {
+                FeedbackModule module = modules[i];
+                if (module != null && module.IsFeedbackEnabled && module.isActiveAndEnabled &&
+                    module is ISpatialProbeObservationSink sink)
+                    sink.OnSpatialProbeObservation(observation);
             }
         }
 

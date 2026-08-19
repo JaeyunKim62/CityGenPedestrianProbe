@@ -100,6 +100,31 @@ namespace CityGenPedestrianProbe
             float.PositiveInfinity, requestedRangeMeters, sample, sample);
     }
 
+    public readonly struct SpatialProbeObservation
+    {
+        public readonly Vector2 Origin;
+        public readonly Vector2 Direction;
+        public readonly float RelativeAngleDegrees;
+        public readonly SpatialProbeHit Hit;
+
+        public float RequestedRangeMeters => Hit.RequestedRangeMeters;
+        public bool HasHit => Hit.HasHit;
+
+        public SpatialProbeObservation(Vector2 origin, Vector2 direction,
+            float relativeAngleDegrees, SpatialProbeHit hit)
+        {
+            Origin = origin;
+            Direction = direction.sqrMagnitude > 0f ? direction.normalized : Vector2.zero;
+            RelativeAngleDegrees = relativeAngleDegrees;
+            Hit = hit;
+        }
+    }
+
+    public interface ISpatialProbeObservationSink
+    {
+        void OnSpatialProbeObservation(SpatialProbeObservation observation);
+    }
+
     public sealed class RayBoundaryProbe
     {
         public SpatialProbeHit Probe(ISpatialProbeField field, SpatialProbeRequest request)
