@@ -290,12 +290,21 @@ EXP-SWEEP-00(계산과 표현 검증)과는 병행 가능하다. 서로 다른 �
 
 | # | 커밋 | 상태 |
 | --- | --- | --- |
-| 1 | `SignalIntent`·`SignalChannel` — 모듈이 무엇을 알릴지 말하는 어휘 | **완료** `1de2547` → `85f42e6` |
-| 2 | `SignalCatalog`·`ISignalRenderer`·`AudioSignalRenderer` | 진행 |
-| 3 | `FeedbackContext` 도입, `Configure(context)`로 시그니처 일원화 | 예정 |
-| 4 | bus를 coordinator에 연결, `signal_emit` 로그 | 예정 |
+| 1 | `SignalIntent`·`SignalChannel` — 모듈이 무엇을 알릴지 말하는 어휘 | 완료 `1de2547` → `85f42e6` |
+| 2 | `SignalCatalog`·`ISignalRenderer`·`AudioSignalRenderer` | 완료 `0755be0` |
+| 3 | `FeedbackSignalBus` — 렌더러 분배와 발화 로그 | 완료 `453aec1` |
+| 4 | `FeedbackContext` 도입, coordinator가 버스를 소유 | 완료 `edade41` |
 
-커밋 1은 중재기를 제거해 61줄로 줄었다. **이 4개가 끝나도 소리는 나지 않는다.** 스위프에 소리가 붙는 것은 그다음 단계다.
+커밋 1은 중재기를 제거해 61줄로 줄었다. 3과 4의 순서는 계획과 바뀌었다. 버스가 존재해야 컨텍스트가 그것을 담을 수 있고, 그래야 `Configure` 시그니처를 한 번만 바꾼다.
+
+**이 4개가 끝나도 소리는 나지 않는다.** 렌더러를 등록하는 코드가 아직 없어 버스는 아무에게도 전달하지 않는다. EditMode 49/49 통과.
+
+### 다음 단계
+
+1. `feat/fb-01-egocentric-sweep`을 이 브랜치에 rebase
+2. scene setup이 `AudioSignalRenderer`와 C-2 카탈로그 에셋을 추가
+3. `EgocentricSweepProbe`가 `ISpatialProbeObservationSink`로 자기 관측을 받아 `answer` 채널 지속 신호를 emit
+4. EXP-SWEEP-00 — ray hit 참값과 들리는 위치의 일치 검증
 
 3번을 뒤에 두는 이유는 `Configure` 시그니처를 한 번만 바꾸기 위해서다. bus가 존재한 뒤에 context를 만들면 두 번 바꿀 필요가 없다. `Configure(context)`는 계획 문서 §121이 이미 명시한 계약이다.
 
