@@ -214,6 +214,7 @@ namespace CityGenPedestrianProbe
                    $"Current layers: {currentLayers}\n" +
                    $"Nearest other: {nearestText}\n" +
                    $"Sweep: {BuildSweepText()}\n" +
+                   $"Signal: {BuildSignalText()}\n" +
                    $"Study bounds X: {semanticMap.StudyBounds.xMin:F1}..{semanticMap.StudyBounds.xMax:F1}, " +
                    $"Z: {semanticMap.StudyBounds.yMin:F1}..{semanticMap.StudyBounds.yMax:F1}";
         }
