@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using UnityEngine;
 
 namespace CityGenPedestrianProbe
@@ -7,6 +8,8 @@ namespace CityGenPedestrianProbe
     public sealed class EgocentricSweepProbe : FeedbackModule
     {
         public const string StableModuleId = "probe.egocentric-sweep";
+        public const string HitSignalId = "probe.hit";
+        public const string MissSignalId = "probe.miss";
 
         [Header("Probe control")]
         [SerializeField, Range(-180f, 0f)] private float minRelativeAngle = -90f;
@@ -29,6 +32,7 @@ namespace CityGenPedestrianProbe
         private Transform listener;
         private SemanticSessionLogger sessionLogger;
         private FeedbackSignalBus signalBus;
+        private string activeSignalId = string.Empty;
         private SemanticSpaceMapProbeField field;
         private readonly RayBoundaryProbe probe = new RayBoundaryProbe();
         private SpatialProbeHit currentHit;
@@ -101,6 +105,7 @@ namespace CityGenPedestrianProbe
                 request.Direction, relativeAngleDegrees, currentHit);
             hasCurrentResult = true;
             ObservationSampled?.Invoke(currentObservation);
+            EmitSignalFor(currentObservation);
 
             if (drawDebugRay)
                 DrawProbe(request, currentHit, listener.position.y);
@@ -108,12 +113,62 @@ namespace CityGenPedestrianProbe
                 LogResult(currentHit);
         }
 
+        public void EmitSignalFor(in SpatialProbeObservation observation)
+        {
+            if (signalBus == null)
+                return;
+
+            SpatialProbeHit hit = observation.Hit;
+            string signalId = hit.HasHit ? HitSignalIdFor(hit.To) : MissSignalId;
+            if (!string.Equals(activeSignalId, signalId, StringComparison.Ordinal))
+            {
+                ReleaseSignal();
+                activeSignalId = signalId;
+            }
+
+            float height = listener != null ? listener.position.y : 0f;
+            var point = new Vector3(hit.Point.x, height, hit.Point.y);
+            float distance = hit.HasHit ? hit.DistanceMeters : hit.RequestedRangeMeters;
+            signalBus.Emit(SignalIntent.Positional(signalId, SignalChannel.Answer,
+                SignalForm.Sustained, point, distance, hit.HasHit ? hit.To.FeatureId : 0L));
+        }
+
+        public static string HitSignalIdFor(SpatialProbeSample sample)
+        {
+            string category = sample.Category;
+            if (string.IsNullOrWhiteSpace(category))
+                return HitSignalId;
+
+            var builder = new StringBuilder(HitSignalId.Length + 1 + category.Length);
+            builder.Append(HitSignalId).Append('.');
+            for (int i = 0; i < category.Length; i++)
+            {
+                char character = category[i];
+                builder.Append(char.IsLetterOrDigit(character)
+                    ? char.ToLowerInvariant(character)
+                    : '-');
+            }
+            return builder.ToString();
+        }
+
         protected override void OnFeedbackEnabledChanged(bool value)
         {
             if (value)
+            {
                 ResetRuntimeState();
-            else
-                hasCurrentResult = false;
+                return;
+            }
+
+            ReleaseSignal();
+            hasCurrentResult = false;
+        }
+
+        private void ReleaseSignal()
+        {
+            if (activeSignalId.Length == 0)
+                return;
+            signalBus?.Release(activeSignalId);
+            activeSignalId = string.Empty;
         }
 
         private void ClampSettings()
@@ -135,6 +190,7 @@ namespace CityGenPedestrianProbe
             nextQuery = 0f;
             hasCurrentResult = false;
             hasLoggedResult = false;
+            activeSignalId = string.Empty;
         }
 
         private bool ResultChanged(SpatialProbeHit hit)
