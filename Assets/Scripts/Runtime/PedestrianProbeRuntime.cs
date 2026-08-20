@@ -51,6 +51,8 @@ namespace CityGenPedestrianProbe
             overlay.Configure(semanticMap, player.transform);
             overlay.BlindModeChanged += blind => logger.LogEvent("blind_mode",
                 semanticMap.ClassifyWorld(player.transform.position), blind ? "on" : "off");
+            overlay.BlindModeChanged += blind => player.SetLookEnabled(!blind);
+            player.SetLookEnabled(!overlay.IsBlind);
 
             EgocentricSweepProbe sweep = GetComponent<EgocentricSweepProbe>();
             if (sweep == null)

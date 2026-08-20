@@ -17,12 +17,22 @@ namespace CityGenPedestrianProbe
         [SerializeField] private float mouseSensitivity = 0.08f;
         [SerializeField] private float boundaryInset = 0.25f;
 
+        [SerializeField] private bool lookEnabled = true;
+
         private float pitch;
         private float nextBoundaryEventTime;
 
         public event Action<Vector3> BoundaryContact;
         public SemanticSpaceMap Map => semanticMap;
         public Terrain GroundTerrain => terrain;
+        public bool LookEnabled => lookEnabled;
+
+        public void SetLookEnabled(bool value)
+        {
+            lookEnabled = value;
+            if (!value)
+                LevelPitch();
+        }
 
         public void Configure(SemanticSpaceMap map, Terrain ground)
         {
@@ -41,11 +51,14 @@ namespace CityGenPedestrianProbe
 
         private void Update()
         {
-            ReadLook(out Vector2 look);
-            transform.Rotate(0f, look.x * mouseSensitivity, 0f, Space.World);
-            pitch = Mathf.Clamp(pitch - look.y * mouseSensitivity, -75f, 75f);
-            Vector3 euler = transform.localEulerAngles;
-            transform.localEulerAngles = new Vector3(pitch, euler.y, 0f);
+            if (lookEnabled)
+            {
+                ReadLook(out Vector2 look);
+                transform.Rotate(0f, look.x * mouseSensitivity, 0f, Space.World);
+                pitch = Mathf.Clamp(pitch - look.y * mouseSensitivity, -75f, 75f);
+                Vector3 euler = transform.localEulerAngles;
+                transform.localEulerAngles = new Vector3(pitch, euler.y, 0f);
+            }
 
             ReadMove(out Vector2 input, out bool fast);
             Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
@@ -78,6 +91,13 @@ namespace CityGenPedestrianProbe
             position.x = x;
             position.z = z;
             return clamped;
+        }
+
+        private void LevelPitch()
+        {
+            pitch = 0f;
+            Vector3 euler = transform.localEulerAngles;
+            transform.localEulerAngles = new Vector3(0f, euler.y, 0f);
         }
 
         public void SnapToGround()
