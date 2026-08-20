@@ -6,18 +6,19 @@ using UnityEngine.SceneManagement;
 
 namespace CityGenPedestrianProbe.Editor
 {
-    internal static class SyntheticTestSceneBuilder
+    public static class SyntheticTestSceneBuilder
     {
-        private const string MapFolder = "Assets/Generated/SyntheticMaps";
-        private const string SceneFolder = "Assets/Scenes/Synthetic";
+        private const string MapFolder = "Assets/Testbed/Maps";
+        private const string SceneFolder = "Assets/Testbed/Scenes";
         private const string CatalogPath =
             "Assets/Generated/Signals/SignalCatalog_C002_DirectionRange.asset";
         private const float EyeHeight = 1.7f;
 
-        [MenuItem("Tools/Pedestrian Probe/Build Synthetic Test Scenes", priority = 40)]
-        private static void BuildAll()
+        [MenuItem("Tools/Pedestrian Probe/Testbed/Build Synthetic Scenes", priority = 40)]
+        public static void BuildAll()
         {
-            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+            if (!Application.isBatchMode &&
+                !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
                 return;
 
             Directory.CreateDirectory(MapFolder);
