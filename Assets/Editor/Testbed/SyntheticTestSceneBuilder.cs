@@ -23,13 +23,12 @@ namespace CityGenPedestrianProbe.Editor
 
             Directory.CreateDirectory(MapFolder);
             Directory.CreateDirectory(SceneFolder);
-            var catalog = AssetDatabase.LoadAssetAtPath<SignalCatalog>(CatalogPath);
-            if (catalog == null)
-                Debug.LogWarning($"Signal catalog not found at {CatalogPath}. " +
-                                 "Synthetic scenes will be silent until one is assigned.");
+            AssetDatabase.Refresh();
 
+            if (FindCatalog() == null)
+                return;
             foreach (SyntheticLayout layout in SyntheticTestMaps.Layouts)
-                BuildOne(layout, catalog);
+                BuildOne(layout);
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -37,7 +36,26 @@ namespace CityGenPedestrianProbe.Editor
                       $"{SceneFolder}. Open one, press Play, then G to silence semantic.audio.");
         }
 
-        private static void BuildOne(SyntheticLayout layout, SignalCatalog catalog)
+        private static SignalCatalog FindCatalog()
+        {
+            var catalog = AssetDatabase.LoadAssetAtPath<SignalCatalog>(CatalogPath);
+            if (catalog != null)
+                return catalog;
+
+            foreach (string assetGuid in AssetDatabase.FindAssets("t:SignalCatalog"))
+            {
+                catalog = AssetDatabase.LoadAssetAtPath<SignalCatalog>(
+                    AssetDatabase.GUIDToAssetPath(assetGuid));
+                if (catalog != null)
+                    return catalog;
+            }
+
+            Debug.LogError("No SignalCatalog asset found, so the synthetic scenes would " +
+                           "be silent. Aborting.");
+            return null;
+        }
+
+        private static void BuildOne(SyntheticLayout layout)
         {
             SemanticSpaceMap map = SyntheticTestMaps.Create(layout.Id);
             string mapPath = $"{MapFolder}/{layout.Id}.asset";
@@ -62,7 +80,12 @@ namespace CityGenPedestrianProbe.Editor
             SceneManager.MoveGameObjectToScene(runtimeObject, scene);
             PedestrianProbeRuntime runtime =
                 runtimeObject.AddComponent<PedestrianProbeRuntime>();
-            runtime.Configure(map, controller, null, catalog);
+            SignalCatalog liveCatalog = FindCatalog();
+            if (liveCatalog == null)
+                Debug.LogError($"{layout.Id} was built without a catalog and will be silent.");
+            runtime.Configure(map, controller, null, liveCatalog);
+            EditorUtility.SetDirty(controller);
+            EditorUtility.SetDirty(runtime);
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene, $"{SceneFolder}/{layout.Id}.unity");
