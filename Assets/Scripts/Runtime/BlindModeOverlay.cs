@@ -14,6 +14,7 @@ namespace CityGenPedestrianProbe
         [SerializeField] private bool blind = true;
         [SerializeField] private SemanticSpaceMap semanticMap;
         [SerializeField] private Transform player;
+        [SerializeField] private EgocentricSweepProbe sweepProbe;
         [SerializeField] private bool logStateToConsole = true;
         [SerializeField] private bool showMap = true;
         [SerializeField] private bool sourceClassView = true;
@@ -31,6 +32,11 @@ namespace CityGenPedestrianProbe
         {
             semanticMap = map;
             player = playerTransform;
+        }
+
+        public void SetSweepProbe(EgocentricSweepProbe probe)
+        {
+            sweepProbe = probe;
         }
 
         private void Awake()
@@ -119,7 +125,7 @@ namespace CityGenPedestrianProbe
                     normal = { textColor = Color.white }
                 };
             }
-            GUI.Box(new Rect(12f, 12f, 720f, 255f), BuildStatusText(true), debugStyle);
+            GUI.Box(new Rect(12f, 12f, 760f, 300f), BuildStatusText(true), debugStyle);
             if (showMap)
                 DrawSemanticMap();
 #endif
@@ -185,7 +191,8 @@ namespace CityGenPedestrianProbe
             }
 
             string header = includeHeader
-                ? "PEDESTRIAN PROBE STATUS (B/F1: blind, N: map, M: scale, C: classes)\n"
+                ? "PEDESTRIAN PROBE STATUS (B/F1: blind, N: map, M: scale, C: classes, " +
+                  "Q/E: sweep, R: centre, [/]: range, G: semantic audio)\n"
                 :
                 "[PedestrianProbe] ";
             string semanticText = current.Kind == SemanticSpaceKind.Unknown
@@ -200,8 +207,28 @@ namespace CityGenPedestrianProbe
                    $"confidence={current.Confidence:F2}  edge={FormatDistance(current.DistanceMeters)}\n" +
                    $"Current layers: {currentLayers}\n" +
                    $"Nearest other: {nearestText}\n" +
+                   $"Sweep: {BuildSweepText()}\n" +
                    $"Study bounds X: {semanticMap.StudyBounds.xMin:F1}..{semanticMap.StudyBounds.xMax:F1}, " +
                    $"Z: {semanticMap.StudyBounds.yMin:F1}..{semanticMap.StudyBounds.yMax:F1}";
+        }
+
+        private string BuildSweepText()
+        {
+            if (sweepProbe == null)
+                return "no probe";
+            if (!sweepProbe.IsFeedbackEnabled)
+                return "module off";
+
+            string aim = $"angle={sweepProbe.RelativeAngleDegrees:+0.0;-0.0;0.0}deg " +
+                         $"({DirectionName(sweepProbe.RelativeAngleDegrees)})  " +
+                         $"range={sweepProbe.RangeMeters:F1}m";
+            if (!sweepProbe.HasCurrentResult)
+                return $"{aim}  not queried";
+
+            SpatialProbeHit hit = sweepProbe.CurrentHit;
+            return hit.HasHit
+                ? $"{aim}  hit {hit.To.DisplayLabel} at {hit.DistanceMeters:F2}m"
+                : $"{aim}  no boundary within range";
         }
 
         private static SemanticHit FindNearestOther(IReadOnlyList<SemanticHit> nearby,

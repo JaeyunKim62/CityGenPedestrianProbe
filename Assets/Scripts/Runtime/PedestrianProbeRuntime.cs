@@ -52,8 +52,10 @@ namespace CityGenPedestrianProbe
             overlay.BlindModeChanged += blind => logger.LogEvent("blind_mode",
                 semanticMap.ClassifyWorld(player.transform.position), blind ? "on" : "off");
 
-            if (GetComponent<EgocentricSweepProbe>() == null)
-                gameObject.AddComponent<EgocentricSweepProbe>();
+            EgocentricSweepProbe sweep = GetComponent<EgocentricSweepProbe>();
+            if (sweep == null)
+                sweep = gameObject.AddComponent<EgocentricSweepProbe>();
+            overlay.SetSweepProbe(sweep);
 
             AudioSignalRenderer signalRenderer = GetComponent<AudioSignalRenderer>();
             if (signalRenderer == null)
@@ -67,6 +69,11 @@ namespace CityGenPedestrianProbe
             if (feedback == null)
                 feedback = gameObject.AddComponent<FeedbackCoordinator>();
             feedback.Configure(semanticMap, camera.transform, logger, player);
+
+            SweepKeyboardControls controls = GetComponent<SweepKeyboardControls>();
+            if (controls == null)
+                controls = gameObject.AddComponent<SweepKeyboardControls>();
+            controls.Configure(sweep, feedback);
         }
     }
 }
