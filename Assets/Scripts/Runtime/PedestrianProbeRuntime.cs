@@ -8,13 +8,16 @@ namespace CityGenPedestrianProbe
         [SerializeField] private SemanticSpaceMap semanticMap;
         [SerializeField] private SemanticPedestrianController player;
         [SerializeField] private Terrain terrain;
+        [SerializeField] private SignalCatalog signalCatalog;
 
         public void Configure(SemanticSpaceMap map, SemanticPedestrianController controller,
-            Terrain ground)
+            Terrain ground, SignalCatalog catalog = null)
         {
             semanticMap = map;
             player = controller;
             terrain = ground;
+            if (catalog != null)
+                signalCatalog = catalog;
         }
 
         private void Awake()
@@ -51,6 +54,14 @@ namespace CityGenPedestrianProbe
 
             if (GetComponent<EgocentricSweepProbe>() == null)
                 gameObject.AddComponent<EgocentricSweepProbe>();
+
+            AudioSignalRenderer signalRenderer = GetComponent<AudioSignalRenderer>();
+            if (signalRenderer == null)
+                signalRenderer = gameObject.AddComponent<AudioSignalRenderer>();
+            signalRenderer.Configure(signalCatalog, camera.transform);
+            if (signalCatalog == null)
+                Debug.LogWarning("Pedestrian Probe has no signal catalog, so feedback " +
+                                 "modules on the signal bus stay silent.", this);
 
             FeedbackCoordinator feedback = GetComponent<FeedbackCoordinator>();
             if (feedback == null)
