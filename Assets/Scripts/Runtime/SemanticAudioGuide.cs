@@ -33,12 +33,11 @@ namespace CityGenPedestrianProbe
 
         public override string ModuleId => StableModuleId;
 
-        public override void Configure(SemanticSpaceMap map, Transform listenerTransform,
-            SemanticSessionLogger logger)
+        public override void Configure(in FeedbackContext context)
         {
-            semanticMap = map;
-            listener = listenerTransform;
-            sessionLogger = logger;
+            semanticMap = context.Map;
+            listener = context.Listener;
+            sessionLogger = context.Logger;
         }
 
         private void Awake()

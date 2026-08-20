@@ -10,11 +10,13 @@ namespace CityGenPedestrianProbe
         private FeedbackModule[] modules = Array.Empty<FeedbackModule>();
         private readonly Dictionary<string, FeedbackModule> modulesById =
             new Dictionary<string, FeedbackModule>(StringComparer.Ordinal);
+        private readonly FeedbackSignalBus signalBus = new FeedbackSignalBus();
         private SemanticSpaceMap semanticMap;
         private SemanticSessionLogger sessionLogger;
         private SemanticPedestrianController player;
 
         public int ModuleCount => modulesById.Count;
+        public FeedbackSignalBus SignalBus => signalBus;
 
         public void Configure(SemanticSpaceMap map, Transform listener,
             SemanticSessionLogger logger, SemanticPedestrianController controller)
@@ -29,7 +31,11 @@ namespace CityGenPedestrianProbe
             if (GetComponent<SemanticAudioGuide>() == null)
                 gameObject.AddComponent<SemanticAudioGuide>();
 
-            RegisterModules(map, listener, logger);
+            signalBus.StopAll();
+            signalBus.Configure(logger, map, listener);
+            signalBus.SetRenderers(GetComponents<ISignalRenderer>());
+
+            RegisterModules(new FeedbackContext(map, listener, logger, signalBus));
 
             if (player != null)
                 player.BoundaryContact += HandleBoundaryContact;
@@ -66,6 +72,8 @@ namespace CityGenPedestrianProbe
         {
             if (player != null)
                 player.BoundaryContact -= HandleBoundaryContact;
+            signalBus.StopAll();
+            signalBus.SetRenderers(null);
         }
 
         private void HandleBoundaryContact(Vector3 attemptedDirection)
@@ -78,8 +86,7 @@ namespace CityGenPedestrianProbe
             }
         }
 
-        private void RegisterModules(SemanticSpaceMap map, Transform listener,
-            SemanticSessionLogger logger)
+        private void RegisterModules(in FeedbackContext context)
         {
             modulesById.Clear();
             var registered = new List<FeedbackModule>();
@@ -104,7 +111,7 @@ namespace CityGenPedestrianProbe
 
                 modulesById.Add(moduleId, module);
                 registered.Add(module);
-                module.Configure(map, listener, logger);
+                module.Configure(context);
             }
             modules = registered.ToArray();
         }

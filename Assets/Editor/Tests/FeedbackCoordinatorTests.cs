@@ -114,6 +114,37 @@ namespace CityGenPedestrianProbe.Editor.Tests
             Assert.That(counter.BoundaryCount, Is.EqualTo(1));
         }
 
+        [Test]
+        public void Configure_HandsEveryModuleTheSharedSignalBus()
+        {
+            var counter = runtimeObject.AddComponent<CountingFeedbackModule>();
+
+            Configure();
+
+            Assert.That(counter.LastContext.SignalBus, Is.SameAs(coordinator.SignalBus));
+            Assert.That(counter.LastContext.Map, Is.SameAs(map));
+            Assert.That(counter.LastContext.Logger, Is.SameAs(logger));
+            Assert.That(counter.LastContext.Listener, Is.SameAs(runtimeObject.transform));
+        }
+
+        [Test]
+        public void Configure_RegistersSignalRenderersFoundOnTheRuntimeObject()
+        {
+            runtimeObject.AddComponent<AudioSignalRenderer>();
+
+            Configure();
+
+            Assert.That(coordinator.SignalBus.RendererCount, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void Configure_LeavesTheBusWithoutRenderersWhenNoneArePresent()
+        {
+            Configure();
+
+            Assert.That(coordinator.SignalBus.RendererCount, Is.EqualTo(0));
+        }
+
         private void Configure() => coordinator.Configure(map, runtimeObject.transform,
             logger, player);
     }
@@ -125,11 +156,12 @@ namespace CityGenPedestrianProbe.Editor.Tests
         public int ConfigureCount { get; private set; }
         public int StateChangeCount { get; private set; }
         public int BoundaryCount { get; private set; }
+        public FeedbackContext LastContext { get; private set; }
 
-        public override void Configure(SemanticSpaceMap map, Transform listener,
-            SemanticSessionLogger logger)
+        public override void Configure(in FeedbackContext context)
         {
             ConfigureCount++;
+            LastContext = context;
         }
 
         protected override void OnFeedbackEnabledChanged(bool value)
