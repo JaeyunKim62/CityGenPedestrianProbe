@@ -15,6 +15,7 @@ namespace CityGenPedestrianProbe
         [SerializeField] private SemanticSpaceMap semanticMap;
         [SerializeField] private Transform player;
         [SerializeField] private EgocentricSweepProbe sweepProbe;
+        [SerializeField] private AudioSignalRenderer signalRenderer;
         [SerializeField] private bool logStateToConsole = true;
         [SerializeField] private bool showMap = true;
         [SerializeField] private bool sourceClassView = true;
@@ -37,6 +38,11 @@ namespace CityGenPedestrianProbe
         public void SetSweepProbe(EgocentricSweepProbe probe)
         {
             sweepProbe = probe;
+        }
+
+        public void SetSignalRenderer(AudioSignalRenderer renderer)
+        {
+            signalRenderer = renderer;
         }
 
         private void Awake()
@@ -210,6 +216,17 @@ namespace CityGenPedestrianProbe
                    $"Sweep: {BuildSweepText()}\n" +
                    $"Study bounds X: {semanticMap.StudyBounds.xMin:F1}..{semanticMap.StudyBounds.xMax:F1}, " +
                    $"Z: {semanticMap.StudyBounds.yMin:F1}..{semanticMap.StudyBounds.yMax:F1}";
+        }
+
+        private string BuildSignalText()
+        {
+            if (signalRenderer == null)
+                return "no renderer in scene";
+            if (signalRenderer.Catalog == null)
+                return "NO CATALOG - run Tools > Pedestrian Probe > Setup Scene";
+            return $"catalog={signalRenderer.Catalog.CatalogId} " +
+                   $"r{signalRenderer.Catalog.Revision}  " +
+                   $"sounding={signalRenderer.ActiveSustainedCount}";
         }
 
         private string BuildSweepText()

@@ -63,6 +63,7 @@ namespace CityGenPedestrianProbe
             if (signalRenderer == null)
                 signalRenderer = gameObject.AddComponent<AudioSignalRenderer>();
             signalRenderer.Configure(signalCatalog, camera.transform);
+            overlay.SetSignalRenderer(signalRenderer);
             if (signalCatalog == null)
                 Debug.LogWarning("Pedestrian Probe has no signal catalog, so feedback " +
                                  "modules on the signal bus stay silent.", this);

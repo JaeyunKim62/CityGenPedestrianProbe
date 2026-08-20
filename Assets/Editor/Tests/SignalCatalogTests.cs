@@ -96,6 +96,22 @@ namespace CityGenPedestrianProbe.Editor.Tests
         }
 
         [Test]
+        public void CutoffHz_FallsByEqualOctavesPerMetre()
+        {
+            var definition = new SignalDefinition("probe.hit", SignalWaveform.Harmonic,
+                440f, 0.18f, 0.55f);
+            float far = definition.FarDistanceMeters;
+
+            float first = definition.CutoffHzAt(far * 0.25f) / definition.CutoffHzAt(0f);
+            float second = definition.CutoffHzAt(far * 0.5f) / definition.CutoffHzAt(far * 0.25f);
+            float third = definition.CutoffHzAt(far * 0.75f) / definition.CutoffHzAt(far * 0.5f);
+
+            Assert.That(second, Is.EqualTo(first).Within(0.001f));
+            Assert.That(third, Is.EqualTo(first).Within(0.001f));
+            Assert.That(first, Is.LessThan(1f));
+        }
+
+        [Test]
         public void CutoffHz_ClampsBeyondTheFarDistance()
         {
             var definition = Definition("probe.hit");

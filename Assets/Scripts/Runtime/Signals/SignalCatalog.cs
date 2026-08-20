@@ -57,8 +57,11 @@ namespace CityGenPedestrianProbe
         {
             if (float.IsNaN(distanceMeters) || float.IsInfinity(distanceMeters))
                 return FarCutoffHz;
+
             float normalized = Mathf.Clamp01(Mathf.Max(0f, distanceMeters) / FarDistanceMeters);
-            return Mathf.Lerp(NearCutoffHz, FarCutoffHz, normalized);
+            float near = Mathf.Max(20f, NearCutoffHz);
+            float far = Mathf.Max(20f, FarCutoffHz);
+            return near * Mathf.Pow(far / near, normalized);
         }
     }
 

@@ -8,9 +8,9 @@ namespace CityGenPedestrianProbe
     public sealed class AudioSignalRenderer : MonoBehaviour, ISignalRenderer
     {
         private const int OneShotVoiceCount = 4;
-        private const float MaxAudibleMeters = 15f;
 
         [SerializeField] private SignalCatalog catalog;
+        [SerializeField, Min(0.5f)] private float fullLevelRadiusMeters = 2f;
 
         private Transform listener;
         private readonly Dictionary<string, AudioSource> sustainedVoices =
@@ -24,6 +24,7 @@ namespace CityGenPedestrianProbe
         private AudioSource flatVoice;
         private AudioClip attackClip;
         private int nextOneShotVoice;
+        private bool warnedAboutMissingCatalog;
 
         public event Action<string> SignalUnresolved;
 
@@ -35,14 +36,26 @@ namespace CityGenPedestrianProbe
             StopAll();
             catalog = signalCatalog;
             listener = listenerTransform;
+            warnedAboutMissingCatalog = false;
             oneShotClips.Clear();
             loopClips.Clear();
         }
 
         public void Render(in SignalIntent intent)
         {
-            if (!intent.IsValid || catalog == null)
+            if (!intent.IsValid)
                 return;
+            if (catalog == null)
+            {
+                if (!warnedAboutMissingCatalog)
+                {
+                    warnedAboutMissingCatalog = true;
+                    Debug.LogWarning($"Signal '{intent.SignalId}' was emitted but this " +
+                                     "renderer has no catalog, so nothing can sound. Run " +
+                                     "Tools > Pedestrian Probe > Setup Scene.", this);
+                }
+                return;
+            }
             if (!catalog.TryResolve(intent.SignalId, out SignalDefinition definition))
             {
                 SignalUnresolved?.Invoke(intent.SignalId);
@@ -199,8 +212,8 @@ namespace CityGenPedestrianProbe
             source.spatialBlend = spatial ? 1f : 0f;
             source.dopplerLevel = 0f;
             source.rolloffMode = AudioRolloffMode.Logarithmic;
-            source.minDistance = 0.5f;
-            source.maxDistance = MaxAudibleMeters;
+            source.minDistance = Mathf.Max(0.5f, fullLevelRadiusMeters);
+            source.maxDistance = 500f;
             if (lowPass)
                 child.AddComponent<AudioLowPassFilter>();
             return source;

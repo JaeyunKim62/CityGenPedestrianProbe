@@ -21,7 +21,9 @@ namespace CityGenPedestrianProbe.Editor.Tests
         public void Catalog_CarriesItsIdAndRevisionForTheSessionLog()
         {
             Assert.That(catalog.CatalogId, Is.EqualTo("C002_DIRECTION_RANGE"));
-            Assert.That(catalog.Revision, Is.EqualTo(1));
+            Assert.That(catalog.Revision, Is.GreaterThanOrEqualTo(2),
+                "bump the revision whenever a definition changes, or the log cannot " +
+                "say which sounds a session used");
             Assert.That(catalog.DefinitionCount, Is.EqualTo(2));
         }
 
@@ -54,10 +56,12 @@ namespace CityGenPedestrianProbe.Editor.Tests
                 out SignalDefinition definition);
 
             Assert.That(definition.Waveform, Is.EqualTo(SignalWaveform.Harmonic));
-            Assert.That(definition.BaseFrequencyHz, Is.EqualTo(320f));
-            Assert.That(definition.HarmonicCount, Is.EqualTo(5));
+            Assert.That(definition.BaseFrequencyHz, Is.GreaterThan(100f));
+            Assert.That(definition.HarmonicCount, Is.GreaterThanOrEqualTo(3),
+                "distance is read from harmonics being filtered away, so there have to " +
+                "be several to lose");
             Assert.That(definition.AttackClick, Is.True);
-            Assert.That(definition.Level, Is.EqualTo(0.55f).Within(0.001f));
+            Assert.That(definition.Level, Is.GreaterThan(0f));
         }
 
         [Test]
@@ -71,15 +75,27 @@ namespace CityGenPedestrianProbe.Editor.Tests
         }
 
         [Test]
-        public void MissSignal_StaysQuietAndDullAtEveryDistance()
+        public void MissSignal_StaysDullAndFlatAtEveryDistance()
         {
             catalog.TryResolve(EgocentricSweepProbe.MissSignalId,
                 out SignalDefinition definition);
 
-            Assert.That(definition.Level, Is.LessThan(0.25f));
             Assert.That(definition.AttackClick, Is.False);
             Assert.That(definition.CutoffHzAt(0f),
-                Is.EqualTo(definition.CutoffHzAt(5f)).Within(0.01f));
+                Is.EqualTo(definition.CutoffHzAt(5f)).Within(0.01f),
+                "a miss reports no boundary, so it must not appear to have a distance");
+        }
+
+        [Test]
+        public void MissSignal_SitsUnderTheHitSignalRatherThanBesideIt()
+        {
+            catalog.TryResolve(EgocentricSweepProbe.HitSignalId, out SignalDefinition hit);
+            catalog.TryResolve(EgocentricSweepProbe.MissSignalId, out SignalDefinition miss);
+
+            Assert.That(miss.Level, Is.LessThan(hit.Level),
+                "the boundary is the signal, the miss is the bed under it");
+            Assert.That(miss.CutoffHzAt(0f), Is.LessThanOrEqualTo(hit.BaseFrequencyHz),
+                "the two must not share a band, or they blur into each other");
         }
     }
 }

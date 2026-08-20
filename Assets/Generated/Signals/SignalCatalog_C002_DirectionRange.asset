@@ -13,27 +13,27 @@ MonoBehaviour:
   m_Name: SignalCatalog_C002_DirectionRange
   m_EditorClassIdentifier:
   catalogId: C002_DIRECTION_RANGE
-  revision: 1
+  revision: 2
   definitions:
   - signalId: probe.hit
     waveform: 2
-    baseFrequencyHz: 320
-    harmonicCount: 5
+    baseFrequencyHz: 440
+    harmonicCount: 9
     roughnessHz: 0
     durationSeconds: 0.18
     attackClick: 1
     level: 0.55
-    nearCutoffHz: 7000
-    farCutoffHz: 600
+    nearCutoffHz: 9000
+    farCutoffHz: 700
     farDistanceMeters: 5
   - signalId: probe.miss
     waveform: 3
     baseFrequencyHz: 200
     harmonicCount: 1
-    roughnessHz: 0
+    roughnessHz: 2
     durationSeconds: 0.12
     attackClick: 0
-    level: 0.14
-    nearCutoffHz: 900
-    farCutoffHz: 900
+    level: 0.4
+    nearCutoffHz: 320
+    farCutoffHz: 320
     farDistanceMeters: 5
