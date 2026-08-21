@@ -1,14 +1,27 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CityGenPedestrianProbe
 {
-    public sealed class SemanticSpaceMapProbeField : ISpatialProbeField
+    public sealed class SemanticSpaceMapProbeField : ISpatialProbeField,
+        ISpatialBoundaryField
     {
         private readonly SemanticSpaceMap map;
 
         public SemanticSpaceMapProbeField(SemanticSpaceMap semanticMap)
         {
             map = semanticMap;
+        }
+
+        public void CollectBoundaryCrossings(Vector2 origin, Vector2 direction,
+            float maxDistanceMeters, List<float> distances)
+        {
+            if (map == null)
+            {
+                distances.Clear();
+                return;
+            }
+            map.CollectBoundaryCrossings(origin, direction, maxDistanceMeters, distances);
         }
 
         public SpatialProbeSample Sample(Vector2 worldPosition)

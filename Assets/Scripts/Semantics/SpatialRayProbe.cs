@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CityGenPedestrianProbe
@@ -54,6 +55,12 @@ namespace CityGenPedestrianProbe
     public interface ISpatialProbeField
     {
         SpatialProbeSample Sample(Vector2 worldPosition);
+    }
+
+    public interface ISpatialBoundaryField
+    {
+        void CollectBoundaryCrossings(Vector2 origin, Vector2 direction,
+            float maxDistanceMeters, List<float> distances);
     }
 
     public readonly struct SpatialProbeRequest
@@ -127,6 +134,8 @@ namespace CityGenPedestrianProbe
 
     public sealed class RayBoundaryProbe
     {
+        private readonly List<float> crossings = new List<float>();
+
         public SpatialProbeHit Probe(ISpatialProbeField field, SpatialProbeRequest request)
         {
             if (field == null)
@@ -137,6 +146,9 @@ namespace CityGenPedestrianProbe
             if (direction.sqrMagnitude < 0.5f || request.MaxDistanceMeters <= 0f)
                 return SpatialProbeHit.NoHit(request.Origin, request.MaxDistanceMeters,
                     originSample);
+
+            if (field is ISpatialBoundaryField boundaryField)
+                return ProbeExact(field, boundaryField, request, direction, originSample);
 
             float previousDistance = 0f;
             SpatialProbeSample previousSample = originSample;
@@ -157,6 +169,38 @@ namespace CityGenPedestrianProbe
                 distance = Mathf.Min(distance + request.SampleStepMeters,
                     request.MaxDistanceMeters);
             }
+        }
+
+        private SpatialProbeHit ProbeExact(ISpatialProbeField field,
+            ISpatialBoundaryField boundaryField, SpatialProbeRequest request,
+            Vector2 direction, SpatialProbeSample originSample)
+        {
+            const float step = 0.01f;
+            boundaryField.CollectBoundaryCrossings(request.Origin, direction,
+                request.MaxDistanceMeters, crossings);
+
+            float previous = -1f;
+            SpatialProbeSample lastSample = originSample;
+            for (int i = 0; i < crossings.Count; i++)
+            {
+                float distance = crossings[i];
+                if (distance - previous < step)
+                    continue;
+                previous = distance;
+
+                Vector2 beyond = request.Origin + direction * (distance + step);
+                SpatialProbeSample sample = field.Sample(beyond);
+                lastSample = sample;
+                if (originSample.HasSameClassification(sample))
+                    continue;
+
+                return new SpatialProbeHit(true, request.Origin + direction * distance,
+                    distance, request.MaxDistanceMeters, originSample, sample);
+            }
+
+            return SpatialProbeHit.NoHit(
+                request.Origin + direction * request.MaxDistanceMeters,
+                request.MaxDistanceMeters, lastSample);
         }
 
         private static SpatialProbeHit RefineBoundary(ISpatialProbeField field,
