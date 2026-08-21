@@ -150,6 +150,67 @@ namespace CityGenPedestrianProbe.Editor.Tests
             }
         }
 
+        [Test]
+        public void CategoryCatalog_GivesEachBoundaryItsOwnVoice()
+        {
+            SignalCatalog category = Load("C101_PulseCategory");
+            var pitches = new System.Collections.Generic.List<float>();
+
+            foreach (string name in new[] { "Sidewalk", "Crosswalk", "Curb", "Road" })
+            {
+                string signalId = EgocentricSweepProbe.HitSignalIdFor(
+                    new SpatialProbeSample(true, name, "Synthetic", 1L, 1f));
+                Assert.That(category.TryResolve(signalId, out SignalDefinition definition),
+                    Is.True, signalId);
+                Assert.That(definition.SignalId, Is.EqualTo(signalId),
+                    $"{signalId} must have its own entry, not fall back to probe.hit");
+                Assert.That(pitches.Contains(definition.BaseFrequencyHz), Is.False,
+                    "two categories sharing a pitch cannot be told apart");
+                pitches.Add(definition.BaseFrequencyHz);
+            }
+        }
+
+        [Test]
+        public void CategoryCatalog_LeavesDistanceOnTheRateForEveryCategory()
+        {
+            SignalCatalog category = Load("C101_PulseCategory");
+
+            foreach (string name in new[] { "Sidewalk", "Crosswalk", "Curb", "Road" })
+            {
+                string signalId = EgocentricSweepProbe.HitSignalIdFor(
+                    new SpatialProbeSample(true, name, "Synthetic", 1L, 1f));
+                category.TryResolve(signalId, out SignalDefinition definition);
+
+                Assert.That(definition.MapsDistanceToPulse, Is.True, signalId);
+                Assert.That(definition.MapsDistanceToPitch, Is.False,
+                    $"{signalId} uses pitch for category, so distance must not move it");
+            }
+        }
+
+        [Test]
+        public void EveryCatalog_UsesTheSameMissSoConditionsStayComparable()
+        {
+            SignalDefinition first = null;
+            foreach (string name in new[] { "C002_DirectionRange", "C003_PulseRange",
+                         "C004_PitchRange", "C101_PulseCategory" })
+            {
+                Load(name).TryResolve(EgocentricSweepProbe.MissSignalId,
+                    out SignalDefinition miss);
+                if (first == null)
+                {
+                    first = miss;
+                    continue;
+                }
+
+                Assert.That(miss.Level, Is.EqualTo(first.Level).Within(0.001f), name);
+                Assert.That(miss.RoughnessHz, Is.EqualTo(first.RoughnessHz).Within(0.001f),
+                    $"{name} pulses its miss while another catalog does not, which would " +
+                    "flip what a pulse means when catalogs are swapped mid-session");
+                Assert.That(miss.CutoffHzAt(0f), Is.EqualTo(first.CutoffHzAt(0f))
+                    .Within(0.01f), name);
+            }
+        }
+
         private static SignalCatalog Load(string assetName)
         {
             string path = $"Assets/Generated/Signals/SignalCatalog_{assetName}.asset";

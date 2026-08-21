@@ -114,6 +114,58 @@ namespace CityGenPedestrianProbe.Editor.Tests
                 "spatial boundary even though the feature id changes");
         }
 
+        [Test]
+        public void KerbAndRoad_PutsBothEdgesAtTheSameDistance()
+        {
+            SemanticSpaceMap map = Map("SYN06_KerbAndRoad");
+
+            AssertHit(map, Vector2.zero, -90f, 2f);
+            AssertHit(map, Vector2.zero, 90f, 2f);
+        }
+
+        [Test]
+        public void KerbAndRoad_SeparatesTheTwoSidesOnlyByCategory()
+        {
+            SemanticSpaceMap map = Map("SYN06_KerbAndRoad");
+
+            Assert.That(Probe(map, Vector2.zero, 90f).To.Category, Is.EqualTo("Curb"));
+            Assert.That(Probe(map, Vector2.zero, -90f).To.Category, Is.EqualTo("Road"));
+        }
+
+        [Test]
+        public void StreetSection_ReportsTheKerbBeforeTheRoadBehindIt()
+        {
+            SemanticSpaceMap map = Map("SYN07_StreetSection");
+
+            SpatialProbeHit hit = Probe(map, Vector2.zero, 90f);
+
+            Assert.That(hit.To.Category, Is.EqualTo("Curb"));
+            Assert.That(hit.DistanceMeters, Is.EqualTo(2f).Within(0.02f));
+        }
+
+        [Test]
+        public void StreetSection_KeepsTheFarSideOutOfReachFromTheNearPavement()
+        {
+            SemanticSpaceMap map = Map("SYN07_StreetSection");
+
+            SpatialProbeHit hit = Probe(map, Vector2.zero, 90f);
+
+            Assert.That(hit.DistanceMeters, Is.LessThan(3f),
+                "the near kerb answers first; the far side sits at 9.15 m, past the range");
+        }
+
+        [Test]
+        public void StreetSection_ShowsTheFarKerbOnceYouAreOutOnTheRoad()
+        {
+            SemanticSpaceMap map = Map("SYN07_StreetSection");
+            var onRoad = new Vector2(5f, 0f);
+
+            SpatialProbeHit hit = Probe(map, onRoad, 90f);
+
+            Assert.That(hit.To.Category, Is.EqualTo("Curb"));
+            Assert.That(hit.DistanceMeters, Is.EqualTo(4.15f).Within(0.02f));
+        }
+
         private SemanticSpaceMap Map(string layoutId)
         {
             SemanticSpaceMap map = SyntheticTestMaps.Create(layoutId);

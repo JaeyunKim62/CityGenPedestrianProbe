@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e8780c0795346108f549e2c1a41630a, type: 3}
+  m_Name: SignalCatalog_C101_PulseCategory
+  m_EditorClassIdentifier:
+  catalogId: C101_PULSE_CATEGORY
+  revision: 1
+  definitions:
+  - signalId: probe.hit
+    waveform: 0
+    baseFrequencyHz: 460
+    harmonicCount: 1
+    roughnessHz: 0
+    durationSeconds: 0.18
+    attackClick: 1
+    level: 0.55
+    nearCutoffHz: 9000
+    farCutoffHz: 9000
+    farDistanceMeters: 5
+    nearPulseHz: 10
+    farPulseHz: 0.91
+    nearPitchHz: 0
+    farPitchHz: 0
+  - signalId: probe.hit.sidewalk
+    waveform: 1
+    baseFrequencyHz: 330
+    harmonicCount: 1
+    roughnessHz: 0
+    durationSeconds: 0.18
+    attackClick: 1
+    level: 0.5
+    nearCutoffHz: 9000
+    farCutoffHz: 9000
+    farDistanceMeters: 5
+    nearPulseHz: 10
+    farPulseHz: 0.91
+    nearPitchHz: 0
+    farPitchHz: 0
+  - signalId: probe.hit.crosswalk
+    waveform: 2
+    baseFrequencyHz: 495
+    harmonicCount: 3
+    roughnessHz: 0
+    durationSeconds: 0.18
+    attackClick: 1
+    level: 0.55
+    nearCutoffHz: 9000
+    farCutoffHz: 9000
+    farDistanceMeters: 5
+    nearPulseHz: 10
+    farPulseHz: 0.91
+    nearPitchHz: 0
+    farPitchHz: 0
+  - signalId: probe.hit.curb
+    waveform: 2
+    baseFrequencyHz: 660
+    harmonicCount: 5
+    roughnessHz: 0
+    durationSeconds: 0.18
+    attackClick: 1
+    level: 0.55
+    nearCutoffHz: 9000
+    farCutoffHz: 9000
+    farDistanceMeters: 5
+    nearPulseHz: 10
+    farPulseHz: 0.91
+    nearPitchHz: 0
+    farPitchHz: 0
+  - signalId: probe.hit.road
+    waveform: 0
+    baseFrequencyHz: 165
+    harmonicCount: 1
+    roughnessHz: 0
+    durationSeconds: 0.18
+    attackClick: 1
+    level: 0.6
+    nearCutoffHz: 9000
+    farCutoffHz: 9000
+    farDistanceMeters: 5
+    nearPulseHz: 10
+    farPulseHz: 0.91
+    nearPitchHz: 0
+    farPitchHz: 0
+  - signalId: probe.miss
+    waveform: 3
+    baseFrequencyHz: 200
+    harmonicCount: 1
+    roughnessHz: 0
+    durationSeconds: 0.12
+    attackClick: 0
+    level: 0.35
+    nearCutoffHz: 320
+    farCutoffHz: 320
+    farDistanceMeters: 5
+    nearPulseHz: 0
+    farPulseHz: 0
+    nearPitchHz: 0
+    farPitchHz: 0
