@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CityGenPedestrianProbe
@@ -9,15 +11,33 @@ namespace CityGenPedestrianProbe
         [SerializeField] private SemanticPedestrianController player;
         [SerializeField] private Terrain terrain;
         [SerializeField] private SignalCatalog signalCatalog;
+        [SerializeField] private SignalCatalog[] comparisonCatalogs = Array.Empty<SignalCatalog>();
 
         public void Configure(SemanticSpaceMap map, SemanticPedestrianController controller,
-            Terrain ground, SignalCatalog catalog = null)
+            Terrain ground, SignalCatalog catalog = null,
+            SignalCatalog[] comparisons = null)
         {
             semanticMap = map;
             player = controller;
             terrain = ground;
             if (catalog != null)
                 signalCatalog = catalog;
+            if (comparisons != null)
+                comparisonCatalogs = comparisons;
+        }
+
+        private List<SignalCatalog> BuildCatalogCycle()
+        {
+            var cycle = new List<SignalCatalog>();
+            if (signalCatalog != null)
+                cycle.Add(signalCatalog);
+            for (int i = 0; i < comparisonCatalogs.Length; i++)
+            {
+                SignalCatalog comparison = comparisonCatalogs[i];
+                if (comparison != null && !cycle.Contains(comparison))
+                    cycle.Add(comparison);
+            }
+            return cycle;
         }
 
         private void Awake()
@@ -77,6 +97,7 @@ namespace CityGenPedestrianProbe
             if (controls == null)
                 controls = gameObject.AddComponent<SweepKeyboardControls>();
             controls.Configure(sweep, feedback);
+            controls.SetCatalogs(signalRenderer, BuildCatalogCycle());
         }
     }
 }

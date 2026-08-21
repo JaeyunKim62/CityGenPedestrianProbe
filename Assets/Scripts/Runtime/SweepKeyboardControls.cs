@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -15,11 +16,42 @@ namespace CityGenPedestrianProbe
 
         private EgocentricSweepProbe sweep;
         private FeedbackCoordinator coordinator;
+        private AudioSignalRenderer signalRenderer;
+        private readonly List<SignalCatalog> catalogs = new List<SignalCatalog>();
+        private int catalogIndex;
 
         public void Configure(EgocentricSweepProbe sweepProbe, FeedbackCoordinator feedback)
         {
             sweep = sweepProbe;
             coordinator = feedback;
+        }
+
+        public void SetCatalogs(AudioSignalRenderer renderer,
+            IEnumerable<SignalCatalog> availableCatalogs)
+        {
+            signalRenderer = renderer;
+            catalogs.Clear();
+            if (availableCatalogs == null)
+                return;
+            foreach (SignalCatalog available in availableCatalogs)
+            {
+                if (available != null && !catalogs.Contains(available))
+                    catalogs.Add(available);
+            }
+            catalogIndex = 0;
+        }
+
+        public bool CycleCatalog()
+        {
+            if (signalRenderer == null || catalogs.Count < 2)
+                return false;
+
+            catalogIndex = (catalogIndex + 1) % catalogs.Count;
+            SignalCatalog next = catalogs[catalogIndex];
+            signalRenderer.SetCatalog(next);
+            coordinator?.SignalBus?.LogConfigurationChange(
+                $"catalog={next.CatalogId}|revision={next.Revision}");
+            return true;
         }
 
         public void StepAngle(float direction, float deltaSeconds)
@@ -68,6 +100,8 @@ namespace CityGenPedestrianProbe
                 StepRange(1f);
             if (Pressed(KeyCode.G))
                 ToggleSemanticAudio();
+            if (Pressed(KeyCode.V))
+                CycleCatalog();
         }
 
         private static bool Held(KeyCode key)
@@ -102,6 +136,7 @@ namespace CityGenPedestrianProbe
                 case KeyCode.E: return keyboard.eKey;
                 case KeyCode.R: return keyboard.rKey;
                 case KeyCode.G: return keyboard.gKey;
+                case KeyCode.V: return keyboard.vKey;
                 case KeyCode.LeftBracket: return keyboard.leftBracketKey;
                 case KeyCode.RightBracket: return keyboard.rightBracketKey;
                 default: return null;

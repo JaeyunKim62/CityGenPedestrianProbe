@@ -66,6 +66,9 @@ namespace CityGenPedestrianProbe
                 renderers[i].StopAll();
         }
 
+        public void LogConfigurationChange(string detail) =>
+            LogEvent("signal_catalog", Sanitize(detail));
+
         private void HandleSignalUnresolved(string signalId) =>
             LogEvent("signal_unresolved", $"signal={Sanitize(signalId)}");
 

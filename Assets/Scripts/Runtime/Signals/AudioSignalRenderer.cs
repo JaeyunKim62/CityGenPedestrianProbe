@@ -8,14 +8,16 @@ namespace CityGenPedestrianProbe
     public sealed class AudioSignalRenderer : MonoBehaviour, ISignalRenderer
     {
         private const int OneShotVoiceCount = 4;
+        private const float GateEdge = 0.06f;
 
         [SerializeField] private SignalCatalog catalog;
         [SerializeField, Min(0.5f)] private float fullLevelRadiusMeters = 2f;
 
         private Transform listener;
-        private readonly Dictionary<string, AudioSource> sustainedVoices =
-            new Dictionary<string, AudioSource>(StringComparer.Ordinal);
-        private readonly Stack<AudioSource> freeSustainedVoices = new Stack<AudioSource>();
+        private readonly Dictionary<string, SustainedVoice> sustainedVoices =
+            new Dictionary<string, SustainedVoice>(StringComparer.Ordinal);
+        private readonly Stack<SustainedVoice> freeSustainedVoices =
+            new Stack<SustainedVoice>();
         private readonly Dictionary<string, AudioClip> oneShotClips =
             new Dictionary<string, AudioClip>(StringComparer.Ordinal);
         private readonly Dictionary<string, AudioClip> loopClips =
@@ -33,9 +35,14 @@ namespace CityGenPedestrianProbe
 
         public void Configure(SignalCatalog signalCatalog, Transform listenerTransform)
         {
+            listener = listenerTransform;
+            SetCatalog(signalCatalog);
+        }
+
+        public void SetCatalog(SignalCatalog signalCatalog)
+        {
             StopAll();
             catalog = signalCatalog;
-            listener = listenerTransform;
             warnedAboutMissingCatalog = false;
             oneShotClips.Clear();
             loopClips.Clear();
@@ -51,8 +58,7 @@ namespace CityGenPedestrianProbe
                 {
                     warnedAboutMissingCatalog = true;
                     Debug.LogWarning($"Signal '{intent.SignalId}' was emitted but this " +
-                                     "renderer has no catalog, so nothing can sound. Run " +
-                                     "Tools > Pedestrian Probe > Setup Scene.", this);
+                                     "renderer has no catalog, so nothing can sound.", this);
                 }
                 return;
             }
@@ -74,33 +80,53 @@ namespace CityGenPedestrianProbe
             if (string.IsNullOrWhiteSpace(signalId))
                 return;
             string key = signalId.Trim();
-            if (!sustainedVoices.TryGetValue(key, out AudioSource voice))
+            if (!sustainedVoices.TryGetValue(key, out SustainedVoice voice))
                 return;
 
             sustainedVoices.Remove(key);
-            if (voice == null)
-                return;
-            voice.Stop();
-            voice.clip = null;
-            freeSustainedVoices.Push(voice);
+            Recycle(voice);
         }
 
         public void StopAll()
         {
-            foreach (KeyValuePair<string, AudioSource> pair in sustainedVoices)
-            {
-                AudioSource voice = pair.Value;
-                if (voice == null)
-                    continue;
-                voice.Stop();
-                voice.clip = null;
-                freeSustainedVoices.Push(voice);
-            }
+            foreach (KeyValuePair<string, SustainedVoice> pair in sustainedVoices)
+                Recycle(pair.Value);
             sustainedVoices.Clear();
 
             for (int i = 0; i < oneShotVoices.Length; i++)
                 oneShotVoices[i]?.Stop();
             flatVoice?.Stop();
+        }
+
+        private void Update()
+        {
+            foreach (KeyValuePair<string, SustainedVoice> pair in sustainedVoices)
+            {
+                SustainedVoice voice = pair.Value;
+                if (voice.Source == null)
+                    continue;
+                if (voice.PulseHz <= 0f)
+                {
+                    voice.Source.volume = voice.Level;
+                    continue;
+                }
+
+                voice.Phase = Mathf.Repeat(
+                    voice.Phase + voice.PulseHz * Time.unscaledDeltaTime, 1f);
+                voice.Source.volume = voice.Level * Gate(voice.Phase);
+            }
+        }
+
+        private static float Gate(float phase)
+        {
+            const float duty = 0.5f;
+            if (phase >= duty)
+                return 0f;
+            if (phase < GateEdge)
+                return phase / GateEdge;
+            if (phase > duty - GateEdge)
+                return (duty - phase) / GateEdge;
+            return 1f;
         }
 
         private void RenderOneShot(in SignalIntent intent, SignalDefinition definition)
@@ -113,6 +139,7 @@ namespace CityGenPedestrianProbe
             if (voice == null)
                 return;
             voice.transform.position = ResolvePosition(intent);
+            voice.pitch = definition.PitchScaleAt(intent.DistanceMeters);
             if (definition.AttackClick && attackClip != null)
                 voice.PlayOneShot(attackClip, definition.Level);
             voice.PlayOneShot(clip, definition.Level);
@@ -125,26 +152,31 @@ namespace CityGenPedestrianProbe
                 return;
 
             bool started = false;
-            if (!sustainedVoices.TryGetValue(intent.SignalId, out AudioSource voice) ||
-                voice == null)
+            if (!sustainedVoices.TryGetValue(intent.SignalId, out SustainedVoice voice) ||
+                voice.Source == null)
             {
                 voice = TakeSustainedVoice();
                 if (voice == null)
                     return;
                 sustainedVoices[intent.SignalId] = voice;
-                voice.clip = clip;
-                voice.loop = true;
-                voice.volume = definition.Level;
-                voice.Play();
+                voice.Phase = 0f;
+                voice.Source.clip = clip;
+                voice.Source.loop = true;
+                voice.Source.Play();
                 started = true;
             }
 
-            voice.transform.position = ResolvePosition(intent);
-            AudioLowPassFilter filter = voice.GetComponent<AudioLowPassFilter>();
-            if (filter != null)
-                filter.cutoffFrequency = definition.CutoffHzAt(intent.DistanceMeters);
+            voice.Definition = definition;
+            voice.Level = definition.Level;
+            voice.PulseHz = definition.PulseHzAt(intent.DistanceMeters);
+            voice.Source.transform.position = ResolvePosition(intent);
+            voice.Source.pitch = definition.PitchScaleAt(intent.DistanceMeters);
+            if (voice.PulseHz <= 0f)
+                voice.Source.volume = voice.Level;
+            if (voice.Filter != null)
+                voice.Filter.cutoffFrequency = definition.CutoffHzAt(intent.DistanceMeters);
             if (started && definition.AttackClick && attackClip != null)
-                voice.PlayOneShot(attackClip, definition.Level);
+                voice.Source.PlayOneShot(attackClip, definition.Level);
         }
 
         private Vector3 ResolvePosition(in SignalIntent intent)
@@ -177,15 +209,33 @@ namespace CityGenPedestrianProbe
             return voice;
         }
 
-        private AudioSource TakeSustainedVoice()
+        private SustainedVoice TakeSustainedVoice()
         {
             while (freeSustainedVoices.Count > 0)
             {
-                AudioSource pooled = freeSustainedVoices.Pop();
-                if (pooled != null)
+                SustainedVoice pooled = freeSustainedVoices.Pop();
+                if (pooled.Source != null)
                     return pooled;
             }
-            return CreateVoice($"Sustained Signal Voice {sustainedVoices.Count}", true, true);
+
+            AudioSource source = CreateVoice(
+                $"Sustained Signal Voice {sustainedVoices.Count}", true, true);
+            return new SustainedVoice
+            {
+                Source = source,
+                Filter = source.GetComponent<AudioLowPassFilter>()
+            };
+        }
+
+        private void Recycle(SustainedVoice voice)
+        {
+            if (voice?.Source == null)
+                return;
+            voice.Source.Stop();
+            voice.Source.clip = null;
+            voice.Source.pitch = 1f;
+            voice.PulseHz = 0f;
+            freeSustainedVoices.Push(voice);
         }
 
         private void EnsureVoices()
@@ -222,6 +272,16 @@ namespace CityGenPedestrianProbe
         private void OnDisable()
         {
             StopAll();
+        }
+
+        private sealed class SustainedVoice
+        {
+            public AudioSource Source;
+            public AudioLowPassFilter Filter;
+            public SignalDefinition Definition;
+            public float Level;
+            public float PulseHz;
+            public float Phase;
         }
     }
 }

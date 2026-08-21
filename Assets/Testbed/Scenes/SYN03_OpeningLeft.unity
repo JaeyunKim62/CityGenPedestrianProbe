@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &612177232
+--- !u!1 &53675954
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,57 +127,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 612177234}
-  - component: {fileID: 612177233}
-  m_Layer: 0
-  m_Name: Pedestrian Probe Runtime
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &612177233
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 612177232}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd519f5973101bb4d9620cc7caa8f0a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CityGenPedestrianProbe.PedestrianProbeRuntime
-  semanticMap: {fileID: 11400000, guid: b5730d3220de94641a4eadad1d0dbebd, type: 2}
-  player: {fileID: 1721079437}
-  terrain: {fileID: 0}
-  signalCatalog: {fileID: 11400000, guid: fc1f6b11942e4e19bb09bb41758d33aa, type: 2}
---- !u!4 &612177234
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 612177232}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1721079436
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1721079439}
-  - component: {fileID: 1721079438}
-  - component: {fileID: 1721079437}
+  - component: {fileID: 53675957}
+  - component: {fileID: 53675956}
+  - component: {fileID: 53675955}
   m_Layer: 0
   m_Name: Synthetic Pedestrian
   m_TagString: Untagged
@@ -185,13 +137,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1721079437
+--- !u!114 &53675955
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1721079436}
+  m_GameObject: {fileID: 53675954}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d6d34b524be37f4b95dceecd90c076b, type: 3}
@@ -205,13 +157,13 @@ MonoBehaviour:
   mouseSensitivity: 0.08
   boundaryInset: 0.25
   lookEnabled: 1
---- !u!20 &1721079438
+--- !u!20 &53675956
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1721079436}
+  m_GameObject: {fileID: 53675954}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
@@ -256,16 +208,68 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &1721079439
+--- !u!4 &53675957
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1721079436}
+  m_GameObject: {fileID: 53675954}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.7, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1010733406
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1010733408}
+  - component: {fileID: 1010733407}
+  m_Layer: 0
+  m_Name: Pedestrian Probe Runtime
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1010733407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1010733406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd519f5973101bb4d9620cc7caa8f0a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CityGenPedestrianProbe.PedestrianProbeRuntime
+  semanticMap: {fileID: 11400000, guid: b5730d3220de94641a4eadad1d0dbebd, type: 2}
+  player: {fileID: 53675955}
+  terrain: {fileID: 0}
+  signalCatalog: {fileID: 11400000, guid: fc1f6b11942e4e19bb09bb41758d33aa, type: 2}
+  comparisonCatalogs:
+  - {fileID: 11400000, guid: fc1f6b11942e4e19bb09bb41758d33aa, type: 2}
+  - {fileID: 11400000, guid: 5f64a6fde0764ae2848c2aa614120b6d, type: 2}
+  - {fileID: 11400000, guid: 376026b226864d61a65f791d8ced860f, type: 2}
+--- !u!4 &1010733408
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1010733406}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -275,5 +279,5 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1721079439}
-  - {fileID: 612177234}
+  - {fileID: 53675957}
+  - {fileID: 1010733408}

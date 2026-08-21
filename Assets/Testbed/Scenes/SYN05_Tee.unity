@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &50661053
+--- !u!1 &833688235
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,9 +127,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 50661056}
-  - component: {fileID: 50661055}
-  - component: {fileID: 50661054}
+  - component: {fileID: 833688238}
+  - component: {fileID: 833688237}
+  - component: {fileID: 833688236}
   m_Layer: 0
   m_Name: Synthetic Pedestrian
   m_TagString: Untagged
@@ -137,13 +137,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &50661054
+--- !u!114 &833688236
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 50661053}
+  m_GameObject: {fileID: 833688235}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d6d34b524be37f4b95dceecd90c076b, type: 3}
@@ -157,13 +157,13 @@ MonoBehaviour:
   mouseSensitivity: 0.08
   boundaryInset: 0.25
   lookEnabled: 1
---- !u!20 &50661055
+--- !u!20 &833688237
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 50661053}
+  m_GameObject: {fileID: 833688235}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
@@ -208,13 +208,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &50661056
+--- !u!4 &833688238
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 50661053}
+  m_GameObject: {fileID: 833688235}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.7, z: 0}
@@ -223,7 +223,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &834680857
+--- !u!1 &1451966546
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -231,8 +231,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 834680859}
-  - component: {fileID: 834680858}
+  - component: {fileID: 1451966548}
+  - component: {fileID: 1451966547}
   m_Layer: 0
   m_Name: Pedestrian Probe Runtime
   m_TagString: Untagged
@@ -240,29 +240,33 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &834680858
+--- !u!114 &1451966547
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 834680857}
+  m_GameObject: {fileID: 1451966546}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fd519f5973101bb4d9620cc7caa8f0a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CityGenPedestrianProbe.PedestrianProbeRuntime
   semanticMap: {fileID: 11400000, guid: 511c4646fb2c879458fc47bb9915c5df, type: 2}
-  player: {fileID: 50661054}
+  player: {fileID: 833688236}
   terrain: {fileID: 0}
   signalCatalog: {fileID: 11400000, guid: fc1f6b11942e4e19bb09bb41758d33aa, type: 2}
---- !u!4 &834680859
+  comparisonCatalogs:
+  - {fileID: 11400000, guid: fc1f6b11942e4e19bb09bb41758d33aa, type: 2}
+  - {fileID: 11400000, guid: 5f64a6fde0764ae2848c2aa614120b6d, type: 2}
+  - {fileID: 11400000, guid: 376026b226864d61a65f791d8ced860f, type: 2}
+--- !u!4 &1451966548
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 834680857}
+  m_GameObject: {fileID: 1451966546}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -275,5 +279,5 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 50661056}
-  - {fileID: 834680859}
+  - {fileID: 833688238}
+  - {fileID: 1451966548}

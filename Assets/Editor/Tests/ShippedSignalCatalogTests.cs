@@ -87,6 +87,78 @@ namespace CityGenPedestrianProbe.Editor.Tests
         }
 
         [Test]
+        public void PulseCatalog_MatchesTheRatesThePublishedComparisonUsed()
+        {
+            SignalCatalog pulse = Load("C003_PulseRange");
+            pulse.TryResolve(EgocentricSweepProbe.HitSignalId, out SignalDefinition hit);
+
+            Assert.That(hit.MapsDistanceToPulse, Is.True);
+            Assert.That(hit.PulseHzAt(0f), Is.EqualTo(10f).Within(0.01f));
+            Assert.That(hit.PulseHzAt(hit.FarDistanceMeters), Is.EqualTo(0.91f).Within(0.01f));
+        }
+
+        [Test]
+        public void PulseCatalog_InterpolatesPeriodSoNearDistancesStaySensitive()
+        {
+            SignalCatalog pulse = Load("C003_PulseRange");
+            pulse.TryResolve(EgocentricSweepProbe.HitSignalId, out SignalDefinition hit);
+            float far = hit.FarDistanceMeters;
+
+            float firstTenth = hit.PulseHzAt(0f) - hit.PulseHzAt(far * 0.1f);
+            float lastTenth = hit.PulseHzAt(far * 0.9f) - hit.PulseHzAt(far);
+
+            Assert.That(firstTenth, Is.GreaterThan(lastTenth * 10f),
+                "beep period is linear in distance, so rate has to change fastest up close");
+        }
+
+        [Test]
+        public void PulseCatalog_LeavesTheMissSteadySoItCannotBeReadAsARate()
+        {
+            SignalCatalog pulse = Load("C003_PulseRange");
+            pulse.TryResolve(EgocentricSweepProbe.MissSignalId, out SignalDefinition miss);
+
+            Assert.That(miss.MapsDistanceToPulse, Is.False);
+            Assert.That(miss.PulseHzAt(2f), Is.EqualTo(0f));
+        }
+
+        [Test]
+        public void PitchCatalog_RisesTowardTheListenerWithinPlayableRange()
+        {
+            SignalCatalog pitch = Load("C004_PitchRange");
+            pitch.TryResolve(EgocentricSweepProbe.HitSignalId, out SignalDefinition hit);
+
+            Assert.That(hit.MapsDistanceToPitch, Is.True);
+            Assert.That(hit.NearPitchHz, Is.GreaterThan(hit.FarPitchHz),
+                "the published majority mapping is higher pitch for nearer");
+            Assert.That(hit.PitchScaleAt(0f), Is.GreaterThan(hit.PitchScaleAt(5f)));
+            Assert.That(hit.PitchScaleAt(0f), Is.LessThanOrEqualTo(3f),
+                "AudioSource.pitch cannot exceed 3, so the base tone has to sit mid-range");
+            Assert.That(hit.PitchScaleAt(5f), Is.GreaterThan(0.05f));
+        }
+
+        [Test]
+        public void EveryCatalog_AnswersBothSweepSignals()
+        {
+            foreach (string name in new[]
+                     { "C002_DirectionRange", "C003_PulseRange", "C004_PitchRange" })
+            {
+                SignalCatalog loaded = Load(name);
+                Assert.That(loaded.TryResolve(EgocentricSweepProbe.HitSignalId, out _),
+                    Is.True, name);
+                Assert.That(loaded.TryResolve(EgocentricSweepProbe.MissSignalId, out _),
+                    Is.True, name);
+            }
+        }
+
+        private static SignalCatalog Load(string assetName)
+        {
+            string path = $"Assets/Generated/Signals/SignalCatalog_{assetName}.asset";
+            var loaded = AssetDatabase.LoadAssetAtPath<SignalCatalog>(path);
+            Assert.That(loaded, Is.Not.Null, $"Missing catalog at {path}");
+            return loaded;
+        }
+
+        [Test]
         public void MissSignal_SitsUnderTheHitSignalRatherThanBesideIt()
         {
             catalog.TryResolve(EgocentricSweepProbe.HitSignalId, out SignalDefinition hit);

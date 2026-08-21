@@ -26,6 +26,10 @@ namespace CityGenPedestrianProbe
         [SerializeField, Min(20f)] private float nearCutoffHz = 8000f;
         [SerializeField, Min(20f)] private float farCutoffHz = 700f;
         [SerializeField, Min(0.1f)] private float farDistanceMeters = 5f;
+        [SerializeField, Min(0f)] private float nearPulseHz;
+        [SerializeField, Min(0f)] private float farPulseHz;
+        [SerializeField, Min(0f)] private float nearPitchHz;
+        [SerializeField, Min(0f)] private float farPitchHz;
 
         public string SignalId => signalId ?? string.Empty;
         public SignalWaveform Waveform => waveform;
@@ -53,15 +57,46 @@ namespace CityGenPedestrianProbe
             level = signalLevel;
         }
 
+        public float NearPulseHz => Mathf.Max(0f, nearPulseHz);
+        public float FarPulseHz => Mathf.Max(0f, farPulseHz);
+        public float NearPitchHz => Mathf.Max(0f, nearPitchHz);
+        public float FarPitchHz => Mathf.Max(0f, farPitchHz);
+        public bool MapsDistanceToPulse => NearPulseHz > 0f && FarPulseHz > 0f;
+        public bool MapsDistanceToPitch => NearPitchHz > 0f && FarPitchHz > 0f;
+
         public float CutoffHzAt(float distanceMeters)
         {
-            if (float.IsNaN(distanceMeters) || float.IsInfinity(distanceMeters))
-                return FarCutoffHz;
-
-            float normalized = Mathf.Clamp01(Mathf.Max(0f, distanceMeters) / FarDistanceMeters);
             float near = Mathf.Max(20f, NearCutoffHz);
             float far = Mathf.Max(20f, FarCutoffHz);
-            return near * Mathf.Pow(far / near, normalized);
+            return near * Mathf.Pow(far / near, Normalized(distanceMeters));
+        }
+
+        public float PulseHzAt(float distanceMeters)
+        {
+            if (!MapsDistanceToPulse)
+                return 0f;
+
+            float nearPeriod = 1f / NearPulseHz;
+            float farPeriod = 1f / FarPulseHz;
+            float period = Mathf.Lerp(nearPeriod, farPeriod, Normalized(distanceMeters));
+            return period > 0f ? 1f / period : 0f;
+        }
+
+        public float PitchScaleAt(float distanceMeters)
+        {
+            if (!MapsDistanceToPitch)
+                return 1f;
+
+            float hz = NearPitchHz * Mathf.Pow(FarPitchHz / NearPitchHz,
+                Normalized(distanceMeters));
+            return Mathf.Clamp(hz / BaseFrequencyHz, 0.05f, 3f);
+        }
+
+        private float Normalized(float distanceMeters)
+        {
+            if (float.IsNaN(distanceMeters) || float.IsInfinity(distanceMeters))
+                return 1f;
+            return Mathf.Clamp01(Mathf.Max(0f, distanceMeters) / FarDistanceMeters);
         }
     }
 

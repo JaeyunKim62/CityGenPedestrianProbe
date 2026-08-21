@@ -55,6 +55,20 @@ namespace CityGenPedestrianProbe.Editor
             return null;
         }
 
+        private static SignalCatalog[] FindComparisonCatalogs()
+        {
+            var found = new System.Collections.Generic.List<SignalCatalog>();
+            foreach (string assetGuid in AssetDatabase.FindAssets("t:SignalCatalog"))
+            {
+                var comparison = AssetDatabase.LoadAssetAtPath<SignalCatalog>(
+                    AssetDatabase.GUIDToAssetPath(assetGuid));
+                if (comparison != null)
+                    found.Add(comparison);
+            }
+            found.Sort((a, b) => string.CompareOrdinal(a.CatalogId, b.CatalogId));
+            return found.ToArray();
+        }
+
         private static void BuildOne(SyntheticLayout layout)
         {
             SemanticSpaceMap map = SyntheticTestMaps.Create(layout.Id);
@@ -83,7 +97,7 @@ namespace CityGenPedestrianProbe.Editor
             SignalCatalog liveCatalog = FindCatalog();
             if (liveCatalog == null)
                 Debug.LogError($"{layout.Id} was built without a catalog and will be silent.");
-            runtime.Configure(map, controller, null, liveCatalog);
+            runtime.Configure(map, controller, null, liveCatalog, FindComparisonCatalogs());
             EditorUtility.SetDirty(controller);
             EditorUtility.SetDirty(runtime);
 
