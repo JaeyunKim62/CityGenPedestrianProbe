@@ -112,7 +112,7 @@ namespace CityGenPedestrianProbe.Editor
         private static SignalCatalog LoadDefaultSignalCatalog()
         {
             const string path =
-                "Assets/Generated/Signals/SignalCatalog_C002_DirectionRange.asset";
+                "Assets/Generated/Signals/SignalCatalog_C101_PulseCategory.asset";
             var catalog = AssetDatabase.LoadAssetAtPath<SignalCatalog>(path);
             if (catalog == null)
                 Debug.LogWarning($"Signal catalog not found at {path}. " +

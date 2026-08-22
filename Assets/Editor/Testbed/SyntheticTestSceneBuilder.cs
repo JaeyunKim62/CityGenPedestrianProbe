@@ -11,7 +11,7 @@ namespace CityGenPedestrianProbe.Editor
         private const string MapFolder = "Assets/Testbed/Maps";
         private const string SceneFolder = "Assets/Testbed/Scenes";
         private const string CatalogPath =
-            "Assets/Generated/Signals/SignalCatalog_C002_DirectionRange.asset";
+            "Assets/Generated/Signals/SignalCatalog_C101_PulseCategory.asset";
         private const float EyeHeight = 1.7f;
 
         [MenuItem("Tools/Pedestrian Probe/Testbed/Build Synthetic Scenes", priority = 40)]

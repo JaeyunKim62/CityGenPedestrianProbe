@@ -151,7 +151,7 @@ MonoBehaviour:
   semanticMap: {fileID: 11400000, guid: 419e5ce17cd329b4a87e9e042f472a32, type: 2}
   player: {fileID: 1560187601}
   terrain: {fileID: 0}
-  signalCatalog: {fileID: 11400000, guid: fc1f6b11942e4e19bb09bb41758d33aa, type: 2}
+  signalCatalog: {fileID: 11400000, guid: 2cce367a907f4e5eb99b03b5c7aaab55, type: 2}
   comparisonCatalogs:
   - {fileID: 11400000, guid: fc1f6b11942e4e19bb09bb41758d33aa, type: 2}
   - {fileID: 11400000, guid: 5f64a6fde0764ae2848c2aa614120b6d, type: 2}

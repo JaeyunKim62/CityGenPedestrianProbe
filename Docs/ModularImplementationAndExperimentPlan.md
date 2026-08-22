@@ -70,6 +70,7 @@
 | 순서 | 브랜치 | 내용 |
 | --- | --- | --- |
 | 0 | `infra/feedback-experiments` | module ID·토글·registry·로그 기반 |
+| 0.5 | `infra/feedback-signal-bus` | 신호 어휘·카탈로그·렌더러·버스 |
 | 1 | `feat/fb-01-egocentric-sweep` | 자기중심 좌우 스위프 v0 |
 | 2 | `feat/fb-02-boundary-flow` | 경계 흐름 또는 피드포워드 shoreline |
 | 3 | `feat/fb-03-junction-topology` | 교차로 포털·허브 |
@@ -110,6 +111,8 @@
 - 시점: boundary 경고를 유지한 채 semantic 접근음만 끄는 실제 조건이 생길 때 별도 refactor branch에서 수행한다.
 
 그 전까지 `semantic.audio`의 OFF는 접근·진입·study-boundary 음향 전체가 꺼진다는 뜻으로 로그와 문서에 명시한다.
+
+스위프가 소리를 내면서 **두 가지 신호 문법이 공존**하게 되었다. `semantic.audio`는 동결된 자기 오디오 경로를 쓰고, 스위프는 신호 버스를 쓴다. 둘을 동시에 켜면 사용자가 두 문법을 함께 배워야 하므로, **그런 조합 profile은 당분간 만들지 않는다.** 청취 세션에서는 `G`로 `semantic.audio`를 끄고 시작한다.
 
 ### FeedbackModule 계약
 
@@ -171,6 +174,7 @@ Git branch는 코드 차이를 보존한다. 실험 profile은 같은 코드에�
 - Git commit hash 또는 수동 입력된 build ID
 - 활성 module ID 목록
 - 각 module의 설정 snapshot
+- signal catalog ID와 revision
 - map version과 database ID
 - Unity version
 - scene 또는 합성 환경 variant ID와 random seed
@@ -279,16 +283,28 @@ profile layer는 module 구현에 의존하지 않고 `FeedbackCoordinator.SetMo
 
 ### 감지 구현
 
-첫 단계는 semantic ray marching이다.
+**구현됨 (2026-08-22 개정).** 처음에는 semantic ray marching으로 만들었으나, 지금은 **레이와 경계 선분의 교차 계산**을 쓴다.
 
 1. 현재 위치의 semantic을 구한다.
 2. 상대 sweep 각도를 player heading에 더한다.
-3. 레이 위를 작은 step으로 샘플링한다.
-4. semantic category가 처음 변하는 지점을 찾는다. 같은 category 안의 source class 또는 feature ID 변화는 경계로 세지 않는다.
-5. 이분 탐색으로 경계 거리를 보정한다.
+3. 레이가 지나는 격자 칸의 feature들을 모은다.
+4. 각 feature의 `boundaryEdges`와 레이를 교차시켜 거리 목록을 얻고 정렬한다.
+5. 가장 가까운 교차점부터 1 cm 뒤를 한 번 샘플링해, 원점과 분류가 처음 달라지는 지점을 찾는다. 같은 category 안의 source class 또는 feature ID 변화는 경계로 세지 않는다.
 6. `SpatialProbeHit`을 반환한다.
 
-초기 step 후보는 0.25–0.5 m지만, 이는 검증된 인간 지각값이 아니라 계산 성능과 오차를 확인하기 위한 공학적 시작값이다.
+`boundaryEdges`는 베이크할 때 이미 만들어 저장하고 있었고, 오랫동안 쓰이지 않았다.
+
+교차 계산으로 바꾼 이유:
+
+- 거리가 정확하다. 이분 탐색의 약 3 cm 오차가 사라진다.
+- 샘플 수가 사거리가 아니라 실제 교차 수에 비례한다. 사거리를 40 m로 늘려도 비용이 거의 늘지 않는다.
+- step과 refinement 반복수라는 **잘못 설정할 수 있는 값이 사라진다.**
+- 교차점 목록이 이미 정렬되어 나오므로 다중 hit이 읽기만 하면 되는 상태가 된다.
+- 경계 선분을 알고 있으므로 접선 방향을 꺼낼 수 있다. F2가 필요로 하는 값이다.
+
+marching이 실패하는 경우는 **양옆이 같은 분류인 얇은 띠**다. 두 샘플이 모두 원점과 같다고 답해서 띠가 아예 없는 것이 된다. 인도를 가로지르는 연석선 같은 것들이다. (얇은 연석이 오분류된다는 초기 서술은 틀렸다. 이분 탐색이 상한을 경계 바로 너머로 좁히면서 띠 안쪽을 샘플링하므로 marching도 맞힌다.)
+
+`ISpatialProbeField`(점 샘플)는 그대로 두고 `ISpatialBoundaryField`(교차 질의)를 선택적으로 추가했다. 점 샘플만 가능한 데이터원은 예전 marching 경로로 계속 동작한다.
 
 `Physics.Raycast`는 collider 존재와 obstacle semantic이 확인된 후 별도 hit provider로 추가한다. v0의 결과를 “모든 장애물 탐지”로 표현하지 않는다.
 
@@ -374,6 +390,16 @@ profile layer는 module 구현에 의존하지 않고 `FeedbackCoordinator.SetMo
 - infra와 feature branch는 사용자가 결정할 때까지 `main`에 병합하지 않음
 
 ## 9. 첫 자체 실험
+
+### EXP-SIG-00 — 신호 변별 검증
+
+- 질문: 세 정보가 각각 들리는가. 방향·거리·경계 유무·경계 종류
+- 환경: 합성 배치 (`Assets/Testbed/Scenes/`)
+- 방법: 화면을 가리고 답한 뒤 `B`로 정답 확인. 매 시행 정답 피드백
+- 결과: 좌우 판별 정확도, 각도 오차, 거리 오차, hit/miss 정확도, 종류 정확도
+- **EXP-SWEEP-01보다 앞선다.** 통과 못 하면 "형태를 못 읽었다"가 신호 혼동 때문인지 공간 인지 실패인지 구분할 수 없다
+
+EXP-SWEEP-00과는 병행할 수 있다. 서로 다른 것을 검증한다. 00은 ray hit 참값과 들리는 위치의 일치를, SIG-00은 신호 자체의 변별을 본다.
 
 ### EXP-SWEEP-00 — 계산과 표현 검증
 
