@@ -17,7 +17,7 @@ namespace CityGenPedestrianProbe
         [SerializeField] private float relativeAngleDegrees;
         [SerializeField, Min(0.1f)] private float minRangeMeters = 1f;
         [SerializeField, Min(0.1f)] private float maxRangeMeters = 40f;
-        [SerializeField, Min(0.1f)] private float rangeMeters = 5f;
+        [SerializeField, Min(0.1f)] private float rangeMeters = 12f;
 
         [Header("Detection")]
         [SerializeField, Min(0.01f)] private float sampleStepMeters = 0.5f;
@@ -220,7 +220,8 @@ namespace CityGenPedestrianProbe
             SemanticHit semanticHit = semanticMap != null
                 ? semanticMap.ClassifyWorld(point)
                 : SemanticHit.Unknown(point);
-            string detail = $"angle={relativeAngleDegrees:F2}|range={rangeMeters:F2}|" +
+            string detail = $"angle={relativeAngleDegrees:F2}|bearing={WorldBearingDegrees():F2}|" +
+                            $"range={rangeMeters:F2}|" +
                             $"hit={hit.HasHit}|distance=" +
                             $"{(hit.HasHit ? hit.DistanceMeters.ToString("F2") : "N/A")}|" +
                             $"from={Safe(hit.From.DisplayLabel)}|" +
@@ -245,6 +246,14 @@ namespace CityGenPedestrianProbe
                 end + Vector3.right * markerSize, color, 0.12f, false);
             Debug.DrawLine(end - Vector3.forward * markerSize,
                 end + Vector3.forward * markerSize, color, 0.12f, false);
+        }
+
+        private float WorldBearingDegrees()
+        {
+            if (listener == null)
+                return relativeAngleDegrees;
+            float bearing = listener.eulerAngles.y + relativeAngleDegrees;
+            return Mathf.Repeat(bearing, 360f);
         }
 
         private static string Safe(string value) =>

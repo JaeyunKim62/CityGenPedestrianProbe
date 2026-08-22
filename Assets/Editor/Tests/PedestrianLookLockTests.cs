@@ -22,54 +22,55 @@ namespace CityGenPedestrianProbe.Editor.Tests
         }
 
         [Test]
-        public void Look_StartsEnabledSoTheEditorCanBeDriven()
+        public void Pitch_StartsEnabledSoTheEditorCanBeDriven()
         {
-            Assert.That(player.LookEnabled, Is.True);
+            Assert.That(player.PitchEnabled, Is.True);
         }
 
         [Test]
-        public void LockingLook_LevelsAnAlreadyTiltedHead()
+        public void LockingPitch_LevelsAnAlreadyTiltedHead()
         {
             playerObject.transform.localEulerAngles = new Vector3(40f, 120f, 0f);
 
-            player.SetLookEnabled(false);
+            player.SetPitchEnabled(false);
 
-            Assert.That(player.LookEnabled, Is.False);
+            Assert.That(player.PitchEnabled, Is.False);
             Assert.That(Mathf.DeltaAngle(0f, playerObject.transform.localEulerAngles.x),
                 Is.EqualTo(0f).Within(0.001f));
         }
 
         [Test]
-        public void LockingLook_KeepsTheHeadingItWasFacing()
+        public void LockingPitch_LeavesTheHeadingAlone()
         {
             playerObject.transform.localEulerAngles = new Vector3(40f, 120f, 0f);
 
-            player.SetLookEnabled(false);
+            player.SetPitchEnabled(false);
 
             Assert.That(Mathf.DeltaAngle(120f, playerObject.transform.localEulerAngles.y),
-                Is.EqualTo(0f).Within(0.001f));
+                Is.EqualTo(0f).Within(0.001f),
+                "the body still has to be able to face down a street while blind");
         }
 
         [Test]
-        public void LockingLook_LevelsHeadsTiltedDownwardToo()
+        public void LockingPitch_LevelsHeadsTiltedDownwardToo()
         {
             playerObject.transform.localEulerAngles = new Vector3(-55f, 0f, 0f);
 
-            player.SetLookEnabled(false);
+            player.SetPitchEnabled(false);
 
             Assert.That(Mathf.DeltaAngle(0f, playerObject.transform.localEulerAngles.x),
                 Is.EqualTo(0f).Within(0.001f));
         }
 
         [Test]
-        public void UnlockingLook_DoesNotDisturbTheTransform()
+        public void UnlockingPitch_DoesNotDisturbTheTransform()
         {
-            player.SetLookEnabled(false);
+            player.SetPitchEnabled(false);
             playerObject.transform.localEulerAngles = new Vector3(0f, 75f, 0f);
 
-            player.SetLookEnabled(true);
+            player.SetPitchEnabled(true);
 
-            Assert.That(player.LookEnabled, Is.True);
+            Assert.That(player.PitchEnabled, Is.True);
             Assert.That(Mathf.DeltaAngle(75f, playerObject.transform.localEulerAngles.y),
                 Is.EqualTo(0f).Within(0.001f));
         }

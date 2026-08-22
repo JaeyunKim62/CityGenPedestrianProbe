@@ -127,13 +127,14 @@ namespace CityGenPedestrianProbe.Editor.Tests
         }
 
         [Test]
-        public void RuntimeProbe_DefaultRangeIsFiveMeters()
+        public void RuntimeProbe_DefaultRangeReachesAcrossAStreet()
         {
             var gameObject = new GameObject("Egocentric Sweep Probe Test");
             try
             {
                 var runtimeProbe = gameObject.AddComponent<EgocentricSweepProbe>();
-                Assert.That(runtimeProbe.RangeMeters, Is.EqualTo(5f));
+                Assert.That(runtimeProbe.RangeMeters, Is.GreaterThanOrEqualTo(10f),
+                    "a sweep that stops short of the far kerb says nothing about a street");
             }
             finally
             {
