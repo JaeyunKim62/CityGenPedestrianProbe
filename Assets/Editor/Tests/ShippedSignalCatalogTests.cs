@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using UnityEditor;
+using UnityEngine;
 
 namespace CityGenPedestrianProbe.Editor.Tests
 {
@@ -208,6 +209,31 @@ namespace CityGenPedestrianProbe.Editor.Tests
                     "flip what a pulse means when catalogs are swapped mid-session");
                 Assert.That(miss.CutoffHzAt(0f), Is.EqualTo(first.CutoffHzAt(0f))
                     .Within(0.01f), name);
+            }
+        }
+
+        [Test]
+        public void EveryCatalog_MapsDistanceOverTheWholeProbeRange()
+        {
+            var probeObject = new GameObject("Range Check Probe");
+            try
+            {
+                float range = probeObject.AddComponent<EgocentricSweepProbe>().RangeMeters;
+
+                foreach (string name in new[] { "C002_DirectionRange", "C003_PulseRange",
+                             "C004_PitchRange", "C101_PulseCategory" })
+                {
+                    Load(name).TryResolve(EgocentricSweepProbe.HitSignalId,
+                        out SignalDefinition hit);
+
+                    Assert.That(hit.FarDistanceMeters, Is.GreaterThanOrEqualTo(range),
+                        $"{name} stops varying at {hit.FarDistanceMeters} m while the probe " +
+                        $"reaches {range} m, so everything past that carries no distance");
+                }
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(probeObject);
             }
         }
 

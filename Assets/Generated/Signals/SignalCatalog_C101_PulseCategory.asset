@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SignalCatalog_C101_PulseCategory
   m_EditorClassIdentifier:
   catalogId: C101_PULSE_CATEGORY
-  revision: 1
+  revision: 2
   definitions:
   - signalId: probe.hit
     waveform: 0
@@ -25,7 +25,7 @@ MonoBehaviour:
     level: 0.55
     nearCutoffHz: 9000
     farCutoffHz: 9000
-    farDistanceMeters: 5
+    farDistanceMeters: 12
     nearPulseHz: 10
     farPulseHz: 0.91
     nearPitchHz: 0
@@ -40,7 +40,7 @@ MonoBehaviour:
     level: 0.5
     nearCutoffHz: 9000
     farCutoffHz: 9000
-    farDistanceMeters: 5
+    farDistanceMeters: 12
     nearPulseHz: 10
     farPulseHz: 0.91
     nearPitchHz: 0
@@ -55,7 +55,7 @@ MonoBehaviour:
     level: 0.55
     nearCutoffHz: 9000
     farCutoffHz: 9000
-    farDistanceMeters: 5
+    farDistanceMeters: 12
     nearPulseHz: 10
     farPulseHz: 0.91
     nearPitchHz: 0
@@ -70,7 +70,7 @@ MonoBehaviour:
     level: 0.55
     nearCutoffHz: 9000
     farCutoffHz: 9000
-    farDistanceMeters: 5
+    farDistanceMeters: 12
     nearPulseHz: 10
     farPulseHz: 0.91
     nearPitchHz: 0
@@ -85,7 +85,7 @@ MonoBehaviour:
     level: 0.6
     nearCutoffHz: 9000
     farCutoffHz: 9000
-    farDistanceMeters: 5
+    farDistanceMeters: 12
     nearPulseHz: 10
     farPulseHz: 0.91
     nearPitchHz: 0
@@ -100,7 +100,7 @@ MonoBehaviour:
     level: 0.35
     nearCutoffHz: 320
     farCutoffHz: 320
-    farDistanceMeters: 5
+    farDistanceMeters: 12
     nearPulseHz: 0
     farPulseHz: 0
     nearPitchHz: 0
