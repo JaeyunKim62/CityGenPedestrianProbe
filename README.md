@@ -56,7 +56,7 @@ CityGen3D로 생성한 실제 도시 공간을 보행자 관점의 semantic 공�
 | 터치 소스 | 완료 | 좌반부 보행·회전, 우반부 조준·사거리, 다중 탭 명령. mm 단위라 기기 무관 |
 | 블라인드 화면과 디버그 HUD | 완료 | 상태·미니맵·화면 설정 메뉴. 디버그 요소는 개발 빌드 한정 |
 | 실험 CSV 로그 | 완료 | 위치·분류·레이어·신호·토글·기기 정보 |
-| 합성 테스트베드 | 완료 | 정답을 아는 자극 5종 (`Assets/Testbed`) |
+| 합성 테스트베드 | 완료 | 정답을 아는 자극 7종 (`Assets/Testbed`) |
 | Android 빌드 | 완료 | 테스트베드·도시 APK. 실기에서 10 Hz 유지 확인 |
 | 씬 전환 | 미구현 | 폰에서 자극을 바꾸려면 재설치가 필요하다 |
 | 사용자 실험을 통한 신호 검증 | 미실시 | 음향 패턴과 confidence 값 검증 필요 |
@@ -65,31 +65,32 @@ CityGen3D로 생성한 실제 도시 공간을 보행자 관점의 semantic 공�
 
 ## 현재 데이터셋
 
-현재 저장된 semantic asset bake version 3 기준입니다.
+두 곳을 베이크해 두었습니다. **NYC Doyers Chinatown이 현행**이고 실기 검증도 이쪽으로 했습니다. 서울은 bake version 3에 머물러 있어 쓰려면 다시 베이크해야 합니다.
 
-| 항목 | 현재 값 |
-| --- | --- |
-| 대상 지역 | 서울시청·서울광장 일대 |
-| 중심 Origin | 위도 `37.5665016174`, 경도 `126.9779968262` |
-| CityGen tile | `[0, 0]`, Area `1` |
-| Terrain | `256 m × 256 m` |
-| 월드 경계 | X `-128..128`, Z `-128..128` |
-| OSM 데이터 | Node 4,083 / Way 399 / Relation 14 |
-| CityGen 원본 클래스 | 26종 |
-| Scene 컴포넌트 | 1,608개 |
-| 베이크 피처 | 387개 |
-| 베이크 삼각형 | 49,909개 |
-| 공간 인덱스 cell | 5 m |
+| 항목 | NYC Doyers Chinatown | 서울시청 |
+| --- | --- | --- |
+| bake version | **4** | 3 (낡음) |
+| 중심 Origin | 위도 `40.7150878906`, 경도 `-73.9994354248` | 위도 `37.5665016174`, 경도 `126.9779968262` |
+| Terrain | `256 m × 256 m` | `256 m × 256 m` |
+| 월드 경계 | X `-128..128`, Z `-128..128` | X `-128..128`, Z `-128..128` |
+| Scene 컴포넌트 | 5,678개 | 1,608개 |
+| 베이크 피처 | **2,095개** | 387개 |
+| 베이크 삼각형 | **86,996개** | 49,909개 |
+| 공간 인덱스 cell | 5 m | 5 m |
 
-현재 보행 semantic 피처는 다음과 같습니다.
+NYC의 보행 semantic 분포입니다.
 
 | 의미 | 피처 수 | 주요 원본 |
 | --- | ---: | --- |
-| `Unknown` | 337 | Landscape, MapBuilding, MapRoad, MapSurface, Plot |
-| `Sidewalk` | 24 | Highway, Landscape |
+| `Unknown` | 1,878 | Landscape, MapRoad, MapEntity, MapBuilding |
+| `Road` | 173 | MapRoad |
+| `Sidewalk` | 22 | Highway, Landscape |
+| `Crosswalk` | 18 | OSM crossing node |
 | `Curb` | 4 | Highway |
-| `Crosswalk` | 5 | OSM crossing node |
-| `Road` | 17 | MapRoad |
+
+서울 기준 분포는 `Unknown` 337 / `Sidewalk` 24 / `Road` 17 / `Crosswalk` 5 / `Curb` 4입니다.
+
+**두 도시 모두 `Unknown`이 대다수입니다.** NYC는 89.6%, 서울은 87.1%입니다. 원본 피처는 있으나 아직 네 보행 의미 중 하나로 정의되지 않았다는 뜻이고, 의미 확장이 다음 과제인 이유입니다.
 
 0.1 m 격자로 피처 내부 중복을 제거해 분석하면, 원본 피처는 전체 실험 영역의 약 88.72%를 덮습니다. 어떤 원본 피처도 덮지 않는 영역은 약 11.28%이고, 현재 네 보행 semantic 중 하나가 정의된 합집합 영역은 약 18.82%입니다. 클래스와 semantic은 서로 겹칠 수 있으므로 개별 점유율을 단순 합산할 수 없습니다.
 
@@ -176,44 +177,109 @@ Play 시작 시 화면은 블라인드 상태입니다. 디버그 화면은 Edit
 
 ## 음향과 기록
 
-현재 음향은 초기 실험값입니다.
+모듈은 소리를 직접 내지 않습니다. `SignalIntent`를 버스에 올리고, 어떻게 들릴지는 **카탈로그**가 정합니다. 덕분에 모듈을 건드리지 않고 신호 설계만 갈아 끼울 수 있고, 그것이 실험 조건이 됩니다.
 
-| 상황 | 신호 |
-| --- | --- |
-| Sidewalk | 440 Hz 종소리 |
-| Curb | 1.2 kHz 클릭 |
-| Crosswalk | 660/880 Hz 교대음 |
-| Road | 110 Hz 경고 펄스 |
-| 실험 구역 경계 | 삼중 경고음 |
+| 카탈로그 | revision | 부호화 |
+| --- | ---: | --- |
+| `C002_DIRECTION_RANGE` | 4 | 방향과 거리 |
+| `C003_PULSE_RANGE` | 2 | 펄스 간격으로 거리 |
+| `C004_PITCH_RANGE` | 2 | 음높이로 거리 |
+| `C101_PULSE_CATEGORY` | 2 | 펄스로 범주 구분 — **현재 씬 기본값** |
 
-런타임 CSV는 `Application.persistentDataPath/PedestrianProbe`에 저장됩니다. 시간, 월드 XYZ, 위·경도, heading, semantic, `source_class`, 현재 겹친 의미와 원본 클래스, 피처 ID, confidence, 접근·진입·이탈·경계·블라인드 이벤트, map version과 Database ID를 기록합니다.
+파형·기본 주파수·거칠기·지속 시간·거리별 저역 컷오프가 asset에 들어 있고, 클립은 런타임에 합성합니다. 신호 ID는 점 단위로 상위 폴백하므로 `probe.hit.sidewalk`가 정의돼 있지 않으면 `probe.hit`으로 내려갑니다.
+
+`semantic.audio` 모듈의 옛 신호(인도 440 Hz 종소리, 연석 1.2 kHz 클릭, 횡단보도 660/880 Hz 교대음, 차도 110 Hz 경고 펄스, 구역 경계 삼중 경고음)는 그대로 남아 있지만 **기본으로 꺼져 있습니다.** 실제 도시에서 중첩 레이어마다 울려 스위프를 묻기 때문입니다.
+
+### 기록
+
+런타임 CSV는 `Application.persistentDataPath/PedestrianProbe`에 저장됩니다. 시간, 월드 XYZ, 위·경도, heading, semantic, `source_class`, 현재 겹친 의미와 원본 클래스, 피처 ID, confidence, 이벤트와 상세, `map_version`, `database_id`, 그리고 **`signal_catalog`와 `signal_catalog_revision`** 을 기록합니다.
+
+마지막 두 열이 있어야 세션이 "어디를 걸었는가"뿐 아니라 **"무엇을 듣고 있었는가"** 를 말합니다. 카탈로그가 경쟁 조건이므로 이것 없이는 세션을 비교할 수 없습니다. 카탈로그는 런타임에 바뀔 수 있어 매 행마다 현재 값을 씁니다.
+
+이벤트로는 접근·진입·이탈·경계 접촉·블라인드 전환·모듈 토글·신호 발화와 해제·기기 정보가 남습니다.
 
 ## 현재 한계와 다음 단계
 
-- 현재 의미 체계는 Road, Sidewalk, Curb, Crosswalk 네 종류뿐입니다.
-- 일부 분류 규칙이 CityGen 원본 클래스뿐 아니라 Hierarchy 이름에도 의존합니다.
-- Crosswalk 5개는 실제 marking 메시가 아니라 OSM node에서 만든 규격화된 형상입니다.
-- 원본 `MapSurface`, `Plot`, `MapBuilding`, `Landscape`의 상당 부분은 아직 `Unknown`입니다.
-- 통계 CSV의 투영 면적은 피처 간 중복을 제거하지 않습니다.
-- 장소별 Database와 출력 선택은 서울시청 256m와 NYC Doyers Chinatown 256m에서 생성·베이크·실행을 확인했습니다.
-- 음향 패턴과 confidence는 사용자 실험으로 검증되지 않았습니다.
+### 의미 공간
 
-다음 단계는 원본 `sourceClass`를 유지하면서 OSM tag와 형상 정보를 함께 사용해 보행 가능 영역, 광장/공터, 녹지, 건물과 건물 진입부를 구분하는 것입니다. 그 뒤 semantic별 위치 판정 정확도와 음향 안내의 이해도를 실제 사용자 실험으로 평가할 예정입니다.
+- 의미 체계가 Road, Sidewalk, Curb, Crosswalk 네 종류뿐이고, 두 도시 모두 피처의 약 90%가 `Unknown`입니다.
+- 일부 분류 규칙이 CityGen 원본 클래스뿐 아니라 Hierarchy 이름에도 의존합니다.
+- Crosswalk는 실제 marking 메시가 아니라 OSM node에서 만든 규격화된 형상입니다.
+- 통계 CSV의 투영 면적은 피처 간 중복을 제거하지 않습니다.
+- 서울 asset은 bake version 3에 머물러 있습니다.
+
+### 신호와 실험
+
+- **사용자 실험이 아직 하나도 수행되지 않았습니다.** 신호가 읽히는지(EXP-SIG-00), 공간 형태가 구성되는지(EXP-SWEEP-01) 모두 미측정입니다.
+- 카탈로그 4종의 우열은 물론, 각각이 변별 가능한지조차 확인되지 않았습니다.
+- 실험 조건을 표현할 수단이 **기본값밖에 없습니다.** `FeedbackExperimentProfile`이 없어서 조건 A(baseline)를 얻으려면 손으로 켜야 합니다.
+- `semantic.audio`를 기본 OFF로 내리면서 원래의 baseline이 기본 상태에서 사라졌습니다.
+
+### 실행 환경
+
+- 폰에서 세션 중 자극을 바꿀 수 없습니다. 씬 전환이 미구현이라 재설치가 필요합니다.
+- 터치에서 좌우 스틱을 동시에 쓸 수 없습니다. 걸으면서 훑는 동작이 안 됩니다.
+- 클립을 44.1 kHz로 합성하는데 실기는 24 kHz로 믹싱합니다. 지속음 루프 이음매가 어긋날 조건이지만 청취상 문제는 보고되지 않았습니다.
+- 테스트베드 APK가 497 MB입니다. 그리는 것이 하나도 없는데 CityGen 아트가 `Resources` 경유로 딸려옵니다.
+
+## 다음 단계
+
+우선순위 순입니다.
+
+1. **실험 profile** — 모듈이 둘이고 조건을 표현할 수단이 없습니다. 계획은 "모듈이 두 개 이상 생기면"으로 미뤄두었고, 그 조건이 충족됐습니다.
+2. **EXP-SIG-00** — 신호 자체의 변별을 먼저 확인합니다. 통과하지 못하면 이후 어떤 결과도 "신호를 못 알아들은 것"과 "공간을 못 읽은 것"을 구분할 수 없습니다.
+3. **의미 확장** — 원본 `sourceClass`를 유지한 채 OSM tag와 형상으로 보행 가능 영역, 광장, 녹지, 건물 진입부를 구분합니다. `Unknown` 90%를 줄이는 일입니다.
+4. **다음 피드백 모듈** — 계획의 `fb-02` 이후. 경계 흐름, 교차로 위상, 기준축, 사용자 랜드마크, 관계 재생.
 
 ## 생성 파일과 주요 코드
 
 | 경로 | 역할 |
 | --- | --- |
-| `Assets/Generated/Semantics/SeoulCityHall_256m.asset` | 서울시청 semantic map asset |
-| `Assets/Generated/Semantics/SeoulCityHall_256m_SourceClassStatistics.csv` | 서울시청 원본 클래스 통계 |
-| `Assets/Generated/Semantics/NYC_DoyersChinatown_256m_SourceClassStatistics.csv` | NYC Doyers Chinatown 원본 클래스 통계 |
+**생성물**
+
+| 경로 | 역할 |
+| --- | --- |
+| `Assets/Generated/Semantics/NYC_DoyersChinatown_256m.asset` | NYC semantic map asset (현행) |
+| `Assets/Generated/Semantics/SeoulCityHall_256m.asset` | 서울시청 semantic map asset (bake v3) |
+| `Assets/Generated/Semantics/*_SourceClassStatistics.csv` | 장소별 원본 클래스 통계 |
+| `Assets/Generated/Signals/SignalCatalog_*.asset` | 신호 카탈로그 4종 |
+| `Assets/Testbed/` | 합성 자극 7종과 그 맵 |
+
+**의미 공간**
+
+| 경로 | 역할 |
+| --- | --- |
 | `Assets/Editor/SemanticMapBaker.cs` | Scene을 semantic asset과 통계로 베이크 |
 | `Assets/Editor/PedestrianProbeLocationResolver.cs` | Scene의 Database·Terrain과 장소별 출력 경로 결정 |
 | `Assets/Scripts/Semantics/SemanticSpaceMap.cs` | 피처 데이터, 공간 질의와 좌표 변환 |
-| `Assets/Scripts/Runtime/SemanticDebugMapRenderer.cs` | 원본 클래스/보행 의미 미니맵 |
-| `Assets/Scripts/Runtime/BlindModeOverlay.cs` | 블라인드·디버그 UI와 입력 |
-| `Assets/Scripts/Runtime/SemanticAudioGuide.cs` | 의미 공간 음향 피드백 |
+| `Assets/Scripts/Semantics/SpatialRayProbe.cs` | 레이와 경계의 교차 계산 |
+| `Assets/Scripts/Semantics/SemanticSpaceMapProbeField.cs` | 맵을 프로브가 훑는 장으로 노출 |
+
+**피드백 기반과 모듈**
+
+| 경로 | 역할 |
+| --- | --- |
+| `Assets/Scripts/Runtime/FeedbackCoordinator.cs` | 모듈 registry, 토글, 관측 분배 |
+| `Assets/Scripts/Runtime/Signals/FeedbackSignalBus.cs` | 의도를 렌더러로 나르고 로그에 남김 |
+| `Assets/Scripts/Runtime/Signals/SignalCatalog.cs` | 신호 정의와 점 단위 상위 폴백 |
+| `Assets/Scripts/Runtime/Signals/AudioSignalRenderer.cs` | 보이스 풀, 공간화, 저역 필터 |
+| `Assets/Scripts/Runtime/Signals/SignalClipFactory.cs` | 클립 절차적 합성 |
+| `Assets/Scripts/Runtime/EgocentricSweepProbe.cs` | 자기중심 스위프 모듈 |
+| `Assets/Scripts/Runtime/SemanticAudioGuide.cs` | 의미 공간 음향 안내 (기본 OFF) |
+
+**실행과 조작**
+
+| 경로 | 역할 |
+| --- | --- |
+| `Assets/Scripts/Runtime/PedestrianProbeRuntime.cs` | 씬의 부품을 맵에서 조립 |
+| `Assets/Scripts/Runtime/Input/ProbeInputRouter.cs` | 소스 병합과 명령 전달 |
+| `Assets/Scripts/Runtime/Input/BlindTouchGestures.cs` | 터치 제스처 인식 (순수, 테스트 가능) |
+| `Assets/Scripts/Runtime/Platform/ProbeSessionPlatform.cs` | 핸드헬드 설정과 입력 소스 부착 |
+| `Assets/Scripts/Runtime/BlindModeOverlay.cs` | 블라인드 화면, 디버그 HUD, 터치 메뉴 |
 | `Assets/Scripts/Runtime/SemanticSessionLogger.cs` | 실험 CSV 기록 |
 | `Assets/Editor/PedestrianFreeCamSetup.cs` | 플레이어와 런타임 설정 |
+| `Assets/Editor/Testbed/SyntheticTestMaps.cs` | 정답이 알려진 합성 자극 정의 |
+| `Assets/Editor/Build/AndroidTestbedBuild.cs` | 테스트베드 APK |
+| `Assets/Editor/Build/AndroidCityBuild.cs` | 도시 APK |
 
-Unity Project 창에서 읽는 짧은 실행 안내는 `Assets/PedestrianProbe_README.md`에 있습니다.
+계획 문서는 `Docs/`에 있습니다. Unity Project 창에서 읽는 짧은 실행 안내는 `Assets/PedestrianProbe_README.md`에 있습니다.
