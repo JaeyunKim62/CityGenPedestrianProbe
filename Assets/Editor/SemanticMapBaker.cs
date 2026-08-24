@@ -35,10 +35,11 @@ namespace CityGenPedestrianProbe.Editor
             Rect studyBounds = new Rect(terrainPosition.x, terrainPosition.z,
                 terrainSize.x, terrainSize.z);
             Vector2 center = studyBounds.center;
-            Vector2 mapWorldOffset = new Vector2(terrainPosition.x, terrainPosition.z);
+            var coordinateFrame = new SemanticBakeCoordinateFrame(
+                new Vector2(terrainPosition.x, terrainPosition.z));
             Vector3 originLocal = database.origin.GetMapCoord(database.minLocation,
                 Vector2.zero).GetPosition();
-            Vector2 originWorld = mapWorldOffset + new Vector2(originLocal.x, originLocal.z);
+            Vector2 originWorld = coordinateFrame.DatabaseMapLocalToWorldXZ(originLocal);
             var features = new List<SemanticFeature>();
             var sourceReport = new Dictionary<SemanticSpaceKind, int>();
             Dictionary<string, int> cityGenComponentCounts = CountCityGenComponents(scene);
@@ -52,20 +53,19 @@ namespace CityGenPedestrianProbe.Editor
                 string sourceClass = FindCityGenSourceClass(filter.transform);
                 if (kind == SemanticSpaceKind.Unknown && string.IsNullOrEmpty(sourceClass))
                     continue;
-                Vector2 sourceOffset = UsesMapCoordinates(sourceClass)
-                    ? mapWorldOffset
-                    : Vector2.zero;
                 SemanticFeature feature = BuildFeatureFromMesh(filter, kind, sourceClass,
-                    sourceOffset, studyBounds);
+                    coordinateFrame, studyBounds);
                 if (feature == null)
                     continue;
                 features.Add(feature);
                 Increment(sourceReport, kind);
             }
 
-            AddCityGenShapeFallbacks(scene, studyBounds, mapWorldOffset, features, sourceReport);
-            AddRoadFallbacks(scene, studyBounds, mapWorldOffset, features, sourceReport);
-            AddCrosswalkFallbacks(database, studyBounds, mapWorldOffset, features, sourceReport);
+            AddCityGenShapeFallbacks(scene, studyBounds, coordinateFrame, features,
+                sourceReport);
+            AddRoadFallbacks(scene, studyBounds, coordinateFrame, features, sourceReport);
+            AddCrosswalkFallbacks(database, studyBounds, coordinateFrame, features,
+                sourceReport);
             AddCurbFallbacks(studyBounds, features, sourceReport);
 
             SemanticSpaceKind[] required =
@@ -94,7 +94,7 @@ namespace CityGenPedestrianProbe.Editor
                 map = ScriptableObject.CreateInstance<SemanticSpaceMap>();
                 AssetDatabase.CreateAsset(map, location.SemanticMapPath);
             }
-            map.SetData("3", AssetDatabase.AssetPathToGUID(location.DatabasePath),
+            map.SetData("4", AssetDatabase.AssetPathToGUID(location.DatabasePath),
                 database.origin.latitude, database.origin.longitude, originWorld, center,
                 studySize, 5f, features, cityGenComponentCounts.Keys,
                 cityGenComponentCounts);
@@ -197,11 +197,6 @@ namespace CityGenPedestrianProbe.Editor
             return string.Empty;
         }
 
-        private static bool UsesMapCoordinates(string sourceClass) =>
-            !string.IsNullOrEmpty(sourceClass) &&
-            (sourceClass.StartsWith("CityGen3D.Map", StringComparison.Ordinal) ||
-             string.Equals(sourceClass, "CityGen3D.Highway", StringComparison.Ordinal));
-
         private static Dictionary<string, int> CountCityGenComponents(Scene scene)
         {
             var counts = new Dictionary<string, int>();
@@ -238,7 +233,8 @@ namespace CityGenPedestrianProbe.Editor
         }
 
         private static SemanticFeature BuildFeatureFromMesh(MeshFilter filter,
-            SemanticSpaceKind kind, string sourceClass, Vector2 sourceOffset, Rect clipBounds)
+            SemanticSpaceKind kind, string sourceClass,
+            SemanticBakeCoordinateFrame coordinateFrame, Rect clipBounds)
         {
             Mesh mesh = filter.sharedMesh;
             Vector3[] sourceVertices = mesh.vertices;
@@ -246,14 +242,14 @@ namespace CityGenPedestrianProbe.Editor
             var builder = new Mesh2DBuilder();
             for (int i = 0; i + 2 < sourceTriangles.Length; i += 3)
             {
-                Vector3 a3 = filter.transform.TransformPoint(sourceVertices[sourceTriangles[i]]);
-                Vector3 b3 = filter.transform.TransformPoint(sourceVertices[sourceTriangles[i + 1]]);
-                Vector3 c3 = filter.transform.TransformPoint(sourceVertices[sourceTriangles[i + 2]]);
                 var polygon = new List<Vector2>
                 {
-                    new Vector2(a3.x, a3.z) + sourceOffset,
-                    new Vector2(b3.x, b3.z) + sourceOffset,
-                    new Vector2(c3.x, c3.z) + sourceOffset
+                    coordinateFrame.SceneObjectLocalToWorldXZ(filter.transform,
+                        sourceVertices[sourceTriangles[i]]),
+                    coordinateFrame.SceneObjectLocalToWorldXZ(filter.transform,
+                        sourceVertices[sourceTriangles[i + 1]]),
+                    coordinateFrame.SceneObjectLocalToWorldXZ(filter.transform,
+                        sourceVertices[sourceTriangles[i + 2]])
                 };
                 polygon = ClipToRect(polygon, clipBounds);
                 builder.AddPolygon(polygon);
@@ -265,7 +261,8 @@ namespace CityGenPedestrianProbe.Editor
             return builder.CreateFeature(kind, id, confidence, sourceClass);
         }
 
-        private static void AddCityGenShapeFallbacks(Scene scene, Rect bounds, Vector2 mapWorldOffset,
+        private static void AddCityGenShapeFallbacks(Scene scene, Rect bounds,
+            SemanticBakeCoordinateFrame coordinateFrame,
             ICollection<SemanticFeature> features, IDictionary<SemanticSpaceKind, int> report)
         {
             bool needSidewalk = features.All(feature => feature.Kind != SemanticSpaceKind.Sidewalk);
@@ -278,18 +275,18 @@ namespace CityGenPedestrianProbe.Editor
             {
                 if (needSidewalk)
                     AddShapeLines(highway.GetSidewalkShapes(), highway.transform, 1.5f,
-                        SemanticSpaceKind.Sidewalk, 0.75f, "CityGen3D.Highway", mapWorldOffset, bounds,
-                        features, report);
+                        SemanticSpaceKind.Sidewalk, 0.75f, "CityGen3D.Highway",
+                        coordinateFrame, bounds, features, report);
                 if (needCurb)
                     AddShapeLines(highway.GetCurbShapes(), highway.transform, 0.2f,
-                        SemanticSpaceKind.Curb, 0.75f, "CityGen3D.Highway", mapWorldOffset, bounds,
-                        features, report);
+                        SemanticSpaceKind.Curb, 0.75f, "CityGen3D.Highway",
+                        coordinateFrame, bounds, features, report);
             }
         }
 
         private static void AddShapeLines(IReadOnlyList<ShapeLine> lines, Transform owner,
             float width, SemanticSpaceKind kind, float confidence, string sourceClass,
-            Vector2 sourceOffset, Rect bounds,
+            SemanticBakeCoordinateFrame coordinateFrame, Rect bounds,
             ICollection<SemanticFeature> features, IDictionary<SemanticSpaceKind, int> report)
         {
             if (lines == null)
@@ -302,10 +299,11 @@ namespace CityGenPedestrianProbe.Editor
                 var builder = new Mesh2DBuilder();
                 for (int i = 0; i + 1 < line.positions.Count; i++)
                 {
-                    Vector3 a3 = owner.TransformPoint(line.positions[i]);
-                    Vector3 b3 = owner.TransformPoint(line.positions[i + 1]);
-                    AddSegmentQuad(builder, new Vector2(a3.x, a3.z) + sourceOffset,
-                        new Vector2(b3.x, b3.z) + sourceOffset, width, bounds);
+                    Vector2 a = coordinateFrame.SceneObjectLocalToWorldXZ(owner,
+                        line.positions[i]);
+                    Vector2 b = coordinateFrame.SceneObjectLocalToWorldXZ(owner,
+                        line.positions[i + 1]);
+                    AddSegmentQuad(builder, a, b, width, bounds);
                 }
                 if (builder.Triangles.Count == 0)
                     continue;
@@ -316,7 +314,8 @@ namespace CityGenPedestrianProbe.Editor
             }
         }
 
-        private static void AddRoadFallbacks(Scene scene, Rect bounds, Vector2 mapWorldOffset,
+        private static void AddRoadFallbacks(Scene scene, Rect bounds,
+            SemanticBakeCoordinateFrame coordinateFrame,
             ICollection<SemanticFeature> features, IDictionary<SemanticSpaceKind, int> report)
         {
             if (features.Any(feature => feature.Kind == SemanticSpaceKind.Road))
@@ -333,10 +332,11 @@ namespace CityGenPedestrianProbe.Editor
                 float width = Mathf.Max(2f, road.GetRoadWidth());
                 for (int i = 0; i + 1 < positions.Count; i++)
                 {
-                    Vector3 a3 = road.transform.TransformPoint(positions[i]);
-                    Vector3 b3 = road.transform.TransformPoint(positions[i + 1]);
-                    AddSegmentQuad(builder, new Vector2(a3.x, a3.z) + mapWorldOffset,
-                        new Vector2(b3.x, b3.z) + mapWorldOffset, width, bounds);
+                    Vector2 a = coordinateFrame.SceneObjectLocalToWorldXZ(road.transform,
+                        positions[i]);
+                    Vector2 b = coordinateFrame.SceneObjectLocalToWorldXZ(road.transform,
+                        positions[i + 1]);
+                    AddSegmentQuad(builder, a, b, width, bounds);
                 }
                 if (builder.Triangles.Count == 0)
                     continue;
@@ -363,7 +363,7 @@ namespace CityGenPedestrianProbe.Editor
         }
 
         private static void AddCrosswalkFallbacks(Database database, Rect bounds,
-            Vector2 mapWorldOffset,
+            SemanticBakeCoordinateFrame coordinateFrame,
             ICollection<SemanticFeature> features, IDictionary<SemanticSpaceKind, int> report)
         {
             if (database.mapNodes == null)
@@ -387,8 +387,9 @@ namespace CityGenPedestrianProbe.Editor
                     unmarked++;
                     continue;
                 }
-                Vector3 world = node.location.GetMapCoord(database.minLocation, Vector2.zero).GetPosition();
-                Vector2 center = new Vector2(world.x, world.z) + mapWorldOffset;
+                Vector3 mapLocal = node.location.GetMapCoord(database.minLocation,
+                    Vector2.zero).GetPosition();
+                Vector2 center = coordinateFrame.DatabaseMapLocalToWorldXZ(mapLocal);
                 if (!bounds.Contains(center))
                 {
                     outside++;
@@ -666,5 +667,32 @@ namespace CityGenPedestrianProbe.Editor
                 return index;
             }
         }
+    }
+
+    /// <summary>
+    /// Defines the only two coordinate conversions accepted by the semantic baker.
+    /// Scene geometry is transformed by its owner directly into world space. Database map
+    /// coordinates are tile-local and receive the terrain world origin exactly once.
+    /// </summary>
+    internal readonly struct SemanticBakeCoordinateFrame
+    {
+        private readonly Vector2 mapWorldOriginXZ;
+
+        public SemanticBakeCoordinateFrame(Vector2 mapWorldOrigin)
+        {
+            mapWorldOriginXZ = mapWorldOrigin;
+        }
+
+        public Vector2 SceneObjectLocalToWorldXZ(Transform owner, Vector3 localPosition)
+        {
+            if (owner == null)
+                throw new ArgumentNullException(nameof(owner));
+
+            Vector3 world = owner.TransformPoint(localPosition);
+            return new Vector2(world.x, world.z);
+        }
+
+        public Vector2 DatabaseMapLocalToWorldXZ(Vector3 mapLocalPosition) =>
+            mapWorldOriginXZ + new Vector2(mapLocalPosition.x, mapLocalPosition.z);
     }
 }

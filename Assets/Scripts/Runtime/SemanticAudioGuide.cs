@@ -7,6 +7,7 @@ namespace CityGenPedestrianProbe
     [DisallowMultipleComponent]
     public sealed class SemanticAudioGuide : FeedbackModule
     {
+        public const string StableModuleId = "semantic.audio";
         private const float QueryInterval = 0.1f;
         private const float StableSeconds = 0.2f;
         private const float EventCooldown = 1f;
@@ -30,12 +31,13 @@ namespace CityGenPedestrianProbe
         private float candidateSince;
         private long activeApproachId;
 
-        public override void Configure(SemanticSpaceMap map, Transform listenerTransform,
-            SemanticSessionLogger logger)
+        public override string ModuleId => StableModuleId;
+
+        public override void Configure(in FeedbackContext context)
         {
-            semanticMap = map;
-            listener = listenerTransform;
-            sessionLogger = logger;
+            semanticMap = context.Map;
+            listener = context.Listener;
+            sessionLogger = context.Logger;
         }
 
         private void Awake()
@@ -58,6 +60,24 @@ namespace CityGenPedestrianProbe
             SemanticHit current = semanticMap.ClassifyWorld(listener.position);
             UpdateStableKind(current);
             UpdateApproach(current);
+        }
+
+        protected override void OnFeedbackEnabledChanged(bool value)
+        {
+            if (value)
+            {
+                nextQuery = 0f;
+                candidateKind = SemanticSpaceKind.Unknown;
+                stableKind = SemanticSpaceKind.Unknown;
+                candidateSince = Time.unscaledTime;
+                return;
+            }
+
+            CancelInvoke(nameof(RepeatEntryTone));
+            approachSource?.Stop();
+            entrySource?.Stop();
+            boundarySource?.Stop();
+            activeApproachId = 0;
         }
 
         public override void OnBoundaryContact(Vector3 attemptedDirection)

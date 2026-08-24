@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CityGenPedestrianProbe
@@ -8,13 +10,34 @@ namespace CityGenPedestrianProbe
         [SerializeField] private SemanticSpaceMap semanticMap;
         [SerializeField] private SemanticPedestrianController player;
         [SerializeField] private Terrain terrain;
+        [SerializeField] private SignalCatalog signalCatalog;
+        [SerializeField] private SignalCatalog[] comparisonCatalogs = Array.Empty<SignalCatalog>();
 
         public void Configure(SemanticSpaceMap map, SemanticPedestrianController controller,
-            Terrain ground)
+            Terrain ground, SignalCatalog catalog = null,
+            SignalCatalog[] comparisons = null)
         {
             semanticMap = map;
             player = controller;
             terrain = ground;
+            if (catalog != null)
+                signalCatalog = catalog;
+            if (comparisons != null)
+                comparisonCatalogs = comparisons;
+        }
+
+        private List<SignalCatalog> BuildCatalogCycle()
+        {
+            var cycle = new List<SignalCatalog>();
+            if (signalCatalog != null)
+                cycle.Add(signalCatalog);
+            for (int i = 0; i < comparisonCatalogs.Length; i++)
+            {
+                SignalCatalog comparison = comparisonCatalogs[i];
+                if (comparison != null && !cycle.Contains(comparison))
+                    cycle.Add(comparison);
+            }
+            return cycle;
         }
 
         private void Awake()
@@ -48,11 +71,33 @@ namespace CityGenPedestrianProbe
             overlay.Configure(semanticMap, player.transform);
             overlay.BlindModeChanged += blind => logger.LogEvent("blind_mode",
                 semanticMap.ClassifyWorld(player.transform.position), blind ? "on" : "off");
+            overlay.BlindModeChanged += blind => player.SetPitchEnabled(!blind);
+            player.SetPitchEnabled(!overlay.IsBlind);
+
+            EgocentricSweepProbe sweep = GetComponent<EgocentricSweepProbe>();
+            if (sweep == null)
+                sweep = gameObject.AddComponent<EgocentricSweepProbe>();
+            overlay.SetSweepProbe(sweep);
+
+            AudioSignalRenderer signalRenderer = GetComponent<AudioSignalRenderer>();
+            if (signalRenderer == null)
+                signalRenderer = gameObject.AddComponent<AudioSignalRenderer>();
+            signalRenderer.Configure(signalCatalog, camera.transform);
+            overlay.SetSignalRenderer(signalRenderer);
+            if (signalCatalog == null)
+                Debug.LogWarning("Pedestrian Probe has no signal catalog, so feedback " +
+                                 "modules on the signal bus stay silent.", this);
 
             FeedbackCoordinator feedback = GetComponent<FeedbackCoordinator>();
             if (feedback == null)
                 feedback = gameObject.AddComponent<FeedbackCoordinator>();
             feedback.Configure(semanticMap, camera.transform, logger, player);
+
+            SweepKeyboardControls controls = GetComponent<SweepKeyboardControls>();
+            if (controls == null)
+                controls = gameObject.AddComponent<SweepKeyboardControls>();
+            controls.Configure(sweep, feedback);
+            controls.SetCatalogs(signalRenderer, BuildCatalogCycle());
         }
     }
 }

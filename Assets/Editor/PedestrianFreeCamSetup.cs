@@ -97,7 +97,7 @@ namespace CityGenPedestrianProbe.Editor
             PedestrianProbeRuntime runtime = runtimeObject.GetComponent<PedestrianProbeRuntime>();
             if (runtime == null)
                 runtime = Undo.AddComponent<PedestrianProbeRuntime>(runtimeObject);
-            runtime.Configure(map, controller, terrain);
+            runtime.Configure(map, controller, terrain, LoadDefaultSignalCatalog());
 
             EditorUtility.SetDirty(controller);
             EditorUtility.SetDirty(runtime);
@@ -107,6 +107,17 @@ namespace CityGenPedestrianProbe.Editor
             Selection.activeGameObject = cameraObject;
             Debug.Log($"Pedestrian Probe scene setup complete for {location.LocationId}. " +
                       "Play starts blind; B or F1 toggles debug view in Editor.");
+        }
+
+        private static SignalCatalog LoadDefaultSignalCatalog()
+        {
+            const string path =
+                "Assets/Generated/Signals/SignalCatalog_C101_PulseCategory.asset";
+            var catalog = AssetDatabase.LoadAssetAtPath<SignalCatalog>(path);
+            if (catalog == null)
+                Debug.LogWarning($"Signal catalog not found at {path}. " +
+                                 "Signal feedback will stay silent until one is assigned.");
+            return catalog;
         }
 
         private static Vector3 FindSpawn(SemanticSpaceMap map, Terrain terrain)

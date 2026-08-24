@@ -107,6 +107,39 @@ namespace CityGenPedestrianProbe.Editor.Tests
                 Is.EqualTo(expected));
         }
 
+        [Test]
+        public void BakeFrame_SceneObjectLocalToWorld_UsesTransformExactlyOnce()
+        {
+            var gameObject = new GameObject("coordinate-frame-test");
+            try
+            {
+                gameObject.transform.position = new Vector3(-128f, 10f, -128f);
+                var frame = new SemanticBakeCoordinateFrame(new Vector2(-128f, -128f));
+
+                Vector2 world = frame.SceneObjectLocalToWorldXZ(gameObject.transform,
+                    new Vector3(269f, 2f, 321f));
+
+                Assert.That(world.x, Is.EqualTo(141f).Within(0.0001f));
+                Assert.That(world.y, Is.EqualTo(193f).Within(0.0001f));
+            }
+            finally
+            {
+                Object.DestroyImmediate(gameObject);
+            }
+        }
+
+        [Test]
+        public void BakeFrame_DatabaseMapLocalToWorld_AppliesTerrainOriginExactlyOnce()
+        {
+            var frame = new SemanticBakeCoordinateFrame(new Vector2(-128f, -128f));
+
+            Vector2 world = frame.DatabaseMapLocalToWorldXZ(
+                new Vector3(269f, 0f, 321f));
+
+            Assert.That(world.x, Is.EqualTo(141f).Within(0.0001f));
+            Assert.That(world.y, Is.EqualTo(193f).Within(0.0001f));
+        }
+
         private static SemanticFeature Quad(SemanticSpaceKind kind, long id,
             float minX, float minY, float maxX, float maxY, string sourceClass = "")
         {

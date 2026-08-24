@@ -86,6 +86,7 @@ namespace CityGenPedestrianProbe
         public float Confidence => confidence;
         public IReadOnlyList<Vector2> Vertices => vertices;
         public IReadOnlyList<int> Triangles => triangles;
+        public IReadOnlyList<int> BoundaryEdges => boundaryEdges;
         public Rect Bounds => bounds;
         public int TriangleCount => triangles == null ? 0 : triangles.Length / 3;
         public float ProjectedAreaSquareMeters
@@ -294,6 +295,7 @@ namespace CityGenPedestrianProbe
         private readonly Dictionary<Vector2Int, List<int>> grid =
             new Dictionary<Vector2Int, List<int>>();
         private bool gridReady;
+        private readonly List<int> rayCandidates = new List<int>();
         private readonly List<SemanticHit> queryBuffer = new List<SemanticHit>();
         private readonly HashSet<int> candidateBuffer = new HashSet<int>();
 
@@ -429,6 +431,69 @@ namespace CityGenPedestrianProbe
                                      0.118 * Math.Cos(5 * latitudeRadians);
             latitude = originLatitude + (world.z - worldOriginXZ.y) / metersLatitude;
             longitude = originLongitude + (world.x - worldOriginXZ.x) / metersLongitude;
+        }
+
+        public void CollectBoundaryCrossings(Vector2 origin, Vector2 direction,
+            float maxDistanceMeters, List<float> distances)
+        {
+            distances.Clear();
+            if (distances == null || maxDistanceMeters <= 0f)
+                return;
+            Vector2 ray = direction.sqrMagnitude > 0f ? direction.normalized : Vector2.zero;
+            if (ray.sqrMagnitude < 0.5f)
+                return;
+
+            EnsureGrid();
+            Vector2 far = origin + ray * maxDistanceMeters;
+            rayCandidates.Clear();
+            Vector2Int min = Cell(Vector2.Min(origin, far));
+            Vector2Int max = Cell(Vector2.Max(origin, far));
+            for (int y = min.y; y <= max.y; y++)
+            for (int x = min.x; x <= max.x; x++)
+            {
+                if (!grid.TryGetValue(new Vector2Int(x, y), out List<int> indices))
+                    continue;
+                foreach (int index in indices)
+                {
+                    if (!rayCandidates.Contains(index))
+                        rayCandidates.Add(index);
+                }
+            }
+
+            for (int c = 0; c < rayCandidates.Count; c++)
+            {
+                SemanticFeature feature = features[rayCandidates[c]];
+                IReadOnlyList<Vector2> vertices = feature.Vertices;
+                IReadOnlyList<int> edges = feature.BoundaryEdges;
+                for (int e = 0; e + 1 < edges.Count; e += 2)
+                {
+                    Vector2 a = vertices[edges[e]];
+                    Vector2 b = vertices[edges[e + 1]];
+                    if (TryIntersect(origin, ray, maxDistanceMeters, a, b, out float hit))
+                        distances.Add(hit);
+                }
+            }
+
+            distances.Sort();
+        }
+
+        private static bool TryIntersect(Vector2 origin, Vector2 ray, float maxDistance,
+            Vector2 a, Vector2 b, out float distance)
+        {
+            distance = 0f;
+            Vector2 edge = b - a;
+            float denominator = ray.x * edge.y - ray.y * edge.x;
+            if (Mathf.Abs(denominator) < 1e-7f)
+                return false;
+
+            Vector2 offset = a - origin;
+            float along = (offset.x * edge.y - offset.y * edge.x) / denominator;
+            float across = (offset.x * ray.y - offset.y * ray.x) / denominator;
+            if (along <= 1e-4f || along > maxDistance || across < 0f || across > 1f)
+                return false;
+
+            distance = along;
+            return true;
         }
 
         private void EnsureGrid()
