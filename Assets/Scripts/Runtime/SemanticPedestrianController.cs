@@ -21,11 +21,23 @@ namespace CityGenPedestrianProbe
 
         private float pitch;
         private float nextBoundaryEventTime;
+        private IPedestrianMoveSource moveSource;
 
         public event Action<Vector3> BoundaryContact;
         public SemanticSpaceMap Map => semanticMap;
         public Terrain GroundTerrain => terrain;
         public bool PitchEnabled => pitchEnabled;
+        public IPedestrianMoveSource MoveSource => moveSource;
+
+        /// <summary>
+        /// Hands walking and turning to something outside this controller, such
+        /// as the touch router on a handheld build. Passing null restores the
+        /// keyboard and mouse path, which is what a desktop session keeps using.
+        /// </summary>
+        public void SetMoveSource(IPedestrianMoveSource source)
+        {
+            moveSource = source;
+        }
 
         public void SetPitchEnabled(bool value)
         {
@@ -51,14 +63,13 @@ namespace CityGenPedestrianProbe
 
         private void Update()
         {
-            ReadLook(out Vector2 look);
-            transform.Rotate(0f, look.x * mouseSensitivity, 0f, Space.World);
+            ReadInput(out Vector2 input, out bool fast, out Vector2 look);
+            transform.Rotate(0f, look.x, 0f, Space.World);
             if (pitchEnabled)
-                pitch = Mathf.Clamp(pitch - look.y * mouseSensitivity, -75f, 75f);
+                pitch = Mathf.Clamp(pitch - look.y, -75f, 75f);
             Vector3 euler = transform.localEulerAngles;
             transform.localEulerAngles = new Vector3(pitchEnabled ? pitch : 0f, euler.y, 0f);
 
-            ReadMove(out Vector2 input, out bool fast);
             Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
             Vector3 right = Vector3.ProjectOnPlane(transform.right, Vector3.up).normalized;
             Vector3 delta = (forward * input.y + right * input.x);
@@ -105,6 +116,26 @@ namespace CityGenPedestrianProbe
             Vector3 position = transform.position;
             position.y = terrain.SampleHeight(position) + terrain.transform.position.y + eyeHeight;
             transform.position = position;
+        }
+
+        /// <summary>
+        /// Asks the attached source, or falls back to reading the devices
+        /// directly. Look is returned already in degrees for this frame, so a
+        /// touch source can turn at its own rate without inheriting the mouse
+        /// sensitivity that only a mouse delta needs.
+        /// </summary>
+        private void ReadInput(out Vector2 movement, out bool fast,
+            out Vector2 lookDegrees)
+        {
+            if (moveSource != null)
+            {
+                moveSource.ReadMovement(out movement, out fast, out lookDegrees);
+                return;
+            }
+
+            ReadMove(out movement, out fast);
+            ReadLook(out Vector2 look);
+            lookDegrees = look * mouseSensitivity;
         }
 
         private static void ReadMove(out Vector2 movement, out bool fast)
