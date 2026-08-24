@@ -40,7 +40,7 @@ namespace CityGenPedestrianProbe
             if (host.GetComponent<ProbeSessionAnnotator>() == null)
                 host.gameObject.AddComponent<ProbeSessionAnnotator>();
 
-            AttachTouchControls(host);
+            AttachInputSources(host);
 
 #if PROBE_DEMO
             if (host.GetComponent<AutoSweepDemo>() == null)
@@ -48,7 +48,22 @@ namespace CityGenPedestrianProbe
 #endif
         }
 
-        private static void AttachTouchControls(PedestrianProbeRuntime host)
+        /// <summary>
+        /// Registers every source, on every platform, and lets each one report
+        /// whether its device is actually there.
+        /// </summary>
+        /// <remarks>
+        /// Both are always added because presence is a runtime question, not a
+        /// build-time one: a desktop has no touchscreen, a phone usually has no
+        /// keyboard, and a phone with one paired has both. The router skips
+        /// whichever is absent and merges the rest.
+        ///
+        /// Registering only touch would strand the desktop. The router becomes
+        /// the controller's move source as soon as it is configured, so the
+        /// keyboard path inside the controller stops being reachable and has to
+        /// come back in as a source rather than as a fallback.
+        /// </remarks>
+        private static void AttachInputSources(PedestrianProbeRuntime host)
         {
             if (host.GetComponent<ProbeInputRouter>() != null)
                 return;
@@ -59,6 +74,7 @@ namespace CityGenPedestrianProbe
                 host.GetComponent<FeedbackCoordinator>(),
                 host.GetComponent<BlindModeOverlay>());
             router.AddSource(host.gameObject.AddComponent<TouchProbeInputSource>());
+            router.AddSource(host.gameObject.AddComponent<KeyboardProbeInputSource>());
         }
     }
 }
