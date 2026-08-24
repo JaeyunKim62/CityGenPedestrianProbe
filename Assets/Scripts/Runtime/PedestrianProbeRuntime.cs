@@ -83,6 +83,10 @@ namespace CityGenPedestrianProbe
             if (signalRenderer == null)
                 signalRenderer = gameObject.AddComponent<AudioSignalRenderer>();
             signalRenderer.Configure(signalCatalog, camera.transform);
+
+            // Named in every row, so a finished session says which of the rival
+            // catalogs it was heard through rather than only where it went.
+            logger.SetSignalRenderer(signalRenderer);
             overlay.SetSignalRenderer(signalRenderer);
             if (signalCatalog == null)
                 Debug.LogWarning("Pedestrian Probe has no signal catalog, so feedback " +
