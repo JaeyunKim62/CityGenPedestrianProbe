@@ -46,7 +46,9 @@ namespace CityGenPedestrianProbe.Editor.Tests
             Assert.That(counterEnabled, Is.True);
             Assert.That(coordinator.TryGetModuleState(SemanticAudioGuide.StableModuleId,
                 out bool semanticEnabled), Is.True);
-            Assert.That(semanticEnabled, Is.True);
+            Assert.That(semanticEnabled, Is.False,
+                "The semantic guide is registered but starts silent, so a session " +
+                "hears the sweep alone until someone asks for it.");
         }
 
         [Test]
