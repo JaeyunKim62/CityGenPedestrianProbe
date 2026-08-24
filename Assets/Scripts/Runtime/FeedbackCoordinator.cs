@@ -32,7 +32,15 @@ namespace CityGenPedestrianProbe
             player = controller;
 
             if (GetComponent<SemanticAudioGuide>() == null)
-                gameObject.AddComponent<SemanticAudioGuide>();
+            {
+                // Created silent. The sweep is what a session is testing, and in
+                // a real city the guide answers every overlapping layer at once
+                // — Highway over MapRoad over MapSurface — and buries it. The
+                // testbed instructions already told everyone to press G first,
+                // which is the same admission. A three-finger tap, G, or the
+                // coordinator turns it back on for anyone who wants it.
+                gameObject.AddComponent<SemanticAudioGuide>().enabled = false;
+            }
 
             signalBus.StopAll();
             signalBus.Configure(logger, map, listener);

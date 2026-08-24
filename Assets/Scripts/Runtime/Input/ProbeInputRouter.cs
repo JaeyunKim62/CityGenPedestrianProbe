@@ -106,11 +106,21 @@ namespace CityGenPedestrianProbe
                 IProbeInputSource source = sources[i];
                 if (source == null || !source.IsPresent)
                     continue;
-                merged = merged.MergedWith(source.Read(deltaSeconds, angle, range));
+
+                ProbeInputFrame read = source.Read(deltaSeconds, angle, range);
+                merged = merged.MergedWith(read);
+
+                // Named the first time anything is actually asked for, because
+                // HasReceivedInput retires the demo sweep and a wrong latch
+                // leaves the probe frozen with nothing saying which device
+                // claimed the person had moved.
+                if (!HasReceivedInput && Requests(read))
+                {
+                    HasReceivedInput = true;
+                    Debug.Log($"Input taken over by '{source.SourceId}'.", this);
+                }
             }
 
-            if (!HasReceivedInput && Requests(merged))
-                HasReceivedInput = true;
             return merged;
         }
 
@@ -139,9 +149,15 @@ namespace CityGenPedestrianProbe
 #endif
         }
 
+        // A stick pushed to a hundredth of its travel, or a tenth of a degree of
+        // turn, is noise rather than a request. Reading a bare zero let a phone
+        // that reports a mouse it does not have retire the demo sweep before
+        // anybody had touched the screen.
+        private const float RequestEpsilon = 0.01f;
+
         private static bool Requests(in ProbeInputFrame candidate) =>
-            candidate.Move.sqrMagnitude > 0f ||
-            candidate.LookDegrees.sqrMagnitude > 0f ||
+            candidate.Move.sqrMagnitude > RequestEpsilon * RequestEpsilon ||
+            candidate.LookDegrees.sqrMagnitude > RequestEpsilon * RequestEpsilon ||
             candidate.HasSweepAngle || candidate.HasRange ||
             candidate.CenterSweep || candidate.ToggleSemanticAudio ||
             candidate.ToggleBlind;

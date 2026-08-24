@@ -83,6 +83,10 @@ namespace CityGenPedestrianProbe
             if (signalRenderer == null)
                 signalRenderer = gameObject.AddComponent<AudioSignalRenderer>();
             signalRenderer.Configure(signalCatalog, camera.transform);
+
+            // Named in every row, so a finished session says which of the rival
+            // catalogs it was heard through rather than only where it went.
+            logger.SetSignalRenderer(signalRenderer);
             overlay.SetSignalRenderer(signalRenderer);
             if (signalCatalog == null)
                 Debug.LogWarning("Pedestrian Probe has no signal catalog, so feedback " +
@@ -98,6 +102,28 @@ namespace CityGenPedestrianProbe
                 controls = gameObject.AddComponent<SweepKeyboardControls>();
             controls.Configure(sweep, feedback);
             controls.SetCatalogs(signalRenderer, BuildCatalogCycle());
+
+            WarmUpSpatialIndex();
+        }
+
+        /// <summary>
+        /// Pays for the map's spatial index here, while the scene is still
+        /// loading, rather than on whichever query happens to ask for it first.
+        /// </summary>
+        /// <remarks>
+        /// The index is built lazily on first use. On the NYC map, with two
+        /// thousand features in it, that cost measured 0.72 s and landed three
+        /// seconds into a session — a freeze while someone was already walking.
+        /// A single throwaway query moves it into the loading screen, where a
+        /// pause is what everyone already expects.
+        /// </remarks>
+        private void WarmUpSpatialIndex()
+        {
+            if (semanticMap == null)
+                return;
+            semanticMap.ClassifyWorld(player != null
+                ? player.transform.position
+                : Vector3.zero);
         }
     }
 }
