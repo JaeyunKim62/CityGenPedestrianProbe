@@ -97,9 +97,12 @@ namespace CityGenPedestrianProbe
             transform.localEulerAngles = new Vector3(pitchEnabled ? pitch : 0f,
                 heading.BearingDegrees, 0f);
 
-            Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
-            Vector3 right = Vector3.ProjectOnPlane(transform.right, Vector3.up).normalized;
-            Vector3 delta = (forward * input.y + right * input.x);
+            // One rotation, and which angle it is decides the frame. With the
+            // body frame this is the same direction the transform's own forward
+            // and right gave before, since both are that yaw with the pitch
+            // projected out of them.
+            Vector3 delta = Quaternion.Euler(0f, heading.MovementBearingDegrees, 0f) *
+                            new Vector3(input.x, 0f, input.y);
             if (delta.sqrMagnitude > 1f)
                 delta.Normalize();
             Vector3 requested = transform.position + delta *

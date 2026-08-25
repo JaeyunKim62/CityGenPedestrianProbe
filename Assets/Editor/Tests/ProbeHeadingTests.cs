@@ -66,6 +66,22 @@ namespace CityGenPedestrianProbe.Editor.Tests
             Assert.That(ProbeHeading.CompassName(heading.BearingDegrees), Is.EqualTo("W"));
         }
 
+        // Mathf.Repeat rounds up to exactly 360 for inputs a hair below zero,
+        // which would put a bearing outside the range this promises and write
+        // the same direction into a session file as both 0.00 and 360.00.
+        [TestCase(-1e-7f)]
+        [TestCase(-1e-5f)]
+        [TestCase(360f)]
+        [TestCase(-360f)]
+        [TestCase(719.9999f)]
+        public void Bearing_NeverLandsOnAFullTurn(float degrees)
+        {
+            heading.SetBearing(degrees);
+
+            Assert.That(heading.BearingDegrees, Is.GreaterThanOrEqualTo(0f));
+            Assert.That(heading.BearingDegrees, Is.LessThan(360f));
+        }
+
         [Test]
         public void SetBearing_IgnoresAMeasurementThatIsNotThere()
         {
@@ -119,6 +135,53 @@ namespace CityGenPedestrianProbe.Editor.Tests
             Assert.That(heading.GazeOffsetDegrees, Is.EqualTo(60f).Within(0.001f),
                 "the sweep holds an angle relative to the body, not to the world");
             Assert.That(heading.GazeBearingDegrees, Is.EqualTo(150f).Within(0.001f));
+        }
+
+        [Test]
+        public void MovementFrame_StartsOnTheBodySoNothingChangesUntilItIsAsked()
+        {
+            heading.SetBearing(120f);
+
+            Assert.That(heading.MovementFrame, Is.EqualTo(ProbeMovementFrame.Body));
+            Assert.That(heading.MovementBearingDegrees, Is.EqualTo(120f).Within(0.001f));
+        }
+
+        [Test]
+        public void BodyFrame_WalksWhereverTheBodyIsPointed()
+        {
+            heading.MovementFrame = ProbeMovementFrame.Body;
+
+            heading.SetBearing(90f);
+            Assert.That(heading.MovementBearingDegrees, Is.EqualTo(90f).Within(0.001f));
+            heading.SetBearing(200f);
+            Assert.That(heading.MovementBearingDegrees, Is.EqualTo(200f).Within(0.001f));
+        }
+
+        [Test]
+        public void CompassFrame_WalksNorthWhicheverWayTheBodyIsPointed()
+        {
+            heading.MovementFrame = ProbeMovementFrame.World;
+
+            heading.SetBearing(90f);
+            Assert.That(heading.MovementBearingDegrees, Is.EqualTo(0f).Within(0.001f));
+            heading.SetBearing(270f);
+            Assert.That(heading.MovementBearingDegrees, Is.EqualTo(0f).Within(0.001f));
+        }
+
+        // The point of the compass frame: the body keeps pointing where it was
+        // pointed, so the sweep can hold something to one side while the person
+        // walks past it. Travel direction and attention direction come apart.
+        [Test]
+        public void CompassFrame_LeavesTheBodyAndAttentionWhereTheyWere()
+        {
+            heading.SetBearing(90f);
+            heading.SetGazeOffset(30f);
+
+            heading.MovementFrame = ProbeMovementFrame.World;
+
+            Assert.That(heading.BearingDegrees, Is.EqualTo(90f).Within(0.001f));
+            Assert.That(heading.GazeBearingDegrees, Is.EqualTo(120f).Within(0.001f));
+            Assert.That(heading.MovementBearingDegrees, Is.EqualTo(0f).Within(0.001f));
         }
 
         [TestCase(0f, "N")]

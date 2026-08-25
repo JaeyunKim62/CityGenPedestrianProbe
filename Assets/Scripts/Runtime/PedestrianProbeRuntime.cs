@@ -72,13 +72,6 @@ namespace CityGenPedestrianProbe
             overlay.Configure(semanticMap, player.transform);
             overlay.SetHeading(player.Heading);
 
-            // The menu is what an experimenter steers a session with, so it is
-            // attached whatever the build, unlike the diagnostics the overlay
-            // keeps behind a guard.
-            ProbeSettingsMenu settingsMenu = GetComponent<ProbeSettingsMenu>();
-            if (settingsMenu == null)
-                settingsMenu = gameObject.AddComponent<ProbeSettingsMenu>();
-            settingsMenu.Configure(overlay);
             overlay.BlindModeChanged += blind => logger.LogEvent("blind_mode",
                 semanticMap.ClassifyWorld(player.transform.position), blind ? "on" : "off");
             overlay.BlindModeChanged += blind => player.SetPitchEnabled(!blind);
@@ -115,6 +108,16 @@ namespace CityGenPedestrianProbe
             if (feedback == null)
                 feedback = gameObject.AddComponent<FeedbackCoordinator>();
             feedback.Configure(semanticMap, camera.transform, logger, player);
+
+            // The menu is what an experimenter steers a session with, so it is
+            // attached whatever the build, unlike the diagnostics the overlay
+            // keeps behind a guard. Configured after the coordinator because
+            // changing a condition here has to reach the session file, and the
+            // signal bus is what writes those rows.
+            ProbeSettingsMenu settingsMenu = GetComponent<ProbeSettingsMenu>();
+            if (settingsMenu == null)
+                settingsMenu = gameObject.AddComponent<ProbeSettingsMenu>();
+            settingsMenu.Configure(overlay, player.Heading, feedback);
 
             SweepKeyboardControls controls = GetComponent<SweepKeyboardControls>();
             if (controls == null)

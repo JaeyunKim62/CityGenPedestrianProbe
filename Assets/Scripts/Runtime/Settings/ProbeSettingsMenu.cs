@@ -51,14 +51,19 @@ namespace CityGenPedestrianProbe
 
         private readonly List<MenuRow> rows = new List<MenuRow>();
         private BlindModeOverlay overlay;
+        private ProbeHeading heading;
+        private FeedbackCoordinator coordinator;
         private GUIStyle buttonStyle;
         private GUIStyle panelStyle;
         private bool open;
         private Rect gearRect;
 
-        public void Configure(BlindModeOverlay blindOverlay)
+        public void Configure(BlindModeOverlay blindOverlay, ProbeHeading probeHeading,
+            FeedbackCoordinator feedback)
         {
             overlay = blindOverlay;
+            heading = probeHeading;
+            coordinator = feedback;
             BuildRows();
         }
 
@@ -83,9 +88,36 @@ namespace CityGenPedestrianProbe
                 () => overlay.SourceClassView = !overlay.SourceClassView);
 #endif
 
+            // Reachable in a shipped build, unlike everything above it. Which
+            // frame a session walked in is a condition, not a diagnostic, and
+            // an experimenter has to be able to set it on the handset that is
+            // going to run the trial.
+            Add(DescribeMovementFrame, ToggleMovementFrame);
+
             AddLabel(DescribeScene);
             AddHalf(() => "PREVIOUS SCENE", () => LoadSceneOffset(-1), CanLoadOffset(-1));
             AddHalf(() => "NEXT SCENE", () => LoadSceneOffset(1), CanLoadOffset(1));
+        }
+
+        private string DescribeMovementFrame() =>
+            heading != null && heading.MovementFrame == ProbeMovementFrame.World
+                ? "WALK: COMPASS (W = NORTH)"
+                : "WALK: BODY (W = FACING)";
+
+        private void ToggleMovementFrame()
+        {
+            if (heading == null)
+                return;
+
+            heading.MovementFrame = heading.MovementFrame == ProbeMovementFrame.World
+                ? ProbeMovementFrame.Body
+                : ProbeMovementFrame.World;
+
+            // Into the session file, because a walked path means a different
+            // thing under each frame and a file that does not say which one
+            // cannot be read back correctly.
+            coordinator?.SignalBus?.LogConfigurationChange("movement_frame",
+                $"frame={heading.MovementFrame}");
         }
 
         private void Add(Func<string> text, Action activate,

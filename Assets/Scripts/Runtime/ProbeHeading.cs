@@ -2,6 +2,22 @@ using UnityEngine;
 
 namespace CityGenPedestrianProbe
 {
+    /// <summary>Which direction a movement request is measured from.</summary>
+    /// <remarks>
+    /// The reference frame axis of the design space, applied to walking. Aiming
+    /// is deliberately not on this list: the sweep is one feedback module among
+    /// several, and letting movement resolve against it would leave walking
+    /// undefined in any condition that module is switched off in.
+    /// </remarks>
+    public enum ProbeMovementFrame
+    {
+        /// <summary>Forward is wherever the body points.</summary>
+        Body = 0,
+
+        /// <summary>Forward is north, whichever way the body points.</summary>
+        World = 1
+    }
+
     /// <summary>
     /// Where a person is pointed, held as two quantities rather than one.
     /// </summary>
@@ -49,6 +65,23 @@ namespace CityGenPedestrianProbe
         /// <summary>Attention as an absolute world direction.</summary>
         public float GazeBearingDegrees => Wrap360(bearingDegrees + gazeOffsetDegrees);
 
+        /// <summary>Which direction walking is measured from. Body by default.</summary>
+        public ProbeMovementFrame MovementFrame { get; set; } = ProbeMovementFrame.Body;
+
+        /// <summary>
+        /// The direction a forward request travels in.
+        /// </summary>
+        /// <remarks>
+        /// The whole of the frame choice is this one angle, which is the reason
+        /// for choosing from the bearings already held here rather than storing
+        /// a third. Walking in world coordinates does not turn the body, so a
+        /// person can hold the sweep on something to the east while walking
+        /// north — travel direction and attention direction come apart, which
+        /// is the condition this frame exists to create.
+        /// </remarks>
+        public float MovementBearingDegrees =>
+            MovementFrame == ProbeMovementFrame.World ? 0f : bearingDegrees;
+
         /// <summary>Points the body at an absolute world direction.</summary>
         /// <remarks>
         /// Non-finite input is dropped rather than stored. A device deriving an
@@ -81,8 +114,19 @@ namespace CityGenPedestrianProbe
             gazeOffsetDegrees = Mathf.DeltaAngle(0f, degrees);
         }
 
-        /// <summary>Bearing folded into 0..360.</summary>
-        public static float Wrap360(float degrees) => Mathf.Repeat(degrees, 360f);
+        /// <summary>Bearing folded into 0 up to but not including 360.</summary>
+        /// <remarks>
+        /// Mathf.Repeat lands on exactly 360 for an input a hair below zero,
+        /// because 360 minus a millionth of a degree is 360 once it is a float.
+        /// Left alone, a bearing would occasionally leave here outside the
+        /// range everything downstream was promised, and a session file would
+        /// carry the same direction as 0.00 on one row and 360.00 on the next.
+        /// </remarks>
+        public static float Wrap360(float degrees)
+        {
+            float wrapped = Mathf.Repeat(degrees, 360f);
+            return wrapped >= 360f ? 0f : wrapped;
+        }
 
         /// <summary>
         /// One of eight compass points, so a heading can be read at a glance.
