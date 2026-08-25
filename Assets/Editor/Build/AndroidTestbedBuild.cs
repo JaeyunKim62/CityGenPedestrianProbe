@@ -22,14 +22,29 @@ namespace CityGenPedestrianProbe.Editor
         private const string OutputDirectory = "Builds/Android";
         private const string ApkName = "PedestrianProbe-testbed.apk";
 
-        private static readonly string[] Scenes =
+        private const string SceneFolder = "Assets/Testbed/Scenes";
+
+        /// <summary>
+        /// Every scene in the testbed folder, sorted by name so SYN01 stays
+        /// first and the scene buttons walk them in order.
+        /// </summary>
+        /// <remarks>
+        /// Read from disk rather than listed here. The list was written when
+        /// there were five layouts and silently stayed at five when SYN06 and
+        /// SYN07 arrived, which left the two stimuli built for the combined
+        /// discrimination trial unreachable from the phone.
+        /// </remarks>
+        private static string[] CollectScenes()
         {
-            "Assets/Testbed/Scenes/SYN01_Corridor4m.unity",
-            "Assets/Testbed/Scenes/SYN02_Corridor8m.unity",
-            "Assets/Testbed/Scenes/SYN03_OpeningLeft.unity",
-            "Assets/Testbed/Scenes/SYN04_OpeningRight.unity",
-            "Assets/Testbed/Scenes/SYN05_Tee.unity"
-        };
+            if (!Directory.Exists(SceneFolder))
+                return Array.Empty<string>();
+
+            string[] scenes = Directory.GetFiles(SceneFolder, "*.unity");
+            Array.Sort(scenes, StringComparer.Ordinal);
+            for (int i = 0; i < scenes.Length; i++)
+                scenes[i] = scenes[i].Replace('\\', '/');
+            return scenes;
+        }
 
         [MenuItem("Tools/Pedestrian Probe/Testbed/Build Android APK", priority = 41)]
         public static void BuildFromMenu()
@@ -60,11 +75,10 @@ namespace CityGenPedestrianProbe.Editor
 
         private static BuildReport Run()
         {
-            foreach (string scene in Scenes)
+            string[] scenes = CollectScenes();
+            if (scenes.Length == 0)
             {
-                if (File.Exists(scene))
-                    continue;
-                Debug.LogError($"Testbed scene is missing: {scene}. Run " +
+                Debug.LogError($"No testbed scenes in {SceneFolder}. Run " +
                                "Tools > Pedestrian Probe > Testbed > Build Synthetic " +
                                "Scenes first.");
                 return null;
@@ -82,7 +96,7 @@ namespace CityGenPedestrianProbe.Editor
             {
                 // Passed directly rather than through EditorBuildSettings so the
                 // project's own scene list is left alone.
-                scenes = Scenes,
+                scenes = scenes,
                 locationPathName = outputPath,
                 target = BuildTarget.Android,
                 targetGroup = BuildTargetGroup.Android,
@@ -97,7 +111,7 @@ namespace CityGenPedestrianProbe.Editor
                 extraScriptingDefines = new[] { "PROBE_DEMO" }
             };
 
-            Debug.Log($"Building {Scenes.Length} testbed scenes to {outputPath} " +
+            Debug.Log($"Building {scenes.Length} testbed scenes to {outputPath} " +
                       $"as {ApplicationId} (development, PROBE_DEMO).");
             BuildReport report = BuildPipeline.BuildPlayer(options);
             BuildSummary summary = report.summary;
