@@ -25,7 +25,9 @@ namespace CityGenPedestrianProbe.Editor.Tests
             Assert.That(catalog.Revision, Is.GreaterThanOrEqualTo(2),
                 "bump the revision whenever a definition changes, or the log cannot " +
                 "say which sounds a session used");
-            Assert.That(catalog.DefinitionCount, Is.EqualTo(2));
+            Assert.That(catalog.DefinitionCount, Is.EqualTo(3),
+                "the two sweep answers and the footfall, and nothing per category: " +
+                "C-2 is the minimal condition");
         }
 
         [Test]
@@ -149,6 +151,63 @@ namespace CityGenPedestrianProbe.Editor.Tests
                 Assert.That(loaded.TryResolve(EgocentricSweepProbe.MissSignalId, out _),
                     Is.True, name);
             }
+        }
+
+        // Sound sets can be cycled mid-session, so a step that only one of them
+        // answered would fall silent halfway through a trial and look like the
+        // person had stopped walking.
+        [Test]
+        public void EveryCatalog_AnswersTheFootfallIdentically()
+        {
+            SignalDefinition first = null;
+            foreach (string name in new[] { "C002_DirectionRange", "C003_PulseRange",
+                         "C004_PitchRange", "C101_PulseCategory" })
+            {
+                Assert.That(Load(name).TryResolve(LocomotionStepFeedback.StepSignalId,
+                    out SignalDefinition step), Is.True, name);
+                Assert.That(step.SignalId, Is.EqualTo(LocomotionStepFeedback.StepSignalId),
+                    $"{name} must carry its own entry rather than falling back");
+
+                if (first == null)
+                {
+                    first = step;
+                    continue;
+                }
+
+                Assert.That(step.BaseFrequencyHz, Is.EqualTo(first.BaseFrequencyHz), name);
+                Assert.That(step.DurationSeconds, Is.EqualTo(first.DurationSeconds), name);
+                Assert.That(step.Level, Is.EqualTo(first.Level), name);
+            }
+        }
+
+        // The catalogs are rival encodings of the sweep. A footfall sitting in
+        // the same register would mask the thing being measured.
+        [Test]
+        public void Footfall_SitsBelowEverySweepSignal()
+        {
+            SignalCatalog category = Load("C101_PulseCategory");
+            category.TryResolve(LocomotionStepFeedback.StepSignalId,
+                out SignalDefinition step);
+
+            foreach (string name in new[] { "Sidewalk", "Crosswalk", "Curb", "Road" })
+            {
+                string signalId = EgocentricSweepProbe.HitSignalIdFor(
+                    new SpatialProbeSample(true, name, "Synthetic", 1L, 1f));
+                category.TryResolve(signalId, out SignalDefinition hit);
+                Assert.That(step.BaseFrequencyHz, Is.LessThan(hit.BaseFrequencyHz), signalId);
+            }
+        }
+
+        [Test]
+        public void Footfall_CarriesNoDistanceOnAnyAxis()
+        {
+            catalog.TryResolve(LocomotionStepFeedback.StepSignalId,
+                out SignalDefinition step);
+
+            Assert.That(step.MapsDistanceToPulse, Is.False);
+            Assert.That(step.MapsDistanceToPitch, Is.False);
+            Assert.That(step.CutoffHzAt(0f), Is.EqualTo(step.CutoffHzAt(9f)).Within(0.01f),
+                "a step reports the body, not anything at a distance from it");
         }
 
         [Test]

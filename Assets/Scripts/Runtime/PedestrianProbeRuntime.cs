@@ -90,6 +90,14 @@ namespace CityGenPedestrianProbe
             sweep.SetHeading(player.Heading);
             overlay.SetSweepProbe(sweep);
 
+            // Added before the coordinator is configured, because that is when
+            // modules are discovered. Enabled, unlike the semantic guide next
+            // to it: a footfall is not a rival source of spatial information,
+            // it is the self-motion that walking normally supplies and a blind
+            // session otherwise leaves out entirely.
+            if (GetComponent<LocomotionStepFeedback>() == null)
+                gameObject.AddComponent<LocomotionStepFeedback>();
+
             AudioSignalRenderer signalRenderer = GetComponent<AudioSignalRenderer>();
             if (signalRenderer == null)
                 signalRenderer = gameObject.AddComponent<AudioSignalRenderer>();
