@@ -71,6 +71,14 @@ namespace CityGenPedestrianProbe
                 overlay = gameObject.AddComponent<BlindModeOverlay>();
             overlay.Configure(semanticMap, player.transform);
             overlay.SetHeading(player.Heading);
+
+            // The menu is what an experimenter steers a session with, so it is
+            // attached whatever the build, unlike the diagnostics the overlay
+            // keeps behind a guard.
+            ProbeSettingsMenu settingsMenu = GetComponent<ProbeSettingsMenu>();
+            if (settingsMenu == null)
+                settingsMenu = gameObject.AddComponent<ProbeSettingsMenu>();
+            settingsMenu.Configure(overlay);
             overlay.BlindModeChanged += blind => logger.LogEvent("blind_mode",
                 semanticMap.ClassifyWorld(player.transform.position), blind ? "on" : "off");
             overlay.BlindModeChanged += blind => player.SetPitchEnabled(!blind);
