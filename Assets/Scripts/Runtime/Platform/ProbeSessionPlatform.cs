@@ -14,6 +14,9 @@ namespace CityGenPedestrianProbe
     /// </remarks>
     public static class ProbeSessionPlatform
     {
+        /// <summary>
+        /// Settings the device forces on us once, for as long as the app runs.
+        /// </summary>
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Apply()
         {
@@ -21,19 +24,32 @@ namespace CityGenPedestrianProbe
             // the device rather than of the compiler, so one build behaves
             // correctly wherever it runs and the desktop keeps running exactly
             // the code the phone does.
-            if (SystemInfo.deviceType == DeviceType.Handheld)
-            {
-                // A blind session paints the screen black and the participant
-                // never touches it, so Android would dim and lock the screen
-                // partway through and end the trial with it.
-                Screen.sleepTimeout = SleepTimeout.NeverSleep;
+            if (SystemInfo.deviceType != DeviceType.Handheld)
+                return;
 
-                // Held the same way every session, so that left and right mean
-                // the same thing to every participant.
-                Screen.orientation = ScreenOrientation.LandscapeLeft;
-            }
+            // A blind session paints the screen black and the participant never
+            // touches it, so Android would dim and lock the screen partway
+            // through and end the trial with it.
+            Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-            var host = Object.FindFirstObjectByType<PedestrianProbeRuntime>();
+            // Held the same way every session, so that left and right mean the
+            // same thing to every participant.
+            Screen.orientation = ScreenOrientation.LandscapeLeft;
+        }
+
+        /// <summary>
+        /// Gives one probe runtime the parts a session needs around it.
+        /// </summary>
+        /// <remarks>
+        /// Called from the runtime's own Awake, once per scene. It used to hang
+        /// off the same runtime-initialize hook as the screen settings above,
+        /// which runs once for the whole app: walking to the next layout left
+        /// the new scene with no router and no input sources at all, so the
+        /// controls simply stopped. Screen settings are an app-lifetime
+        /// concern and this is a per-scene one, and they cannot share a hook.
+        /// </remarks>
+        internal static void AttachSessionComponents(PedestrianProbeRuntime host)
+        {
             if (host == null)
                 return;
 

@@ -103,6 +103,10 @@ namespace CityGenPedestrianProbe
             controls.Configure(sweep, feedback);
             controls.SetCatalogs(signalRenderer, BuildCatalogCycle());
 
+            // Per scene, not per app. Loading the next layout builds a fresh
+            // runtime that needs its own router and sources.
+            ProbeSessionPlatform.AttachSessionComponents(this);
+
             WarmUpSpatialIndex();
         }
 
