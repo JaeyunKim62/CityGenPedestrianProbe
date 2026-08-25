@@ -108,3 +108,23 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# Scratch output from batch-mode test runs
+/tmp/
+
+# SRTM elevation tiles. CityGen downloads these and they are public data, so
+# they can be fetched again byte for byte. The OSM snapshot in
+# Assets/Database cannot, which is why that is committed and this is not.
+/[Aa]ssets/CityGen3D/Data/HGT/*.hgt
+/[Aa]ssets/CityGen3D/Data/HGT/*.hgt.meta
+/[Aa]ssets/CityGen3D/Data/HGT/*.zip
+/[Aa]ssets/CityGen3D/Data/HGT/*.zip.meta
+
+# CityGen scenes and terrain generated from a Database. Large, regenerable by
+# running Process and Generate again, and not needed to run a session: the
+# baked semantic map is what the runtime reads.
+/[Aa]ssets/[Ss]cenes/NYC_*.unity*
+/[Aa]ssets/[Ss]cenes/nyc_*.unity*
+/[Aa]ssets/[Ss]cenes/New City.unity*
+/[Aa]ssets/[Tt]errains/NYC_*
+/[Aa]ssets/[Tt]errains/New City*
