@@ -67,7 +67,16 @@ namespace CityGenPedestrianProbe
         }
 
         public void LogConfigurationChange(string detail) =>
-            LogEvent("signal_catalog", Sanitize(detail));
+            LogConfigurationChange("signal_catalog", detail);
+
+        /// <summary>
+        /// Records something about how a session is set up, under its own event
+        /// name so the rows can be told apart when the file is read back.
+        /// </summary>
+        public void LogConfigurationChange(string eventName, string detail) =>
+            LogEvent(string.IsNullOrWhiteSpace(eventName)
+                ? "configuration"
+                : eventName.Trim(), Sanitize(detail));
 
         private void HandleSignalUnresolved(string signalId) =>
             LogEvent("signal_unresolved", $"signal={Sanitize(signalId)}");

@@ -118,6 +118,14 @@ namespace CityGenPedestrianProbe
                 {
                     HasReceivedInput = true;
                     Debug.Log($"Input taken over by '{source.SourceId}'.", this);
+
+                    // Into the session file, not just the console. A thumb and
+                    // a key are different tasks — one holds an angle, the other
+                    // asks the person to integrate how long they held it — so a
+                    // session that does not say which was used cannot be
+                    // compared with one that used the other.
+                    coordinator?.SignalBus?.LogConfigurationChange("input_source",
+                        $"source={source.SourceId}");
                 }
             }
 
