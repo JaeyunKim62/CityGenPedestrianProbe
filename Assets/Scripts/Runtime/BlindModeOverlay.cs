@@ -150,6 +150,9 @@ namespace CityGenPedestrianProbe
                     ScaleMode.StretchToFill);
             }
 
+            // Diagnostics stay behind the guard: the status text and the map
+            // say where the participant is, which is the one thing a blind
+            // session must not show them.
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (!blind && semanticMap != null && player != null)
             {
@@ -166,9 +169,14 @@ namespace CityGenPedestrianProbe
                 if (showMap)
                     DrawSemanticMap();
             }
-
-            DrawTouchSettings();
 #endif
+
+            // The menu does not. An experimenter has to move between layouts to
+            // run a trial, and a build without it is a black screen nobody can
+            // steer. It draws over the blind fill, so it is reachable while the
+            // condition holds; the one button that would end the condition is
+            // guarded inside it instead.
+            DrawTouchSettings();
         }
 
         private void DrawTouchSettings()
@@ -206,7 +214,15 @@ namespace CityGenPedestrianProbe
 
             float width = Mathf.Min(390f * scale, Screen.width - margin * 2f);
             float rowHeight = 50f * scale;
+
+            // A shipped build shows the scene row alone; the blind toggle and
+            // the three map controls above it are compiled out, so the panel
+            // has to shrink with them or it draws a box of empty space.
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             float panelHeight = rowHeight * 5.7f;
+#else
+            float panelHeight = rowHeight * 2.7f;
+#endif
             Rect panel = new Rect(Screen.width - width - margin,
                 settingsRect.yMax + 8f * scale, width, panelHeight);
             GUI.Box(panel, "TESTBED SETTINGS", settingsPanelStyle);
@@ -217,12 +233,21 @@ namespace CityGenPedestrianProbe
             float gap = 8f * scale;
             float half = (innerWidth - gap) * 0.5f;
 
+            // Only a build that already carries the debug map offers a way out
+            // of the blind condition. A participant holding a shipped build can
+            // reach every other control here and not this one.
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             touchBlindRect = new Rect(panel.x + inset, y, innerWidth, rowHeight);
             if (GUI.Button(touchBlindRect,
                     blind ? "VIEW DEBUG MAP" : "RETURN TO BLIND MODE"))
                 SetBlind(!blind);
             y += rowHeight + gap;
+#endif
 
+            // These steer the debug map, which a shipped build never draws, so
+            // offering them there would be three buttons that visibly do
+            // nothing.
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             touchMapRect = new Rect(panel.x + inset, y, half, rowHeight);
             if (GUI.Button(touchMapRect,
                     showMap ? "HIDE MAP" : "SHOW MAP"))
@@ -238,6 +263,7 @@ namespace CityGenPedestrianProbe
                     sourceClassView ? "SHOW PEDESTRIAN SEMANTICS" : "SHOW SOURCE CLASSES"))
                 sourceClassView = !sourceClassView;
             y += rowHeight + gap;
+#endif
 
             Scene scene = SceneManager.GetActiveScene();
             int sceneCount = SceneManager.sceneCountInBuildSettings;

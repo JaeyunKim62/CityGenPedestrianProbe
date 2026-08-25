@@ -129,3 +129,8 @@ InitTestScene*.unity*
 /[Aa]ssets/[Ss]cenes/New City.unity*
 /[Aa]ssets/[Tt]errains/NYC_*
 /[Aa]ssets/[Tt]errains/New City*
+
+# Signing keys. The upload key decides who may publish updates for the life of
+# the app; losing it is unrecoverable and committing it is worse.
+*.keystore
+*.jks
