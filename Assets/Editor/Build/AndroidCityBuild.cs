@@ -24,8 +24,8 @@ namespace CityGenPedestrianProbe.Editor
         // Its own identity, so a city build and a testbed build sit on the
         // phone at once instead of replacing each other, and so their session
         // logs land in separate per-app directories and cannot be mixed up.
-        private const string ApplicationId = "com.jaeyunkim.pedestrianprobe.city";
-        private const string ProductName = "Probe NYC";
+        private const string ApplicationId = "com.jaeyunkim.pedsim.city";
+        private const string ProductName = "도시환경 공간인지";
         private const string OutputDirectory = "Builds/Android";
         private const string ApkName = "PedestrianProbe-city.apk";
         private const string CityScene = "Assets/Scenes/NYC_DoyersChinatown.unity";

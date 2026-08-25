@@ -18,7 +18,8 @@ namespace CityGenPedestrianProbe.Editor
     /// </remarks>
     public static class AndroidTestbedBuild
     {
-        private const string ApplicationId = "com.jaeyunkim.pedestrianprobe";
+        private const string ApplicationId = "com.jaeyunkim.pedsim.syn";
+        private const string ProductName = "합성환경 공간인지";
         private const string OutputDirectory = "Builds/Android";
         private const string ApkName = "PedestrianProbe-testbed.apk";
         private const string AabName = "PedestrianProbe-testbed.aab";
@@ -26,16 +27,6 @@ namespace CityGenPedestrianProbe.Editor
 
         private const string SceneFolder = "Assets/Testbed/Scenes";
 
-        /// <summary>
-        /// Every scene in the testbed folder, sorted by name so SYN01 stays
-        /// first and the scene buttons walk them in order.
-        /// </summary>
-        /// <remarks>
-        /// Read from disk rather than listed here. The list was written when
-        /// there were five layouts and silently stayed at five when SYN06 and
-        /// SYN07 arrived, which left the two stimuli built for the combined
-        /// discrimination trial unreachable from the phone.
-        /// </remarks>
         /// <summary>
         /// Points Unity at the release keystore, reading both passwords from
         /// the environment.
@@ -87,6 +78,16 @@ namespace CityGenPedestrianProbe.Editor
             return true;
         }
 
+        /// <summary>
+        /// Every scene in the testbed folder, sorted by name so SYN01 stays
+        /// first and the scene buttons walk them in order.
+        /// </summary>
+        /// <remarks>
+        /// Read from disk rather than listed here. The list was written when
+        /// there were five layouts and silently stayed at five when SYN06 and
+        /// SYN07 arrived, which left the two stimuli built for the combined
+        /// discrimination trial unreachable from the phone.
+        /// </remarks>
         private static string[] CollectScenes()
         {
             if (!Directory.Exists(SceneFolder))
@@ -165,7 +166,15 @@ namespace CityGenPedestrianProbe.Editor
                 return null;
             }
 
+            // Identity belongs to this recipe, not to the project, so both are
+            // put back afterwards. Otherwise whichever build ran last decides
+            // what ProjectSettings claims the project is.
+            string previousId =
+                PlayerSettings.GetApplicationIdentifier(NamedBuildTarget.Android);
+            string previousProduct = PlayerSettings.productName;
+
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, ApplicationId);
+            PlayerSettings.productName = ProductName;
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
 
@@ -220,17 +229,27 @@ namespace CityGenPedestrianProbe.Editor
                       $"as {ApplicationId} " +
                       $"({(releaseMode ? "release, app bundle" : "development, PROBE_DEMO")}).");
 
-            // Only a release build sheds it. A development build is installed
-            // over a cable where half a gigabyte costs thirty seconds, and
-            // leaving the project untouched there is worth more than the space.
-            using (releaseMode ? new CityGenResourcesExclusion() : null)
+            try
             {
-                BuildReport report = BuildPipeline.BuildPlayer(options);
-                BuildSummary summary = report.summary;
-                Debug.Log($"Android build {summary.result}: " +
-                          $"{summary.totalSize / (1024 * 1024)} MB in {summary.totalTime}. " +
-                          $"Errors: {summary.totalErrors}.");
-                return report;
+                // Only a release build sheds it. A development build is
+                // installed over a cable where half a gigabyte costs thirty
+                // seconds, and leaving the project untouched there is worth
+                // more than the space.
+                using (releaseMode ? new CityGenResourcesExclusion() : null)
+                {
+                    BuildReport report = BuildPipeline.BuildPlayer(options);
+                    BuildSummary summary = report.summary;
+                    Debug.Log($"Android build {summary.result}: " +
+                              $"{summary.totalSize / (1024 * 1024)} MB in " +
+                              $"{summary.totalTime}. Errors: {summary.totalErrors}.");
+                    return report;
+                }
+            }
+            finally
+            {
+                PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android,
+                    previousId);
+                PlayerSettings.productName = previousProduct;
             }
         }
     }
