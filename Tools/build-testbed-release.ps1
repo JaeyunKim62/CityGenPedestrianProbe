@@ -38,26 +38,37 @@ $env:PROBE_KEYSTORE_PASS = $plain
 $env:PROBE_KEYALIAS_PASS = $plain
 
 try {
-    Write-Host "Building. This takes about thirteen minutes." -ForegroundColor Cyan
+    Write-Host "Building. This takes a few minutes." -ForegroundColor Cyan
 
-    # Unity writes progress to stderr, and in Windows PowerShell a native
-    # command's stderr becomes an ErrorRecord. Under ErrorActionPreference
-    # 'Stop' that is a terminating error, so the script used to abandon a build
-    # that was in fact running perfectly well and then complain about the log
-    # file it had not waited for.
-    $previous = $ErrorActionPreference
-    $ErrorActionPreference = 'Continue'
-    try {
-        & $Unity -batchmode -quit `
-            -projectPath $project `
-            -buildTarget Android `
-            -executeMethod CityGenPedestrianProbe.Editor.AndroidTestbedBuild.BuildReleaseFromCommandLine `
-            -logFile $LogFile
-        $code = $LASTEXITCODE
+    # Removed first so that a build which never starts cannot be reported from
+    # the previous run's log, which is exactly what happened twice: the script
+    # announced a version code and a duration belonging to an earlier build.
+    Remove-Item $LogFile -ErrorAction SilentlyContinue
+
+    # Unity.exe relaunches itself and the process we start exits immediately,
+    # so neither the call operator nor Start-Process -Wait waits for the build.
+    # The log is the only honest signal: Unity writes a terminal line to it
+    # whichever way the build ends.
+    Start-Process -FilePath $Unity -PassThru -ArgumentList @(
+        '-batchmode', '-quit',
+        '-projectPath', $project,
+        '-buildTarget', 'Android',
+        '-executeMethod',
+        'CityGenPedestrianProbe.Editor.AndroidTestbedBuild.BuildReleaseFromCommandLine',
+        '-logFile', $LogFile) | Out-Null
+
+    $deadline = (Get-Date).AddMinutes(45)
+    $terminal = 'Exiting batchmode|Aborting batchmode|error CS\d|Android build Failed'
+    $done = $false
+    while ((Get-Date) -lt $deadline) {
+        Start-Sleep -Seconds 5
+        if (-not (Test-Path $LogFile)) { continue }
+        if (Select-String -Path $LogFile -Pattern $terminal -Quiet) { $done = $true; break }
     }
-    finally {
-        $ErrorActionPreference = $previous
-    }
+
+    if (-not $done) { Write-Host "Gave up waiting after 45 minutes." -ForegroundColor Yellow }
+    $code = if ($done -and
+        (Select-String -Path $LogFile -Pattern 'Android build Succeeded' -Quiet)) { 0 } else { 1 }
 }
 finally {
     # Cleared even if the build throws, so the password does not outlive it in
@@ -75,14 +86,27 @@ else {
         "the editor is not already open with this project." -ForegroundColor Yellow
 }
 
+# Checked rather than mentioned in passing: a build that dies while the folder
+# is parked leaves the editor unable to generate a city, and the next thing the
+# user does is unlikely to be reading this script's last line.
+$parked = Join-Path $project 'Assets\CityGen3D\Resources~Build'
+if (Test-Path $parked) {
+    Write-Host "`nCityGen's Resources folder is still parked at:" -ForegroundColor Yellow
+    Write-Host "  $parked"
+    Write-Host "Generating a city will not work until it is back. Either run"
+    Write-Host "Tools > Pedestrian Probe > Restore CityGen Resources in the editor,"
+    Write-Host "or rename that folder to Resources yourself."
+}
+
 $aab = Join-Path $project 'Builds\Android\PedestrianProbe-testbed.aab'
 if ($code -eq 0 -and (Test-Path $aab)) {
-    $mb = [math]::Round((Get-Item $aab).Length / 1MB, 1)
-    Write-Host "`n$aab  ($mb MB)" -ForegroundColor Green
-    Write-Host "Upload this to the Play Console internal testing track."
+    $item = Get-Item $aab
+    $mb = [math]::Round($item.Length / 1MB, 1)
+    Write-Host "`n$aab" -ForegroundColor Green
+    Write-Host "  $mb MB, built $($item.LastWriteTime.ToString('HH:mm'))"
+    Write-Host "  Upload this to the Play Console internal testing track."
 }
 else {
     Write-Host "`nBuild failed. Full log: $LogFile" -ForegroundColor Red
-    Write-Host "If it stopped partway, run Tools > Pedestrian Probe > Restore CityGen Resources in the editor."
     exit 1
 }
