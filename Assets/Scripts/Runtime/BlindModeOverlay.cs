@@ -20,6 +20,7 @@ namespace CityGenPedestrianProbe
         [SerializeField] private bool logStateToConsole = true;
         [SerializeField] private bool showMap = true;
         [SerializeField] private bool sourceClassView = true;
+        private ProbeHeading heading;
         private Texture2D blackTexture;
         private GUIStyle debugStyle;
         private GUIStyle mapLabelStyle;
@@ -68,6 +69,15 @@ namespace CityGenPedestrianProbe
         public void SetSweepProbe(EgocentricSweepProbe probe)
         {
             sweepProbe = probe;
+        }
+
+        /// <summary>
+        /// Gives the status text the heading model, so it can show where the
+        /// body points and where attention points as two separate readings.
+        /// </summary>
+        public void SetHeading(ProbeHeading probeHeading)
+        {
+            heading = probeHeading;
         }
 
         public void SetSignalRenderer(AudioSignalRenderer renderer)
@@ -423,7 +433,7 @@ namespace CityGenPedestrianProbe
             return header +
                    $"Position XYZ: {position.x:F2}, {position.y:F2}, {position.z:F2}\n" +
                    $"Geo: {latitude:F8}, {longitude:F8}\n" +
-                   $"Heading: {player.eulerAngles.y:F1}deg\n" +
+                   $"Heading: {BuildHeadingText()}\n" +
                    $"Current: {current.DisplayClass}{semanticText}  " +
                    $"id={current.FeatureId}  " +
                    $"confidence={current.Confidence:F2}  edge={FormatDistance(current.DistanceMeters)}\n" +
@@ -433,6 +443,28 @@ namespace CityGenPedestrianProbe
                    $"Signal: {BuildSignalText()}\n" +
                    $"Study bounds X: {semanticMap.StudyBounds.xMin:F1}..{semanticMap.StudyBounds.xMax:F1}, " +
                    $"Z: {semanticMap.StudyBounds.yMin:F1}..{semanticMap.StudyBounds.yMax:F1}";
+        }
+
+        /// <summary>
+        /// Body and attention on one line, each named by compass point.
+        /// </summary>
+        /// <remarks>
+        /// The compass points are what make a device that claims to map its own
+        /// angle onto a world bearing checkable without instruments: hold the
+        /// thing in landscape and the body has to read N, turn it a quarter
+        /// turn anticlockwise and it has to read W. A number alone leaves the
+        /// sign of that mapping to be discovered by a confused participant.
+        /// </remarks>
+        private string BuildHeadingText()
+        {
+            if (heading == null)
+                return $"{player.eulerAngles.y:F1}deg";
+
+            float bearing = heading.BearingDegrees;
+            float gaze = heading.GazeBearingDegrees;
+            return $"body {bearing:F1}deg ({ProbeHeading.CompassName(bearing)})  " +
+                   $"gaze {gaze:F1}deg ({ProbeHeading.CompassName(gaze)})  " +
+                   $"offset {heading.GazeOffsetDegrees:+0.0;-0.0;0.0}deg";
         }
 
         private string BuildSignalText()

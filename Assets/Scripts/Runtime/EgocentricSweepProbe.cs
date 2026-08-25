@@ -30,6 +30,7 @@ namespace CityGenPedestrianProbe
 
         private SemanticSpaceMap semanticMap;
         private Transform listener;
+        private ProbeHeading heading;
         private SemanticSessionLogger sessionLogger;
         private FeedbackSignalBus signalBus;
         private string activeSignalId = string.Empty;
@@ -66,10 +67,26 @@ namespace CityGenPedestrianProbe
             ResetRuntimeState();
         }
 
+        /// <summary>
+        /// Names the heading this sweep is an offset from.
+        /// </summary>
+        /// <remarks>
+        /// The sweep is the only thing that moves attention away from the body,
+        /// so it is the only thing that can keep the shared model's gaze offset
+        /// honest. Told here rather than found, because a sweep with no heading
+        /// still has to work — the edit-mode tests build one on its own.
+        /// </remarks>
+        public void SetHeading(ProbeHeading probeHeading)
+        {
+            heading = probeHeading;
+            PublishGazeOffset();
+        }
+
         public void SetRelativeAngle(float angleDegrees)
         {
             relativeAngleDegrees = Mathf.Clamp(angleDegrees, minRelativeAngle,
                 maxRelativeAngle);
+            PublishGazeOffset();
             nextQuery = 0f;
         }
 
@@ -183,6 +200,12 @@ namespace CityGenPedestrianProbe
             sampleStepMeters = Mathf.Max(0.01f, sampleStepMeters);
             refinementIterations = Mathf.Clamp(refinementIterations, 0, 16);
             queryIntervalSeconds = Mathf.Max(0.02f, queryIntervalSeconds);
+            PublishGazeOffset();
+        }
+
+        private void PublishGazeOffset()
+        {
+            heading?.SetGazeOffset(relativeAngleDegrees);
         }
 
         private void ResetRuntimeState()
@@ -248,12 +271,17 @@ namespace CityGenPedestrianProbe
                 end + Vector3.forward * markerSize, color, 0.12f, false);
         }
 
+        // Asked of the shared model when there is one, so that the bearing on
+        // this log line and the gaze bearing on the sample rows cannot drift
+        // apart into two answers to the same question. The transform sum stays
+        // as the fallback for a sweep built without a heading.
         private float WorldBearingDegrees()
         {
+            if (heading != null)
+                return heading.GazeBearingDegrees;
             if (listener == null)
                 return relativeAngleDegrees;
-            float bearing = listener.eulerAngles.y + relativeAngleDegrees;
-            return Mathf.Repeat(bearing, 360f);
+            return ProbeHeading.Wrap360(listener.eulerAngles.y + relativeAngleDegrees);
         }
 
         private static string Safe(string value) =>

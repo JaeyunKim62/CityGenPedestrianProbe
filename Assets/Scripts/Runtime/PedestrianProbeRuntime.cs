@@ -64,11 +64,13 @@ namespace CityGenPedestrianProbe
             if (logger == null)
                 logger = gameObject.AddComponent<SemanticSessionLogger>();
             logger.Configure(semanticMap, player.transform);
+            logger.SetHeading(player.Heading);
 
             BlindModeOverlay overlay = GetComponent<BlindModeOverlay>();
             if (overlay == null)
                 overlay = gameObject.AddComponent<BlindModeOverlay>();
             overlay.Configure(semanticMap, player.transform);
+            overlay.SetHeading(player.Heading);
             overlay.BlindModeChanged += blind => logger.LogEvent("blind_mode",
                 semanticMap.ClassifyWorld(player.transform.position), blind ? "on" : "off");
             overlay.BlindModeChanged += blind => player.SetPitchEnabled(!blind);
@@ -77,6 +79,7 @@ namespace CityGenPedestrianProbe
             EgocentricSweepProbe sweep = GetComponent<EgocentricSweepProbe>();
             if (sweep == null)
                 sweep = gameObject.AddComponent<EgocentricSweepProbe>();
+            sweep.SetHeading(player.Heading);
             overlay.SetSweepProbe(sweep);
 
             AudioSignalRenderer signalRenderer = GetComponent<AudioSignalRenderer>();

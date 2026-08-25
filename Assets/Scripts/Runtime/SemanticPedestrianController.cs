@@ -19,6 +19,7 @@ namespace CityGenPedestrianProbe
 
         [SerializeField] private bool pitchEnabled = true;
 
+        private readonly ProbeHeading heading = new ProbeHeading();
         private float pitch;
         private float nextBoundaryEventTime;
         private IPedestrianMoveSource moveSource;
@@ -28,6 +29,18 @@ namespace CityGenPedestrianProbe
         public Terrain GroundTerrain => terrain;
         public bool PitchEnabled => pitchEnabled;
         public IPedestrianMoveSource MoveSource => moveSource;
+
+        /// <summary>
+        /// Where this body is pointed, and where its attention sits.
+        /// </summary>
+        /// <remarks>
+        /// The transform's yaw is now a rendering of this rather than the store
+        /// of it. Anything that wants to steer the body absolutely — a device
+        /// that measures its own angle — asks this rather than writing the
+        /// transform, because the transform is overwritten from here every
+        /// frame and a write to it would last exactly one frame.
+        /// </remarks>
+        public ProbeHeading Heading => heading;
 
         /// <summary>
         /// Hands walking and turning to something outside this controller, such
@@ -52,6 +65,20 @@ namespace CityGenPedestrianProbe
             terrain = ground;
         }
 
+        /// <summary>
+        /// Takes the bearing the scene spawned this body at.
+        /// </summary>
+        /// <remarks>
+        /// In Awake rather than Start because the session logger writes its
+        /// first row from its own Start, and ordering between two components'
+        /// Start is undefined. Seeded late, that row would claim the session
+        /// began facing north whichever way the scene actually pointed.
+        /// </remarks>
+        private void Awake()
+        {
+            heading.SetBearing(transform.eulerAngles.y);
+        }
+
         private void Start()
         {
             if (terrain == null)
@@ -64,11 +91,11 @@ namespace CityGenPedestrianProbe
         private void Update()
         {
             ReadInput(out Vector2 input, out bool fast, out Vector2 look);
-            transform.Rotate(0f, look.x, 0f, Space.World);
+            heading.TurnBy(look.x);
             if (pitchEnabled)
                 pitch = Mathf.Clamp(pitch - look.y, -75f, 75f);
-            Vector3 euler = transform.localEulerAngles;
-            transform.localEulerAngles = new Vector3(pitchEnabled ? pitch : 0f, euler.y, 0f);
+            transform.localEulerAngles = new Vector3(pitchEnabled ? pitch : 0f,
+                heading.BearingDegrees, 0f);
 
             Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
             Vector3 right = Vector3.ProjectOnPlane(transform.right, Vector3.up).normalized;
