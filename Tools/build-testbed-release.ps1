@@ -39,12 +39,25 @@ $env:PROBE_KEYALIAS_PASS = $plain
 
 try {
     Write-Host "Building. This takes about thirteen minutes." -ForegroundColor Cyan
-    & $Unity -batchmode -quit `
-        -projectPath $project `
-        -buildTarget Android `
-        -executeMethod CityGenPedestrianProbe.Editor.AndroidTestbedBuild.BuildReleaseFromCommandLine `
-        -logFile $LogFile
-    $code = $LASTEXITCODE
+
+    # Unity writes progress to stderr, and in Windows PowerShell a native
+    # command's stderr becomes an ErrorRecord. Under ErrorActionPreference
+    # 'Stop' that is a terminating error, so the script used to abandon a build
+    # that was in fact running perfectly well and then complain about the log
+    # file it had not waited for.
+    $previous = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        & $Unity -batchmode -quit `
+            -projectPath $project `
+            -buildTarget Android `
+            -executeMethod CityGenPedestrianProbe.Editor.AndroidTestbedBuild.BuildReleaseFromCommandLine `
+            -logFile $LogFile
+        $code = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $previous
+    }
 }
 finally {
     # Cleared even if the build throws, so the password does not outlive it in
@@ -53,8 +66,14 @@ finally {
     Remove-Item Env:PROBE_KEYSTORE_PASS, Env:PROBE_KEYALIAS_PASS -ErrorAction SilentlyContinue
 }
 
-Select-String -Path $LogFile -Pattern 'Signing with|Version code|Android build |error CS' |
-    ForEach-Object { $_.Line.Trim() }
+if (Test-Path $LogFile) {
+    Select-String -Path $LogFile -Pattern 'Signing with|Version code|Android build |error CS' |
+        ForEach-Object { $_.Line.Trim() }
+}
+else {
+    Write-Host "Unity wrote no log at $LogFile, so it never started. Check that " `
+        "the editor is not already open with this project." -ForegroundColor Yellow
+}
 
 $aab = Join-Path $project 'Builds\Android\PedestrianProbe-testbed.aab'
 if ($code -eq 0 -and (Test-Path $aab)) {
