@@ -144,9 +144,9 @@ namespace CityGenPedestrianProbe.Editor.Tests
         }
 
         [Test]
-        public void TwoFingerTap_RecentresTheSweep()
+        public void ThreeFingerTap_RecentresTheSweep()
         {
-            gestures.Resolve(Many(2), 0f, 0.1f, 5f);
+            gestures.Resolve(Many(3), 0f, 0.1f, 5f);
 
             ProbeInputFrame frame = gestures.Resolve(None, 0.1f, 0.1f, 5f);
 
@@ -155,9 +155,9 @@ namespace CityGenPedestrianProbe.Editor.Tests
         }
 
         [Test]
-        public void ThreeFingerTap_TogglesSemanticAudio()
+        public void FourFingerTap_TogglesSemanticAudio()
         {
-            gestures.Resolve(Many(3), 0f, 0.1f, 5f);
+            gestures.Resolve(Many(4), 0f, 0.1f, 5f);
 
             ProbeInputFrame frame = gestures.Resolve(None, 0.1f, 0.1f, 5f);
 
@@ -166,22 +166,72 @@ namespace CityGenPedestrianProbe.Editor.Tests
         }
 
         [Test]
-        public void FourFingerTap_TogglesBlind()
+        public void NoTapCountTogglesBlind()
         {
-            gestures.Resolve(Many(4), 0f, 0.1f, 5f);
+            // Blind lives on the settings menu. Reaching it by tap would have
+            // meant a five-finger one, which nobody can perform while holding a
+            // phone, and leaving the condition is a decision that should take a
+            // deliberate press rather than a slip of the hand.
+            for (int fingers = 2; fingers <= 5; fingers++)
+            {
+                gestures.Resolve(Many(fingers), 0f, 0.1f, 5f);
 
-            ProbeInputFrame frame = gestures.Resolve(None, 0.1f, 0.1f, 5f);
+                ProbeInputFrame frame = gestures.Resolve(None, 0.1f, 0.1f, 5f);
 
-            Assert.That(frame.ToggleBlind, Is.True);
+                Assert.That(frame.ToggleBlind, Is.False,
+                    $"a {fingers}-finger tap must not leave the blind condition");
+            }
         }
 
         [Test]
-        public void MultipleFingers_DoNotAlsoWalkOrAim()
+        public void ThreeFingers_DoNotAlsoWalkOrAim()
         {
-            ProbeInputFrame frame = gestures.Resolve(Many(2), 0f, 0.1f, 5f);
+            ProbeInputFrame frame = gestures.Resolve(Many(3), 0f, 0.1f, 5f);
 
             Assert.That(frame.Move.sqrMagnitude, Is.EqualTo(0f).Within(0.0001f));
             Assert.That(frame.HasSweepAngle, Is.False);
+        }
+
+        [Test]
+        public void TwoThumbs_WalkAndAimAtTheSameTime()
+        {
+            // The movement the study is about is sweeping while walking. Making
+            // the two take turns would have measured the control scheme.
+            var down = new List<ProbeTouch>
+            {
+                new ProbeTouch(1, new Vector2(200f, 500f)),
+                new ProbeTouch(2, new Vector2(700f, 500f))
+            };
+            gestures.Resolve(down, 0f, 0.1f, 5f);
+
+            var moved = new List<ProbeTouch>
+            {
+                new ProbeTouch(1, new Vector2(200f, 500f + StickFullScalePixels)),
+                new ProbeTouch(2, new Vector2(700f + AimFullScalePixels, 500f))
+            };
+            ProbeInputFrame frame = gestures.Resolve(moved, 0.1f, 0.1f, 5f);
+
+            Assert.That(frame.Move.y, Is.EqualTo(1f).Within(0.01f),
+                "the left thumb should be walking forward");
+            Assert.That(frame.HasSweepAngle, Is.True,
+                "the right thumb should be aiming at the same time");
+            Assert.That(frame.SweepAngleAbsolute, Is.EqualTo(90f).Within(0.5f));
+        }
+
+        [Test]
+        public void ASecondFingerInTheSameHalf_DoesNotStealTheStick()
+        {
+            gestures.Resolve(One(200f, 500f), 0f, 0.1f, 5f);
+
+            var crowded = new List<ProbeTouch>
+            {
+                new ProbeTouch(1, new Vector2(200f, 500f + StickFullScalePixels)),
+                new ProbeTouch(2, new Vector2(300f, 500f))
+            };
+            ProbeInputFrame frame = gestures.Resolve(crowded, 0.1f, 0.1f, 5f);
+
+            Assert.That(frame.Move.y, Is.EqualTo(1f).Within(0.01f),
+                "the thumb already walking keeps its origin");
         }
 
         [Test]

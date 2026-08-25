@@ -94,27 +94,50 @@ namespace CityGenPedestrianProbe
             episodeDriftPixels = Mathf.Max(episodeDriftPixels,
                 Vector2.Distance(centroid, episodeOrigin));
 
-            // Two or more fingers is always a tap being formed, never a stick.
-            if (count > 1)
+            // Two thumbs is the ordinary grip, one walking and one aiming, so
+            // only a third finger means a tap is being formed. Walking while
+            // sweeping is the movement the study is about; making the two take
+            // turns would have measured the control scheme instead.
+            if (count > 2)
             {
                 leftId = -1;
                 rightId = -1;
                 return ProbeInputFrame.Empty;
             }
 
-            // Which half a finger belongs to is settled where it lands and then
-            // held for as long as it stays down. Deciding it afresh every frame
-            // would hand the gesture to the other control the moment a thumb
-            // aiming hard to one side dragged past the middle of the screen.
-            ProbeTouch touch = touches[0];
+            ProbeInputFrame frame = ProbeInputFrame.Empty;
+            for (int i = 0; i < count; i++)
+                frame = frame.MergedWith(ResolveStick(touches[i], deltaSeconds,
+                    currentRangeMeters));
+            return frame;
+        }
+
+        /// <summary>
+        /// Sends one finger to the control for its half of the screen.
+        /// </summary>
+        /// <remarks>
+        /// Which half a finger belongs to is settled where it lands and then
+        /// held for as long as it stays down. Deciding it afresh every frame
+        /// would hand the gesture to the other control the moment a thumb
+        /// aiming hard to one side dragged past the middle of the screen.
+        ///
+        /// A half already holding a thumb ignores further fingers rather than
+        /// letting the newcomer reset its origin under the one already there.
+        /// </remarks>
+        private ProbeInputFrame ResolveStick(ProbeTouch touch, float deltaSeconds,
+            float currentRangeMeters)
+        {
             if (touch.Id == leftId)
                 return ResolveWalk(touch, deltaSeconds);
             if (touch.Id == rightId)
                 return ResolveAim(touch, currentRangeMeters);
 
-            return touch.Position.x < halfWidthPixels
-                ? ResolveWalk(touch, deltaSeconds)
-                : ResolveAim(touch, currentRangeMeters);
+            bool left = touch.Position.x < halfWidthPixels;
+            if (left && leftId < 0)
+                return ResolveWalk(touch, deltaSeconds);
+            if (!left && rightId < 0)
+                return ResolveAim(touch, currentRangeMeters);
+            return ProbeInputFrame.Empty;
         }
 
         private ProbeInputFrame ResolveWalk(ProbeTouch touch, float deltaSeconds)
@@ -122,7 +145,6 @@ namespace CityGenPedestrianProbe
             if (leftId != touch.Id)
             {
                 leftId = touch.Id;
-                rightId = -1;
                 leftOrigin = touch.Position;
             }
 
@@ -139,7 +161,6 @@ namespace CityGenPedestrianProbe
             if (rightId != touch.Id)
             {
                 rightId = touch.Id;
-                leftId = -1;
                 rightOrigin = touch.Position;
                 rightBaseRange = currentRangeMeters;
             }
@@ -163,16 +184,19 @@ namespace CityGenPedestrianProbe
             episodeMaxTouches = 0;
 
             // A stick being released is not a tap: it either lingered or moved.
+            // Two fingers are the walking-and-aiming grip, so a tap starts at
+            // three. Blind is left to the settings menu rather than pushed out
+            // to a five-finger tap nobody could perform while holding a phone.
             bool quick = unscaledTime - episodeStart <= TapSeconds &&
                          episodeDriftPixels <= TapSlackMm * pixelsPerMm;
-            if (!quick || fingers < 2)
+            if (!quick || fingers < 3)
                 return ProbeInputFrame.Empty;
 
             return new ProbeInputFrame(Vector2.zero, Vector2.zero, false,
                 float.NaN, 0f, float.NaN,
-                centerSweep: fingers == 2,
-                toggleSemanticAudio: fingers == 3,
-                toggleBlind: fingers >= 4);
+                centerSweep: fingers == 3,
+                toggleSemanticAudio: fingers >= 4,
+                toggleBlind: false);
         }
 
         private static float Deflection(float offsetMm, float fullScaleMm)
