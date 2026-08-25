@@ -52,12 +52,13 @@ namespace CityGenPedestrianProbe
         }
 
         public void ReadMovement(out Vector2 movement, out bool fast,
-            out Vector2 lookDegrees)
+            out Vector2 lookDegrees, out float bearingAbsolute)
         {
             ProbeInputFrame current = Current();
             movement = current.Move;
             fast = current.Fast;
             lookDegrees = current.LookDegrees;
+            bearingAbsolute = current.HeadingAbsolute;
         }
 
         private void Update()

@@ -53,6 +53,7 @@ namespace CityGenPedestrianProbe
         private BlindModeOverlay overlay;
         private ProbeHeading heading;
         private FeedbackCoordinator coordinator;
+        private DeviceTiltInputSource tilt;
         private GUIStyle buttonStyle;
         private GUIStyle panelStyle;
         private bool open;
@@ -93,6 +94,7 @@ namespace CityGenPedestrianProbe
             // an experimenter has to be able to set it on the handset that is
             // going to run the trial.
             Add(DescribeMovementFrame, ToggleMovementFrame);
+            Add(DescribeTiltSteering, ToggleTiltSteering);
 
             AddLabel(DescribeScene);
             AddHalf(() => "PREVIOUS SCENE", () => LoadSceneOffset(-1), CanLoadOffset(-1));
@@ -328,6 +330,39 @@ namespace CityGenPedestrianProbe
                     row.Activate();
                 return;
             }
+        }
+
+        // Looked up rather than handed over, because the input sources are
+        // attached at the very end of the runtime's setup, after this menu has
+        // already been configured.
+        private DeviceTiltInputSource Tilt =>
+            tilt != null ? tilt : tilt = GetComponent<DeviceTiltInputSource>();
+
+        private string DescribeTiltSteering()
+        {
+            DeviceTiltInputSource source = Tilt;
+            if (source == null)
+                return "TILT STEERING: UNAVAILABLE";
+            if (!source.SteeringEnabled)
+                return "TILT STEERING: OFF";
+
+            // A phone laid flat has no gravity left in the screen plane to take
+            // a direction from, and silently holding the last bearing would look
+            // like the steering had broken. Say so where someone can read it.
+            return source.IsPostureValid
+                ? "TILT STEERING: ON  (LANDSCAPE = N)"
+                : "TILT STEERING: ON  — HOLD IT UPRIGHT";
+        }
+
+        private void ToggleTiltSteering()
+        {
+            DeviceTiltInputSource source = Tilt;
+            if (source == null)
+                return;
+
+            source.SteeringEnabled = !source.SteeringEnabled;
+            coordinator?.SignalBus?.LogConfigurationChange("tilt_steering",
+                $"enabled={source.SteeringEnabled}");
         }
 
         private static string DescribeScene()

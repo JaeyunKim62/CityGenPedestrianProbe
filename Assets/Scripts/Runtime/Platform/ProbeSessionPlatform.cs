@@ -91,6 +91,11 @@ namespace CityGenPedestrianProbe
                 host.GetComponent<BlindModeOverlay>());
             router.AddSource(host.gameObject.AddComponent<TouchProbeInputSource>());
             router.AddSource(host.gameObject.AddComponent<KeyboardProbeInputSource>());
+
+            // Attached everywhere but silent until switched on in the settings.
+            // While it reads it owns the body's bearing outright, so it is not
+            // something a session should acquire merely by running on a handset.
+            router.AddSource(host.gameObject.AddComponent<DeviceTiltInputSource>());
         }
     }
 }

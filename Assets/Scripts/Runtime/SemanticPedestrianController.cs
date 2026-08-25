@@ -90,8 +90,18 @@ namespace CityGenPedestrianProbe
 
         private void Update()
         {
-            ReadInput(out Vector2 input, out bool fast, out Vector2 look);
-            heading.TurnBy(look.x);
+            ReadInput(out Vector2 input, out bool fast, out Vector2 look,
+                out float bearingAbsolute);
+
+            // A device that measures its own attitude wins over accumulated
+            // turning while it is reading, so a thumb and a tilted phone cannot
+            // fight over the same body. When the reading lapses — a phone laid
+            // flat has no bearing to give — turning takes over again from
+            // wherever the body was left.
+            if (!float.IsNaN(bearingAbsolute))
+                heading.SetBearing(bearingAbsolute);
+            else
+                heading.TurnBy(look.x);
             if (pitchEnabled)
                 pitch = Mathf.Clamp(pitch - look.y, -75f, 75f);
             transform.localEulerAngles = new Vector3(pitchEnabled ? pitch : 0f,
@@ -155,17 +165,19 @@ namespace CityGenPedestrianProbe
         /// sensitivity that only a mouse delta needs.
         /// </summary>
         private void ReadInput(out Vector2 movement, out bool fast,
-            out Vector2 lookDegrees)
+            out Vector2 lookDegrees, out float bearingAbsolute)
         {
             if (moveSource != null)
             {
-                moveSource.ReadMovement(out movement, out fast, out lookDegrees);
+                moveSource.ReadMovement(out movement, out fast, out lookDegrees,
+                    out bearingAbsolute);
                 return;
             }
 
             ReadMove(out movement, out fast);
             ReadLook(out Vector2 look);
             lookDegrees = look * mouseSensitivity;
+            bearingAbsolute = float.NaN;
         }
 
         private static void ReadMove(out Vector2 movement, out bool fast)
