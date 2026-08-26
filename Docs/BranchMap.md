@@ -9,7 +9,7 @@
 ```
 origin/main
   └─ main
-       └─ infra/heading-model   (+12, 미푸시)
+       └─ infra/heading-model   (미푸시)
 ```
 
 ## 2. `infra/heading-model`에 담긴 것
@@ -26,8 +26,7 @@ origin/main
 | `b68edb1` | 홀드 전진 + 개발 빌드 서명 수정 |
 | `e3fe843` | 발소리 진동 (`HapticSignalRenderer`) |
 | `ccc764c` | 실험자용 빌드 (`PROBE_EXPERIMENTER`) + 릴리스 스크립트 수정 |
-| `c9d5d9c` | 문서 갱신 |
-| `6ef016c` | 도시 환경이 드러낼 부채와 다음 순서 |
+| 이후 | 문서 — 이 문서와 `ImplementationAxes`, 신호 계획, 설계공간, 두 README |
 
 **미커밋** — 이 작업과 무관하게 세션 전부터 dirty였던 `ProjectSettings.asset`(빌드마다 버전 코드가 오른다)과 `Assets/Resources.meta`.
 
