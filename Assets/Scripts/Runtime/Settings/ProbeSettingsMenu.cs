@@ -58,6 +58,26 @@ namespace CityGenPedestrianProbe
         private GUIStyle panelStyle;
         private bool open;
         private Rect gearRect;
+        private Rect panelRect;
+
+        /// <summary>
+        /// Whether this menu is sitting under the given point, in screen
+        /// coordinates with y measured up from the bottom.
+        /// </summary>
+        /// <remarks>
+        /// The gear sits in the top right, which is the half of the screen the
+        /// sweep is aimed with. Without this, reaching for the menu also plants
+        /// a thumb on the aiming stick, and because that stick takes the point
+        /// it lands on as its own zero, opening the settings quietly threw the
+        /// sweep back to straight ahead. An experimenter changing a setting
+        /// mid-trial would have altered the stimulus by doing so.
+        /// </remarks>
+        public bool OccupiesScreenPoint(Vector2 screenPoint)
+        {
+            var guiPoint = new Vector2(screenPoint.x, Screen.height - screenPoint.y);
+            return gearRect.Contains(guiPoint) ||
+                   (open && panelRect.Contains(guiPoint));
+        }
 
         public void Configure(BlindModeOverlay blindOverlay, ProbeHeading probeHeading,
             FeedbackCoordinator feedback)
@@ -161,12 +181,13 @@ namespace CityGenPedestrianProbe
             float margin = 14f * scale;
             gearRect = new Rect(Screen.width - buttonSize - margin, margin,
                 buttonSize, buttonSize);
-            if (GUI.Button(gearRect, "⚙", buttonStyle))
+            if (GUI.Button(gearRect, "⚙", buttonStyle) && !TapsDriveTheMenu)
                 open = !open;
 
             if (!open)
             {
                 ClearRowRects();
+                panelRect = Rect.zero;
                 return;
             }
 
@@ -177,8 +198,8 @@ namespace CityGenPedestrianProbe
             float innerWidth = width - inset * 2f;
 
             float panelHeight = LayOutRows(panelX + inset, panelY, innerWidth, scale);
-            GUI.Box(new Rect(panelX, panelY, width, panelHeight), "TESTBED SETTINGS",
-                panelStyle);
+            panelRect = new Rect(panelX, panelY, width, panelHeight);
+            GUI.Box(panelRect, "TESTBED SETTINGS", panelStyle);
             DrawRows();
         }
 
@@ -245,7 +266,7 @@ namespace CityGenPedestrianProbe
                 }
 
                 GUI.enabled = row.Interactable == null || row.Interactable();
-                if (GUI.Button(row.Rect, text))
+                if (GUI.Button(row.Rect, text) && !TapsDriveTheMenu)
                     row.Activate();
                 GUI.enabled = true;
             }
@@ -275,11 +296,34 @@ namespace CityGenPedestrianProbe
                 rows[i].Rect = Rect.zero;
         }
 
+        /// <summary>
+        /// Whether taps, rather than IMGUI's own hit testing, work this menu.
+        /// </summary>
+        /// <remarks>
+        /// With the Input System package as the only input handler, IMGUI does
+        /// not see touches on Android at all, so on a handset every button here
+        /// is inert unless something reads the touchscreen and dispatches the
+        /// press itself. Where IMGUI does see them, both paths would fire and
+        /// each press would count twice, so on a touchscreen the tap handler is
+        /// made the only way in and GUI.Button's own answer is discarded.
+        /// </remarks>
+        private static bool TapsDriveTheMenu
+        {
+#if ENABLE_INPUT_SYSTEM
+            get { return Touchscreen.current != null; }
+#else
+            get { return Input.touchSupported; }
+#endif
+        }
+
+        // Not behind a development guard. The menu is the only thing a session
+        // can be steered with once the screen is black, and it had been left
+        // unreachable in exactly the build handed to a participant: the tap
+        // handler was compiled out and IMGUI never saw the touches, so the gear
+        // drew and did nothing.
         private void Update()
         {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
             HandleTouch();
-#endif
         }
 
         private void HandleTouch()
