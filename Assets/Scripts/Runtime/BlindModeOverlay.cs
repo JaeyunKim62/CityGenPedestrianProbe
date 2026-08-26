@@ -105,7 +105,7 @@ namespace CityGenPedestrianProbe
 
         private void Update()
         {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || PROBE_EXPERIMENTER
             bool pressed;
 #if ENABLE_INPUT_SYSTEM
             pressed = Keyboard.current != null &&
@@ -115,7 +115,7 @@ namespace CityGenPedestrianProbe
             pressed = Input.GetKeyDown(KeyCode.F1) || Input.GetKeyDown(KeyCode.B);
 #endif
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || PROBE_EXPERIMENTER
             bool mapPressed;
 #if ENABLE_INPUT_SYSTEM
             mapPressed = Keyboard.current != null && Keyboard.current.mKey.wasPressedThisFrame;
@@ -170,8 +170,11 @@ namespace CityGenPedestrianProbe
 
             // Diagnostics stay behind the guard: the status text and the map
             // say where the participant is, which is the one thing a blind
-            // session must not show them.
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            // session must not show them. PROBE_EXPERIMENTER opens them to a
+            // signed build as well, because the person running a session over
+            // internal testing needs to see the map on the same handset the
+            // trial will run on, and cannot install a development APK there.
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || PROBE_EXPERIMENTER
             if (!blind && semanticMap != null && player != null)
             {
                 if (debugStyle == null)

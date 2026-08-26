@@ -28,7 +28,8 @@ namespace CityGenPedestrianProbe
     /// it. It draws over the blind fill on purpose: an experimenter has to move
     /// between layouts to run a trial, and a build with no reachable menu is a
     /// black screen nobody can steer. The one control that would end the blind
-    /// condition is compiled out of a shipped build instead.</para>
+    /// condition is compiled out of the build a participant is handed
+    /// instead.</para>
     /// </remarks>
     [DisallowMultipleComponent]
     public sealed class ProbeSettingsMenu : MonoBehaviour
@@ -92,11 +93,11 @@ namespace CityGenPedestrianProbe
         {
             rows.Clear();
 
-            // Only a build that already carries the debug map offers a way out
-            // of the blind condition, and the three map controls under it steer
-            // a map a shipped build never draws. A participant holding a
-            // release build can reach everything else here and not these.
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            // Only a build that carries the debug map offers a way out of the
+            // blind condition, and the three map controls under it steer a map
+            // the participant build never draws. A participant can reach
+            // everything else here and not these.
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || PROBE_EXPERIMENTER
             Add(() => overlay.IsBlind ? "VIEW DEBUG MAP" : "RETURN TO BLIND MODE",
                 () => overlay.SetBlind(!overlay.IsBlind));
             AddHalf(() => overlay.ShowMap ? "HIDE MAP" : "SHOW MAP",

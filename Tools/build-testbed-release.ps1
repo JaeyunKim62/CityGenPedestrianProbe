@@ -19,7 +19,14 @@ is gone when the script ends.
 param(
     [string]$Unity = "C:\Program Files\Unity\Hub\Editor\6000.3.20f1\Editor\Unity.exe",
     [string]$Keystore = "$env:USERPROFILE\pedestrianprobe-release.keystore",
-    [string]$LogFile = "$env:TEMP\probe-testbed-release.log"
+    [string]$LogFile = "$env:TEMP\probe-testbed-release.log",
+    [switch]$KeepVersionCode,
+
+    # Signed and uploadable exactly like the participant build, but carrying
+    # the debug map, the status text and the way out of the blind condition.
+    # For running a session over internal testing, where a development APK
+    # cannot be uploaded and the handset has no cable.
+    [switch]$Experimenter
 )
 
 $ErrorActionPreference = 'Stop'
@@ -36,9 +43,17 @@ if ([string]::IsNullOrWhiteSpace($plain)) { throw "No password given." }
 $env:PROBE_KEYSTORE = $Keystore
 $env:PROBE_KEYSTORE_PASS = $plain
 $env:PROBE_KEYALIAS_PASS = $plain
+if ($KeepVersionCode) { $env:PROBE_KEEP_VERSION_CODE = '1' }
+
+$method = if ($Experimenter) {
+    'CityGenPedestrianProbe.Editor.AndroidTestbedBuild.BuildExperimenterFromCommandLine'
+} else {
+    'CityGenPedestrianProbe.Editor.AndroidTestbedBuild.BuildReleaseFromCommandLine'
+}
 
 try {
-    Write-Host "Building. This takes a few minutes." -ForegroundColor Cyan
+    $which = if ($Experimenter) { 'experimenter' } else { 'participant' }
+    Write-Host "Building the $which bundle. This takes a while." -ForegroundColor Cyan
 
     # Removed first so that a build which never starts cannot be reported from
     # the previous run's log, which is exactly what happened twice: the script
@@ -54,19 +69,56 @@ try {
         '-projectPath', $project,
         '-buildTarget', 'Android',
         '-executeMethod',
-        'CityGenPedestrianProbe.Editor.AndroidTestbedBuild.BuildReleaseFromCommandLine',
+        $method,
         '-logFile', $LogFile) | Out-Null
 
-    $deadline = (Get-Date).AddMinutes(45)
-    $terminal = 'Exiting batchmode|Aborting batchmode|error CS\d|Android build Failed'
+    # Three hours, not forty-five minutes. A release build moves CityGen's
+    # Resources folder out and back, and the two asset reimports that costs put
+    # it near two hours where a development APK takes fifteen minutes.
+    $deadline = (Get-Date).AddHours(3)
+    $started = Get-Date
+    $nextStatus = $started
+
+    # Only the two lines our own build code writes when it is finished.
+    # "Application will terminate" cannot be used and neither can "Exiting
+    # batchmode": the launcher process prints the first of those seconds into
+    # every run as it hands off to the editor it relaunches, so watching for it
+    # abandons a healthy build twenty seconds in and calls it a failure.
+    $terminal = 'Android build Succeeded|Android build Failed'
     $done = $false
     while ((Get-Date) -lt $deadline) {
         Start-Sleep -Seconds 5
+        if ((Test-Path $LogFile) -and
+            (Select-String -Path $LogFile -Pattern $terminal -Quiet)) {
+            $done = $true
+            break
+        }
+
+        # A build that dies without reaching either line leaves no editor
+        # behind. Not trusted for the first minute, because the launcher exits
+        # before the editor it relaunches has appeared.
+        if (((Get-Date) - $started).TotalSeconds -gt 60 -and
+            -not (Get-Process Unity -ErrorAction SilentlyContinue)) {
+            Write-Host "Unity stopped without reporting a result." -ForegroundColor Yellow
+            break
+        }
+
         if (-not (Test-Path $LogFile)) { continue }
-        if (Select-String -Path $LogFile -Pattern $terminal -Quiet) { $done = $true; break }
+        if ((Get-Date) -ge $nextStatus) {
+            $recent = Get-Content $LogFile -Tail 200
+            $phase = if ($recent -match 'Gradle|bundleRelease') { 'Gradle packaging' }
+                elseif ($recent -match 'clang\+\+|IL2CPP|bee_backend') { 'IL2CPP compile' }
+                elseif ($recent -match 'Compiling shader') { 'Shader compile' }
+                else { 'Unity initialization' }
+            $elapsed = [math]::Floor(((Get-Date) - $started).TotalSeconds)
+            Write-Host ("  [{0:mm\:ss}] {1}" -f [timespan]::FromSeconds($elapsed), $phase)
+            $nextStatus = (Get-Date).AddSeconds(15)
+        }
     }
 
-    if (-not $done) { Write-Host "Gave up waiting after 45 minutes." -ForegroundColor Yellow }
+    if (-not $done -and (Get-Date) -ge $deadline) {
+        Write-Host "Gave up waiting after three hours." -ForegroundColor Yellow
+    }
     $code = if ($done -and
         (Select-String -Path $LogFile -Pattern 'Android build Succeeded' -Quiet)) { 0 } else { 1 }
 }
@@ -74,7 +126,7 @@ finally {
     # Cleared even if the build throws, so the password does not outlive it in
     # a shell the user keeps working in.
     $plain = $null
-    Remove-Item Env:PROBE_KEYSTORE_PASS, Env:PROBE_KEYALIAS_PASS -ErrorAction SilentlyContinue
+    Remove-Item Env:PROBE_KEYSTORE_PASS, Env:PROBE_KEYALIAS_PASS, Env:PROBE_KEEP_VERSION_CODE -ErrorAction SilentlyContinue
 }
 
 if (Test-Path $LogFile) {
@@ -98,7 +150,9 @@ if (Test-Path $parked) {
     Write-Host "or rename that folder to Resources yourself."
 }
 
-$aab = Join-Path $project 'Builds\Android\PedestrianProbe-testbed.aab'
+$name = if ($Experimenter) { 'PedestrianProbe-testbed-experimenter.aab' }
+        else { 'PedestrianProbe-testbed.aab' }
+$aab = Join-Path $project "Builds\Android\$name"
 if ($code -eq 0 -and (Test-Path $aab)) {
     $item = Get-Item $aab
     $mb = [math]::Round($item.Length / 1MB, 1)

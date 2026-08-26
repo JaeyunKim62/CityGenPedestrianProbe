@@ -153,7 +153,7 @@ namespace CityGenPedestrianProbe
             // build handed to a participant must not offer a way out of the
             // condition, so only a build that already carries the debug HUD
             // honours the request.
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || PROBE_EXPERIMENTER
             overlay.SetBlind(!overlay.IsBlind);
 #endif
         }
