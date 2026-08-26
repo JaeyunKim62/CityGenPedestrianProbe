@@ -38,6 +38,81 @@ namespace CityGenPedestrianProbe.Editor.Tests
 
         private static readonly List<ProbeTouch> None = new List<ProbeTouch>();
 
+        // Tilt steering leaves this half with one thing to say. Deflection stops
+        // meaning anything, because a thumb cannot hold a measured travel while
+        // the other hand rolls the handset like a wheel.
+
+        [Test]
+        public void Held_WalksAtOneSpeedWhereverTheThumbLanded()
+        {
+            gestures.WalkStyle = TouchWalkStyle.Hold;
+
+            ProbeInputFrame justDown = gestures.Resolve(One(200f, 500f), 0f, 0.016f, 4f);
+            ProbeInputFrame pushedUp = gestures.Resolve(One(200f, 500f + StickFullScalePixels),
+                0.016f, 0.016f, 4f);
+
+            Assert.That(justDown.Move.y, Is.EqualTo(1f).Within(0.001f),
+                "touching at all is the whole instruction");
+            Assert.That(pushedUp.Move.y, Is.EqualTo(1f).Within(0.001f),
+                "and pushing further asks for nothing more");
+        }
+
+        [Test]
+        public void Held_DoesNotTurnBecauseTheHandsetIsDoingThat()
+        {
+            gestures.WalkStyle = TouchWalkStyle.Hold;
+
+            gestures.Resolve(One(200f, 500f), 0f, 0.016f, 4f);
+            ProbeInputFrame dragged = gestures.Resolve(
+                One(200f + StickFullScalePixels, 500f), 0.016f, 0.016f, 4f);
+
+            Assert.That(dragged.LookDegrees, Is.EqualTo(Vector2.zero));
+            Assert.That(dragged.Move.y, Is.EqualTo(1f).Within(0.001f));
+        }
+
+        [Test]
+        public void Held_StopsTheMomentTheThumbLifts()
+        {
+            gestures.WalkStyle = TouchWalkStyle.Hold;
+            gestures.Resolve(One(200f, 500f), 0f, 0.016f, 4f);
+
+            ProbeInputFrame lifted = gestures.Resolve(None, 0.1f, 0.016f, 4f);
+
+            Assert.That(lifted.Move, Is.EqualTo(Vector2.zero));
+        }
+
+        [Test]
+        public void Held_LeavesTheAimingHalfAlone()
+        {
+            gestures.WalkStyle = TouchWalkStyle.Hold;
+
+            var both = new List<ProbeTouch>
+            {
+                new ProbeTouch(1, new Vector2(200f, 500f)),
+                new ProbeTouch(2, new Vector2(800f, 500f))
+            };
+            gestures.Resolve(both, 0f, 0.016f, 4f);
+            both[1] = new ProbeTouch(2, new Vector2(800f + AimFullScalePixels, 500f));
+            ProbeInputFrame aimed = gestures.Resolve(both, 0.016f, 0.016f, 4f);
+
+            Assert.That(aimed.Move.y, Is.EqualTo(1f).Within(0.001f));
+            Assert.That(aimed.HasSweepAngle, Is.True);
+            Assert.That(aimed.SweepAngleAbsolute, Is.EqualTo(90f).Within(0.5f),
+                "walking and aiming still happen at once");
+        }
+
+        [Test]
+        public void SwitchingStyleMidGestureDoesNotDropTheFingerAlreadyDown()
+        {
+            gestures.Resolve(One(200f, 500f), 0f, 0.016f, 4f);
+
+            gestures.WalkStyle = TouchWalkStyle.Hold;
+            ProbeInputFrame afterSwitch = gestures.Resolve(One(200f, 500f), 0.016f,
+                0.016f, 4f);
+
+            Assert.That(afterSwitch.Move.y, Is.EqualTo(1f).Within(0.001f));
+        }
+
         [Test]
         public void AimingFullyRight_PointsTheSweepAtNinetyDegrees()
         {

@@ -172,6 +172,7 @@ namespace CityGenPedestrianProbe.Editor
             string previousId =
                 PlayerSettings.GetApplicationIdentifier(NamedBuildTarget.Android);
             string previousProduct = PlayerSettings.productName;
+            bool previousCustomKeystore = PlayerSettings.Android.useCustomKeystore;
 
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, ApplicationId);
             PlayerSettings.productName = ProductName;
@@ -187,13 +188,29 @@ namespace CityGenPedestrianProbe.Editor
             if (releaseMode && !TryApplySigning())
                 return null;
 
+            // A development APK goes onto a handset over a cable, where the
+            // debug key Unity generates is all Android asks for. Signing had to
+            // be turned off explicitly because the release recipe turns it on
+            // and, until now, left it on: the upload keystore stayed selected
+            // in the project afterwards, so every later development build died
+            // demanding a password with nobody there to type one.
+            if (!releaseMode)
+                PlayerSettings.Android.useCustomKeystore = false;
+
             // Play refuses a version code it has seen before, and the failure
             // arrives at upload rather than at build, long after whoever built
             // it has moved on.
-            if (releaseMode)
+            bool keepVersionCode =
+                Environment.GetEnvironmentVariable("PROBE_KEEP_VERSION_CODE") == "1";
+            if (releaseMode && !keepVersionCode)
             {
                 PlayerSettings.Android.bundleVersionCode++;
                 Debug.Log($"Version code {PlayerSettings.Android.bundleVersionCode}, " +
+                          $"version {PlayerSettings.bundleVersion}.");
+            }
+            else if (releaseMode)
+            {
+                Debug.Log($"Keeping version code {PlayerSettings.Android.bundleVersionCode}, " +
                           $"version {PlayerSettings.bundleVersion}.");
             }
 
@@ -250,6 +267,7 @@ namespace CityGenPedestrianProbe.Editor
                 PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android,
                     previousId);
                 PlayerSettings.productName = previousProduct;
+                PlayerSettings.Android.useCustomKeystore = previousCustomKeystore;
             }
         }
     }
