@@ -224,6 +224,8 @@ namespace CityGenPedestrianProbe.Editor
                 PlayerSettings.GetApplicationIdentifier(NamedBuildTarget.Android);
             string previousProduct = PlayerSettings.productName;
             bool previousCustomKeystore = PlayerSettings.Android.useCustomKeystore;
+            string previousKeystore = PlayerSettings.Android.keystoreName;
+            string previousAlias = PlayerSettings.Android.keyaliasName;
 
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, ApplicationId);
             PlayerSettings.productName = ProductName;
@@ -330,7 +332,13 @@ namespace CityGenPedestrianProbe.Editor
                 PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android,
                     previousId);
                 PlayerSettings.productName = previousProduct;
+                // Restored along with the identity above. Left alone, a
+                // release build writes the absolute path of whichever machine
+                // ran it into ProjectSettings, where it is committed by
+                // whoever next stages that file.
                 PlayerSettings.Android.useCustomKeystore = previousCustomKeystore;
+                PlayerSettings.Android.keystoreName = previousKeystore;
+                PlayerSettings.Android.keyaliasName = previousAlias;
             }
         }
     }
