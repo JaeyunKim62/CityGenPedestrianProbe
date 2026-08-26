@@ -37,7 +37,18 @@ namespace CityGenPedestrianProbe
                 $"speakers={audio.speakerMode}|" +
                 $"clip_hz={SignalClipFactory.SampleRate.ToString(c)}|" +
                 $"screen={Screen.width}x{Screen.height}|" +
-                $"dpi={Screen.dpi.ToString("F0", c)}");
+                $"dpi={Screen.dpi.ToString("F0", c)}|" +
+                // Whether the footfalls were felt as well as heard. A session
+                // on a handset with no motor, or one where reaching it failed,
+                // ran a quieter condition than one where it worked, and the
+                // difference is invisible from anywhere else in the file.
+                $"haptics={HasHaptics()}");
+        }
+
+        private bool HasHaptics()
+        {
+            HapticSignalRenderer haptics = GetComponent<HapticSignalRenderer>();
+            return haptics != null && haptics.HasVibrator;
         }
 
         private static string Safe(string value) =>

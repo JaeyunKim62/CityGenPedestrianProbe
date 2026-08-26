@@ -96,6 +96,12 @@ namespace CityGenPedestrianProbe
                 signalRenderer = gameObject.AddComponent<AudioSignalRenderer>();
             signalRenderer.Configure(signalCatalog, camera.transform);
 
+            // A second renderer on the same bus. Added before the coordinator
+            // is configured, since that is when the bus asks this object what
+            // renderers it has.
+            if (GetComponent<HapticSignalRenderer>() == null)
+                gameObject.AddComponent<HapticSignalRenderer>();
+
             // Named in every row, so a finished session says which of the rival
             // catalogs it was heard through rather than only where it went.
             logger.SetSignalRenderer(signalRenderer);
