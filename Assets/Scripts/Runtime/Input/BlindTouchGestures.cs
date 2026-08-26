@@ -16,6 +16,26 @@ namespace CityGenPedestrianProbe
         }
     }
 
+    /// <summary>How the walking half of the screen is worked.</summary>
+    public enum TouchWalkStyle
+    {
+        /// <summary>Thumb travel sets speed and turn, relative to where it landed.</summary>
+        Stick = 0,
+
+        /// <summary>
+        /// A finger down walks at one speed, and turning is somebody else's job.
+        /// </summary>
+        /// <remarks>
+        /// What tilt steering needs. Holding a thumb at a measured deflection
+        /// while rolling the handset like a wheel asks for two different things
+        /// from the same pair of hands, and merely touching the glass survives
+        /// any grip and any roll angle. It also takes a variable out of the
+        /// experiment: at one speed, distance walked is time elapsed, and the
+        /// footfalls come at one steady rate for the person to read.
+        /// </remarks>
+        Hold = 1
+    }
+
     /// <summary>
     /// Turns touches into intent for a screen nobody can see.
     /// </summary>
@@ -72,6 +92,14 @@ namespace CityGenPedestrianProbe
 
         /// <summary>Highest finger count seen in the gesture now in progress.</summary>
         public int ActiveFingerCount => episodeMaxTouches;
+
+        /// <summary>
+        /// How the walking half behaves. Settable rather than fixed at
+        /// construction, because the mode it follows is switched mid-session
+        /// from the settings menu and rebuilding the reader would drop whatever
+        /// gesture was in progress.
+        /// </summary>
+        public TouchWalkStyle WalkStyle { get; set; } = TouchWalkStyle.Stick;
 
         public ProbeInputFrame Resolve(IReadOnlyList<ProbeTouch> touches,
             float unscaledTime, float deltaSeconds, float currentRangeMeters)
@@ -147,6 +175,13 @@ namespace CityGenPedestrianProbe
                 leftId = touch.Id;
                 leftOrigin = touch.Position;
             }
+
+            // Walking straight ahead at one speed, with nothing asked of how
+            // far the thumb has travelled. Where the body points is the tilt of
+            // the handset, so this half has no turn to contribute either.
+            if (WalkStyle == TouchWalkStyle.Hold)
+                return new ProbeInputFrame(new Vector2(0f, 1f), Vector2.zero, false,
+                    float.NaN, 0f, float.NaN, false, false, false);
 
             Vector2 offsetMm = (touch.Position - leftOrigin) / pixelsPerMm;
             float forward = Deflection(offsetMm.y, StickDeflectionMm);

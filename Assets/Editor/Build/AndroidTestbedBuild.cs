@@ -23,6 +23,8 @@ namespace CityGenPedestrianProbe.Editor
         private const string OutputDirectory = "Builds/Android";
         private const string ApkName = "PedestrianProbe-testbed.apk";
         private const string AabName = "PedestrianProbe-testbed.aab";
+        private const string ExperimenterAabName =
+            "PedestrianProbe-testbed-experimenter.aab";
         private const string KeyAlias = "pedestrianprobe";
 
         private const string SceneFolder = "Assets/Testbed/Scenes";
@@ -107,6 +109,23 @@ namespace CityGenPedestrianProbe.Editor
         /// </summary>
         private static bool releaseMode;
 
+        /// <summary>
+        /// True while building the signed app for whoever is running the
+        /// session rather than for whoever is in it.
+        /// </summary>
+        /// <remarks>
+        /// The debug map, the status text and the way out of the blind
+        /// condition used to hang off DEVELOPMENT_BUILD, which conflated two
+        /// separate questions: whether a build is a debug build, and whether it
+        /// is going to a participant. Only the second should decide those, and
+        /// with distribution over Play internal testing there was no way to get
+        /// a signed build that had them — a development APK cannot be uploaded,
+        /// and a handset on the far end of a test track has no cable.
+        ///
+        /// Off by default, so the safe build is the one you get without asking.
+        /// </remarks>
+        private static bool experimenterMode;
+
         [MenuItem("Tools/Pedestrian Probe/Testbed/Build Android AAB (Play)", priority = 42)]
         public static void BuildReleaseFromMenu()
         {
@@ -121,11 +140,34 @@ namespace CityGenPedestrianProbe.Editor
             }
         }
 
+        [MenuItem("Tools/Pedestrian Probe/Testbed/Build Android AAB (experimenter)",
+            priority = 43)]
+        public static void BuildExperimenterFromMenu()
+        {
+            experimenterMode = true;
+            try
+            {
+                BuildReleaseFromMenu();
+            }
+            finally
+            {
+                experimenterMode = false;
+            }
+        }
+
         // Entry point for -executeMethod, release variant.
         public static void BuildReleaseFromCommandLine()
         {
             releaseMode = true;
             BuildFromCommandLine();
+        }
+
+        // Entry point for -executeMethod, experimenter variant. Signed and
+        // uploadable like the release, and carrying the diagnostics.
+        public static void BuildExperimenterFromCommandLine()
+        {
+            experimenterMode = true;
+            BuildReleaseFromCommandLine();
         }
 
         [MenuItem("Tools/Pedestrian Probe/Testbed/Build Android APK", priority = 41)]
@@ -155,6 +197,15 @@ namespace CityGenPedestrianProbe.Editor
             EditorApplication.Exit(succeeded ? 0 : 1);
         }
 
+        private static string DescribeRecipe()
+        {
+            if (!releaseMode)
+                return "development, PROBE_DEMO";
+            return experimenterMode
+                ? "experimenter, app bundle, PROBE_EXPERIMENTER"
+                : "participant, app bundle";
+        }
+
         private static BuildReport Run()
         {
             string[] scenes = CollectScenes();
@@ -172,6 +223,9 @@ namespace CityGenPedestrianProbe.Editor
             string previousId =
                 PlayerSettings.GetApplicationIdentifier(NamedBuildTarget.Android);
             string previousProduct = PlayerSettings.productName;
+            bool previousCustomKeystore = PlayerSettings.Android.useCustomKeystore;
+            string previousKeystore = PlayerSettings.Android.keystoreName;
+            string previousAlias = PlayerSettings.Android.keyaliasName;
 
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, ApplicationId);
             PlayerSettings.productName = ProductName;
@@ -187,19 +241,41 @@ namespace CityGenPedestrianProbe.Editor
             if (releaseMode && !TryApplySigning())
                 return null;
 
+            // A development APK goes onto a handset over a cable, where the
+            // debug key Unity generates is all Android asks for. Signing had to
+            // be turned off explicitly because the release recipe turns it on
+            // and, until now, left it on: the upload keystore stayed selected
+            // in the project afterwards, so every later development build died
+            // demanding a password with nobody there to type one.
+            if (!releaseMode)
+                PlayerSettings.Android.useCustomKeystore = false;
+
             // Play refuses a version code it has seen before, and the failure
             // arrives at upload rather than at build, long after whoever built
             // it has moved on.
-            if (releaseMode)
+            bool keepVersionCode =
+                Environment.GetEnvironmentVariable("PROBE_KEEP_VERSION_CODE") == "1";
+            if (releaseMode && !keepVersionCode)
             {
                 PlayerSettings.Android.bundleVersionCode++;
                 Debug.Log($"Version code {PlayerSettings.Android.bundleVersionCode}, " +
                           $"version {PlayerSettings.bundleVersion}.");
             }
+            else if (releaseMode)
+            {
+                Debug.Log($"Keeping version code {PlayerSettings.Android.bundleVersionCode}, " +
+                          $"version {PlayerSettings.bundleVersion}.");
+            }
 
             Directory.CreateDirectory(OutputDirectory);
+            // Named apart so the two bundles do not overwrite each other on
+            // disk. They carry the same application id, because they are the
+            // same app going to the same test track — only one can be up there
+            // at a time, and which one is a decision somebody makes per session.
             string outputPath = Path.Combine(OutputDirectory,
-                releaseMode ? AabName : ApkName);
+                releaseMode
+                    ? experimenterMode ? ExperimenterAabName : AabName
+                    : ApkName);
 
             var options = new BuildPlayerOptions
             {
@@ -220,14 +296,20 @@ namespace CityGenPedestrianProbe.Editor
                 // PROBE_DEMO attaches AutoSweepDemo, which is the only reason a
                 // development build makes any sound with no input device
                 // attached. A release build is driven by a person.
+                //
+                // PROBE_EXPERIMENTER puts the map, the status text and the way
+                // out of the blind condition back into a signed build, for the
+                // person running the session rather than the one in it.
                 extraScriptingDefines = releaseMode
-                    ? Array.Empty<string>()
+                    ? experimenterMode
+                        ? new[] { "PROBE_EXPERIMENTER" }
+                        : Array.Empty<string>()
                     : new[] { "PROBE_DEMO" }
             };
 
             Debug.Log($"Building {scenes.Length} testbed scenes to {outputPath} " +
                       $"as {ApplicationId} " +
-                      $"({(releaseMode ? "release, app bundle" : "development, PROBE_DEMO")}).");
+                      $"({DescribeRecipe()}).");
 
             try
             {
@@ -250,6 +332,13 @@ namespace CityGenPedestrianProbe.Editor
                 PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android,
                     previousId);
                 PlayerSettings.productName = previousProduct;
+                // Restored along with the identity above. Left alone, a
+                // release build writes the absolute path of whichever machine
+                // ran it into ProjectSettings, where it is committed by
+                // whoever next stages that file.
+                PlayerSettings.Android.useCustomKeystore = previousCustomKeystore;
+                PlayerSettings.Android.keystoreName = previousKeystore;
+                PlayerSettings.Android.keyaliasName = previousAlias;
             }
         }
     }

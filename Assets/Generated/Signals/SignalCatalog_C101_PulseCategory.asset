@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SignalCatalog_C101_PulseCategory
   m_EditorClassIdentifier:
   catalogId: C101_PULSE_CATEGORY
-  revision: 2
+  revision: 3
   definitions:
   - signalId: probe.hit
     waveform: 0
@@ -100,6 +100,21 @@ MonoBehaviour:
     level: 0.35
     nearCutoffHz: 320
     farCutoffHz: 320
+    farDistanceMeters: 12
+    nearPulseHz: 0
+    farPulseHz: 0
+    nearPitchHz: 0
+    farPitchHz: 0
+  - signalId: locomotion.step
+    waveform: 0
+    baseFrequencyHz: 95
+    harmonicCount: 1
+    roughnessHz: 0
+    durationSeconds: 0.055
+    attackClick: 0
+    level: 0.32
+    nearCutoffHz: 400
+    farCutoffHz: 400
     farDistanceMeters: 12
     nearPulseHz: 0
     farPulseHz: 0

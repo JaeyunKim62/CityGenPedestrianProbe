@@ -52,12 +52,13 @@ namespace CityGenPedestrianProbe
         }
 
         public void ReadMovement(out Vector2 movement, out bool fast,
-            out Vector2 lookDegrees)
+            out Vector2 lookDegrees, out float bearingAbsolute)
         {
             ProbeInputFrame current = Current();
             movement = current.Move;
             fast = current.Fast;
             lookDegrees = current.LookDegrees;
+            bearingAbsolute = current.HeadingAbsolute;
         }
 
         private void Update()
@@ -152,7 +153,7 @@ namespace CityGenPedestrianProbe
             // build handed to a participant must not offer a way out of the
             // condition, so only a build that already carries the debug HUD
             // honours the request.
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || PROBE_EXPERIMENTER
             overlay.SetBlind(!overlay.IsBlind);
 #endif
         }

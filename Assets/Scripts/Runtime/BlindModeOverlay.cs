@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -20,25 +19,37 @@ namespace CityGenPedestrianProbe
         [SerializeField] private bool logStateToConsole = true;
         [SerializeField] private bool showMap = true;
         [SerializeField] private bool sourceClassView = true;
+        private ProbeHeading heading;
         private Texture2D blackTexture;
         private GUIStyle debugStyle;
         private GUIStyle mapLabelStyle;
-        private GUIStyle settingsButtonStyle;
-        private GUIStyle settingsPanelStyle;
         private SemanticDebugMapRenderer mapRenderer;
         private bool localMapView;
-        private bool settingsOpen;
-        private Rect touchSettingsRect;
-        private Rect touchBlindRect;
-        private Rect touchMapRect;
-        private Rect touchScaleRect;
-        private Rect touchClassRect;
-        private Rect touchPreviousRect;
-        private Rect touchNextRect;
         private float nextConsoleLog;
 
         public event Action<bool> BlindModeChanged;
         public bool IsBlind => blind;
+
+        // The debug map's own view state. Exposed because the settings menu
+        // offers the same three toggles the keyboard shortcuts below do, and
+        // the map belongs to this component rather than to the menu.
+        public bool ShowMap
+        {
+            get => showMap;
+            set => showMap = value;
+        }
+
+        public bool LocalMapView
+        {
+            get => localMapView;
+            set => localMapView = value;
+        }
+
+        public bool SourceClassView
+        {
+            get => sourceClassView;
+            set => sourceClassView = value;
+        }
 
         public void Configure(SemanticSpaceMap map, Transform playerTransform)
         {
@@ -70,6 +81,15 @@ namespace CityGenPedestrianProbe
             sweepProbe = probe;
         }
 
+        /// <summary>
+        /// Gives the status text the heading model, so it can show where the
+        /// body points and where attention points as two separate readings.
+        /// </summary>
+        public void SetHeading(ProbeHeading probeHeading)
+        {
+            heading = probeHeading;
+        }
+
         public void SetSignalRenderer(AudioSignalRenderer renderer)
         {
             signalRenderer = renderer;
@@ -85,9 +105,7 @@ namespace CityGenPedestrianProbe
 
         private void Update()
         {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            HandleTouchSettingsInput();
-
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || PROBE_EXPERIMENTER
             bool pressed;
 #if ENABLE_INPUT_SYSTEM
             pressed = Keyboard.current != null &&
@@ -97,7 +115,7 @@ namespace CityGenPedestrianProbe
             pressed = Input.GetKeyDown(KeyCode.F1) || Input.GetKeyDown(KeyCode.B);
 #endif
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || PROBE_EXPERIMENTER
             bool mapPressed;
 #if ENABLE_INPUT_SYSTEM
             mapPressed = Keyboard.current != null && Keyboard.current.mKey.wasPressedThisFrame;
@@ -152,8 +170,11 @@ namespace CityGenPedestrianProbe
 
             // Diagnostics stay behind the guard: the status text and the map
             // say where the participant is, which is the one thing a blind
-            // session must not show them.
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            // session must not show them. PROBE_EXPERIMENTER opens them to a
+            // signed build as well, because the person running a session over
+            // internal testing needs to see the map on the same handset the
+            // trial will run on, and cannot install a development APK there.
+#if UNITY_EDITOR || DEVELOPMENT_BUILD || PROBE_EXPERIMENTER
             if (!blind && semanticMap != null && player != null)
             {
                 if (debugStyle == null)
@@ -170,187 +191,6 @@ namespace CityGenPedestrianProbe
                     DrawSemanticMap();
             }
 #endif
-
-            // The menu does not. An experimenter has to move between layouts to
-            // run a trial, and a build without it is a black screen nobody can
-            // steer. It draws over the blind fill, so it is reachable while the
-            // condition holds; the one button that would end the condition is
-            // guarded inside it instead.
-            DrawTouchSettings();
-        }
-
-        private void DrawTouchSettings()
-        {
-            float scale = Mathf.Clamp(Screen.dpi > 1f ? Screen.dpi / 320f : 1f, 1f, 1.6f);
-            float buttonSize = 58f * scale;
-            float margin = 14f * scale;
-
-            if (settingsButtonStyle == null)
-            {
-                settingsButtonStyle = new GUIStyle(GUI.skin.button)
-                {
-                    fontSize = Mathf.RoundToInt(27f * scale),
-                    alignment = TextAnchor.MiddleCenter
-                };
-                settingsPanelStyle = new GUIStyle(GUI.skin.box)
-                {
-                    fontSize = Mathf.RoundToInt(17f * scale),
-                    alignment = TextAnchor.UpperCenter,
-                    normal = { textColor = Color.white }
-                };
-            }
-
-            Rect settingsRect = new Rect(Screen.width - buttonSize - margin, margin,
-                buttonSize, buttonSize);
-            touchSettingsRect = settingsRect;
-            if (GUI.Button(settingsRect, "\u2699", settingsButtonStyle))
-                settingsOpen = !settingsOpen;
-
-            if (!settingsOpen)
-            {
-                ClearTouchMenuRects();
-                return;
-            }
-
-            float width = Mathf.Min(390f * scale, Screen.width - margin * 2f);
-            float rowHeight = 50f * scale;
-
-            // A shipped build shows the scene row alone; the blind toggle and
-            // the three map controls above it are compiled out, so the panel
-            // has to shrink with them or it draws a box of empty space.
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            float panelHeight = rowHeight * 5.7f;
-#else
-            float panelHeight = rowHeight * 2.7f;
-#endif
-            Rect panel = new Rect(Screen.width - width - margin,
-                settingsRect.yMax + 8f * scale, width, panelHeight);
-            GUI.Box(panel, "TESTBED SETTINGS", settingsPanelStyle);
-
-            float inset = 12f * scale;
-            float y = panel.y + 36f * scale;
-            float innerWidth = panel.width - inset * 2f;
-            float gap = 8f * scale;
-            float half = (innerWidth - gap) * 0.5f;
-
-            // Only a build that already carries the debug map offers a way out
-            // of the blind condition. A participant holding a shipped build can
-            // reach every other control here and not this one.
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            touchBlindRect = new Rect(panel.x + inset, y, innerWidth, rowHeight);
-            if (GUI.Button(touchBlindRect,
-                    blind ? "VIEW DEBUG MAP" : "RETURN TO BLIND MODE"))
-                SetBlind(!blind);
-            y += rowHeight + gap;
-#endif
-
-            // These steer the debug map, which a shipped build never draws, so
-            // offering them there would be three buttons that visibly do
-            // nothing.
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            touchMapRect = new Rect(panel.x + inset, y, half, rowHeight);
-            if (GUI.Button(touchMapRect,
-                    showMap ? "HIDE MAP" : "SHOW MAP"))
-                showMap = !showMap;
-            touchScaleRect = new Rect(panel.x + inset + half + gap, y, half, rowHeight);
-            if (GUI.Button(touchScaleRect,
-                    localMapView ? "FULL 256m" : "LOCAL 40m"))
-                localMapView = !localMapView;
-            y += rowHeight + gap;
-
-            touchClassRect = new Rect(panel.x + inset, y, innerWidth, rowHeight);
-            if (GUI.Button(touchClassRect,
-                    sourceClassView ? "SHOW PEDESTRIAN SEMANTICS" : "SHOW SOURCE CLASSES"))
-                sourceClassView = !sourceClassView;
-            y += rowHeight + gap;
-#endif
-
-            Scene scene = SceneManager.GetActiveScene();
-            int sceneCount = SceneManager.sceneCountInBuildSettings;
-            GUI.Label(new Rect(panel.x + inset, y, innerWidth, rowHeight * 0.55f),
-                $"SCENE {scene.buildIndex + 1}/{Mathf.Max(1, sceneCount)}  {scene.name}",
-                settingsPanelStyle);
-            y += rowHeight * 0.58f;
-
-            touchPreviousRect = new Rect(panel.x + inset, y, half, rowHeight);
-            GUI.enabled = scene.buildIndex > 0;
-            if (GUI.Button(touchPreviousRect, "PREVIOUS SCENE"))
-                SceneManager.LoadScene(scene.buildIndex - 1);
-            touchNextRect = new Rect(panel.x + inset + half + gap, y, half, rowHeight);
-            GUI.enabled = scene.buildIndex >= 0 && scene.buildIndex < sceneCount - 1;
-            if (GUI.Button(touchNextRect, "NEXT SCENE"))
-                SceneManager.LoadScene(scene.buildIndex + 1);
-            GUI.enabled = true;
-        }
-
-        private void HandleTouchSettingsInput()
-        {
-#if ENABLE_INPUT_SYSTEM
-            Touchscreen touchscreen = Touchscreen.current;
-            if (touchscreen == null)
-                return;
-
-            var touches = touchscreen.touches;
-            for (int i = 0; i < touches.Count; i++)
-            {
-                if (!touches[i].press.wasPressedThisFrame)
-                    continue;
-                Vector2 screen = touches[i].position.ReadValue();
-                HandleSettingsTap(new Vector2(screen.x, Screen.height - screen.y));
-                break;
-            }
-#else
-            for (int i = 0; i < Input.touchCount; i++)
-            {
-                Touch touch = Input.GetTouch(i);
-                if (touch.phase != TouchPhase.Began)
-                    continue;
-                HandleSettingsTap(new Vector2(touch.position.x,
-                    Screen.height - touch.position.y));
-                break;
-            }
-#endif
-        }
-
-        private void HandleSettingsTap(Vector2 guiPosition)
-        {
-            if (touchSettingsRect.Contains(guiPosition))
-            {
-                settingsOpen = !settingsOpen;
-                return;
-            }
-            if (!settingsOpen)
-                return;
-            if (touchBlindRect.Contains(guiPosition))
-                SetBlind(!blind);
-            else if (touchMapRect.Contains(guiPosition))
-                showMap = !showMap;
-            else if (touchScaleRect.Contains(guiPosition))
-                localMapView = !localMapView;
-            else if (touchClassRect.Contains(guiPosition))
-                sourceClassView = !sourceClassView;
-            else if (touchPreviousRect.Contains(guiPosition))
-            {
-                int index = SceneManager.GetActiveScene().buildIndex;
-                if (index > 0)
-                    SceneManager.LoadScene(index - 1);
-            }
-            else if (touchNextRect.Contains(guiPosition))
-            {
-                int index = SceneManager.GetActiveScene().buildIndex;
-                if (index >= 0 && index < SceneManager.sceneCountInBuildSettings - 1)
-                    SceneManager.LoadScene(index + 1);
-            }
-        }
-
-        private void ClearTouchMenuRects()
-        {
-            touchBlindRect = Rect.zero;
-            touchMapRect = Rect.zero;
-            touchScaleRect = Rect.zero;
-            touchClassRect = Rect.zero;
-            touchPreviousRect = Rect.zero;
-            touchNextRect = Rect.zero;
         }
 
         private void DrawSemanticMap()
@@ -423,7 +263,7 @@ namespace CityGenPedestrianProbe
             return header +
                    $"Position XYZ: {position.x:F2}, {position.y:F2}, {position.z:F2}\n" +
                    $"Geo: {latitude:F8}, {longitude:F8}\n" +
-                   $"Heading: {player.eulerAngles.y:F1}deg\n" +
+                   $"Heading: {BuildHeadingText()}\n" +
                    $"Current: {current.DisplayClass}{semanticText}  " +
                    $"id={current.FeatureId}  " +
                    $"confidence={current.Confidence:F2}  edge={FormatDistance(current.DistanceMeters)}\n" +
@@ -433,6 +273,28 @@ namespace CityGenPedestrianProbe
                    $"Signal: {BuildSignalText()}\n" +
                    $"Study bounds X: {semanticMap.StudyBounds.xMin:F1}..{semanticMap.StudyBounds.xMax:F1}, " +
                    $"Z: {semanticMap.StudyBounds.yMin:F1}..{semanticMap.StudyBounds.yMax:F1}";
+        }
+
+        /// <summary>
+        /// Body and attention on one line, each named by compass point.
+        /// </summary>
+        /// <remarks>
+        /// The compass points are what make a device that claims to map its own
+        /// angle onto a world bearing checkable without instruments: hold the
+        /// thing in landscape and the body has to read N, turn it a quarter
+        /// turn anticlockwise and it has to read W. A number alone leaves the
+        /// sign of that mapping to be discovered by a confused participant.
+        /// </remarks>
+        private string BuildHeadingText()
+        {
+            if (heading == null)
+                return $"{player.eulerAngles.y:F1}deg";
+
+            float bearing = heading.BearingDegrees;
+            float gaze = heading.GazeBearingDegrees;
+            return $"body {bearing:F1}deg ({ProbeHeading.CompassName(bearing)})  " +
+                   $"gaze {gaze:F1}deg ({ProbeHeading.CompassName(gaze)})  " +
+                   $"offset {heading.GazeOffsetDegrees:+0.0;-0.0;0.0}deg";
         }
 
         private string BuildSignalText()

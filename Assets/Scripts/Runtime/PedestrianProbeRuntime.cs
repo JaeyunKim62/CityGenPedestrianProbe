@@ -64,11 +64,14 @@ namespace CityGenPedestrianProbe
             if (logger == null)
                 logger = gameObject.AddComponent<SemanticSessionLogger>();
             logger.Configure(semanticMap, player.transform);
+            logger.SetHeading(player.Heading);
 
             BlindModeOverlay overlay = GetComponent<BlindModeOverlay>();
             if (overlay == null)
                 overlay = gameObject.AddComponent<BlindModeOverlay>();
             overlay.Configure(semanticMap, player.transform);
+            overlay.SetHeading(player.Heading);
+
             overlay.BlindModeChanged += blind => logger.LogEvent("blind_mode",
                 semanticMap.ClassifyWorld(player.transform.position), blind ? "on" : "off");
             overlay.BlindModeChanged += blind => player.SetPitchEnabled(!blind);
@@ -77,12 +80,27 @@ namespace CityGenPedestrianProbe
             EgocentricSweepProbe sweep = GetComponent<EgocentricSweepProbe>();
             if (sweep == null)
                 sweep = gameObject.AddComponent<EgocentricSweepProbe>();
+            sweep.SetHeading(player.Heading);
             overlay.SetSweepProbe(sweep);
+
+            // Added before the coordinator is configured, because that is when
+            // modules are discovered. Enabled, unlike the semantic guide next
+            // to it: a footfall is not a rival source of spatial information,
+            // it is the self-motion that walking normally supplies and a blind
+            // session otherwise leaves out entirely.
+            if (GetComponent<LocomotionStepFeedback>() == null)
+                gameObject.AddComponent<LocomotionStepFeedback>();
 
             AudioSignalRenderer signalRenderer = GetComponent<AudioSignalRenderer>();
             if (signalRenderer == null)
                 signalRenderer = gameObject.AddComponent<AudioSignalRenderer>();
             signalRenderer.Configure(signalCatalog, camera.transform);
+
+            // A second renderer on the same bus. Added before the coordinator
+            // is configured, since that is when the bus asks this object what
+            // renderers it has.
+            if (GetComponent<HapticSignalRenderer>() == null)
+                gameObject.AddComponent<HapticSignalRenderer>();
 
             // Named in every row, so a finished session says which of the rival
             // catalogs it was heard through rather than only where it went.
@@ -96,6 +114,16 @@ namespace CityGenPedestrianProbe
             if (feedback == null)
                 feedback = gameObject.AddComponent<FeedbackCoordinator>();
             feedback.Configure(semanticMap, camera.transform, logger, player);
+
+            // The menu is what an experimenter steers a session with, so it is
+            // attached whatever the build, unlike the diagnostics the overlay
+            // keeps behind a guard. Configured after the coordinator because
+            // changing a condition here has to reach the session file, and the
+            // signal bus is what writes those rows.
+            ProbeSettingsMenu settingsMenu = GetComponent<ProbeSettingsMenu>();
+            if (settingsMenu == null)
+                settingsMenu = gameObject.AddComponent<ProbeSettingsMenu>();
+            settingsMenu.Configure(overlay, player.Heading, feedback);
 
             SweepKeyboardControls controls = GetComponent<SweepKeyboardControls>();
             if (controls == null)

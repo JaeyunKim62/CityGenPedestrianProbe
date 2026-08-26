@@ -30,10 +30,28 @@ namespace CityGenPedestrianProbe
         public readonly bool ToggleSemanticAudio;
         public readonly bool ToggleBlind;
 
+        /// <summary>
+        /// A world bearing to face, or NaN for "no instruction".
+        /// </summary>
+        /// <remarks>
+        /// The counterpart of <see cref="LookDegrees"/>, and the same split the
+        /// sweep already makes between an angle to hold and a rate to turn at.
+        /// A device that measures its own attitude knows where it points, not
+        /// how far it has moved since last frame, and spending that through a
+        /// stream of small turns would accumulate error and lose the one
+        /// property worth having.
+        /// </remarks>
+        public readonly float HeadingAbsolute;
+
+        // Defaulted so the nine-argument calls that predate it still read as
+        // they did. Adding a tenth positional argument to every construction
+        // site would have buried the one that matters among six bare falses.
         public ProbeInputFrame(Vector2 move, Vector2 lookDegrees, bool fast,
             float sweepAngleAbsolute, float sweepAngleRate, float rangeAbsolute,
-            bool centerSweep, bool toggleSemanticAudio, bool toggleBlind)
+            bool centerSweep, bool toggleSemanticAudio, bool toggleBlind,
+            float headingAbsolute = float.NaN)
         {
+            HeadingAbsolute = headingAbsolute;
             Move = move;
             LookDegrees = lookDegrees;
             Fast = fast;
@@ -50,6 +68,7 @@ namespace CityGenPedestrianProbe
 
         public bool HasSweepAngle => !float.IsNaN(SweepAngleAbsolute);
         public bool HasRange => !float.IsNaN(RangeAbsolute);
+        public bool HasHeading => !float.IsNaN(HeadingAbsolute);
 
         /// <summary>
         /// Combines two sources for a frame. Buttons latch on, axes add, and an
@@ -68,7 +87,8 @@ namespace CityGenPedestrianProbe
                 HasRange ? RangeAbsolute : other.RangeAbsolute,
                 CenterSweep || other.CenterSweep,
                 ToggleSemanticAudio || other.ToggleSemanticAudio,
-                ToggleBlind || other.ToggleBlind);
+                ToggleBlind || other.ToggleBlind,
+                HasHeading ? HeadingAbsolute : other.HeadingAbsolute);
         }
     }
 
@@ -92,6 +112,14 @@ namespace CityGenPedestrianProbe
     /// </summary>
     public interface IPedestrianMoveSource
     {
-        void ReadMovement(out Vector2 movement, out bool fast, out Vector2 lookDegrees);
+        /// <summary>
+        /// One frame of walking and turning.
+        /// </summary>
+        /// <param name="bearingAbsolute">
+        /// A world bearing to face outright, or NaN when nothing claims one and
+        /// <paramref name="lookDegrees"/> should turn the body instead.
+        /// </param>
+        void ReadMovement(out Vector2 movement, out bool fast, out Vector2 lookDegrees,
+            out float bearingAbsolute);
     }
 }
