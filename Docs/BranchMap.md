@@ -4,15 +4,16 @@
 
 ## 1. 브랜치
 
-8월 24일 문서에 있던 일렬 스택(`infra/feedback-experiments` → `infra/feedback-signal-bus` → `feat/fb-01-egocentric-sweep` → `infra/input-router` → `infra/android-input`)은 전부 `main`에 들어갔고 브랜치는 삭제됐다.
+미병합 브랜치가 없다. 8월 24일 문서의 일렬 스택(`infra/feedback-experiments` → `infra/feedback-signal-bus` → `feat/fb-01-egocentric-sweep` → `infra/input-router` → `infra/android-input`)과 그 뒤의 `infra/heading-model`이 모두 `main`에 들어갔고 브랜치는 삭제됐다.
 
 ```
 origin/main
-  └─ main
-       └─ infra/heading-model   (미푸시)
+  └─ main   (미푸시)
 ```
 
-## 2. `infra/heading-model`에 담긴 것
+다음 작업은 최신 `main`에서 새 브랜치를 딴다.
+
+## 2. 직전 병합에 담긴 것
 
 | | |
 | --- | --- |
