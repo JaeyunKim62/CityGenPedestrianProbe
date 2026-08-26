@@ -13,8 +13,8 @@
 
 | | 층 | 하는 일 | 코드 |
 | --- | --- | --- | --- |
-| 1 | **자극** | 무엇을 탐색하나 | 씬(`Assets/Testbed/Scenes` SYN01~07, seoul), `BlindModeOverlay` |
-| 2 | **입력** | 사람 → 시스템 | `IProbeInputSource` → `ProbeInputRouter` |
+| 1 | **자극** | 무엇을 탐색하나 | 씬(`Assets/Testbed/Scenes` SYN01~07, `Assets/Scenes`의 도시), `BlindModeOverlay` |
+| 2 | **입력** | 사람 → 시스템 | `IProbeInputSource` → `ProbeInputRouter`. 소스는 `KeyboardProbeInputSource` · `TouchProbeInputSource` · `DeviceTiltInputSource` |
 | 3 | **상태** | 시스템이 쥐는 값 | `ProbeHeading`(몸 방위·주의), `SemanticPedestrianController`(위치) |
 | 4 | **감지** | 공간을 재는 도구 | `SemanticSpaceMap`, `RayBoundaryProbe` |
 | 5 | **방법** | 무엇을 언제 말할지 결정 | `FeedbackModule` |
@@ -27,12 +27,26 @@
 
 **5층은 무엇을 감지하고 언제 말할지를 정하고, 6층은 그것이 어떻게 들리는지를 정한다.**
 
-- 5층 `FeedbackModule`: `EgocentricSweepProbe`(설계공간 A1-1), `SemanticAudioGuide`. shoreline·junction·나침반이 같은 자리에 꽂힐 형제들이다.
-- 6층: `AudioSignalRenderer` + `SignalCatalog` 4종. 같은 스위프를 네 가지 소리로 들려주는 것이 현재의 주 실험이다.
+- 5층 `FeedbackModule`: `EgocentricSweepProbe`(설계공간 A1-1), `SemanticAudioGuide`, `LocomotionStepFeedback`. shoreline·junction·나침반이 같은 자리에 꽂힐 형제들이다.
+- 6층: `AudioSignalRenderer` + `SignalCatalog` 4종, `HapticSignalRenderer`. 같은 스위프를 네 가지 소리로 들려주는 것이 현재의 주 실험이다.
 
 이 분리가 없으면 "스위프를 다른 소리로" 같은 조건이 모듈 수정이 되어 버린다. 신호 계획 §8의 "세 개의 교체 지점"이 같은 이야기다.
 
 **스위프는 층이 아니라 5층의 모듈 하나다.** 이동이나 표현과 나란한 것이 아니라 A1-1이라는 선택지 하나이며, `EgocentricSweepProbe : FeedbackModule`이 그 뜻이다.
+
+### 기기 접근과 판단을 나눈다
+
+층과는 별개로 지켜온 규칙이 하나 있다. **무엇을 할지 정하는 계산은 Unity 입력 API를 쓰지 않는 순수 클래스로 빼고, MonoBehaviour는 기기를 읽어 넘기기만 한다.**
+
+| 판단 | 기기 접근 |
+| --- | --- |
+| `BlindTouchGestures` | `TouchProbeInputSource` |
+| `RollSteering` | `DeviceTiltInputSource` |
+| `StepCadence` | `LocomotionStepFeedback` |
+
+검은 화면을 들고 폰에서 디버깅할 수 없기 때문이다. 부호가 뒤집혔거나 데드존이 잘못된 것은 "참가자가 길을 못 찾는다"로만 나타나고, 그때는 과제가 어려운 것과 구분되지 않는다. EditMode 테스트가 191개 도는 것이 이 분리의 결과다.
+
+새 입력 소스나 모듈을 붙일 때 같은 모양을 따른다.
 
 ## 2. 기준틀 — 한 벌, 두 적용처
 
@@ -72,7 +86,7 @@
 | 축 | 선택지 | 상태 |
 | --- | --- | --- |
 | **내용** | 정체성 · 방향 · 거리 · 경계 접선 · 연결성 · 변화 · 불확실성 · **자기운동** | 거리와 정체성만 구현 |
-| **채널** (언제) | `alarm` · `answer` · `transition` · `proximity` · `state` · **`locomotion`** | `answer`만 실사용 |
+| **채널** (언제) | `alarm` · `answer` · `transition` · `proximity` · `state` · **`locomotion`** | `answer`와 `locomotion` 둘 |
 | **부호화** (어떻게 구분) | 음색=무엇 / 시간구조=거리 / 공간위치+어택=어디 / **음량=아무것도** | 카탈로그 C002 · C003 · C004 · C101 |
 | **감각** | 소리 · 진동 | 둘 다. 진동은 `locomotion` 채널에만 |
 
@@ -88,19 +102,19 @@
 
 ## 4. 입력 — 세 컨트롤러
 
-| 모드 | 몸 방위를 쓰는 주체 | 전진 | 스위프 조준 |
+| 컨트롤러 | 몸 방위를 쓰는 주체 | 전진 | 스위프 조준 |
 | --- | --- | --- | --- |
-| 1 키보드 | 마우스 (델타 누적) | WASD | Q/E, R, `[`/`]` |
-| 2 화면 | 왼쪽 엄지 좌우 (델타 누적) | 왼쪽 엄지 상하 | 오른쪽 엄지 |
-| 3 기기 | **폰 롤 (절대, 가로=북)** | 화면 홀드 | 오른쪽 엄지 |
+| 키보드 | 마우스 (델타 누적) | WASD | Q/E, R, `[`/`]` |
+| 화면 터치 | 왼쪽 엄지 좌우 (델타 누적) | 왼쪽 엄지 상하 | 오른쪽 엄지 |
+| 기울기 조향 | **폰 롤 (절대, 가로=북)** | 화면 홀드 | 오른쪽 엄지 |
 
 > **한 프레임에 몸 방위를 쓰는 주체는 하나뿐이다.**
 
 `ProbeInputRouter`는 모든 소스의 회전을 더한다. 그래도 싸우지 않는 것은 `ProbeInputFrame.HeadingAbsolute`가 스위프 각도와 같은 규칙 — **절대 지시가 델타를 이긴다** — 을 따르기 때문이다. 폰이 유효한 롤을 내는 동안 엄지와 마우스의 회전은 무시되고, 폰이 눕혀 무효가 되면 회전 입력이 다시 살아난다.
 
-기울기 조향은 설정의 on/off 하나로 붙는다. 모드 3분기는 조건을 기록할 필요가 생길 때 하면 되고, 기기 조작의 선행 조건이 아니다.
+기울기 조향은 설정의 on/off 하나로 붙는다. 셋을 배타적으로 고르는 모드 개념은 없다. 조건을 기록할 필요가 생기면 그때 만들면 되고, 기기 조작의 선행 조건은 아니다.
 
-### 모드 3의 방위 규약
+### 기울기 조향의 방위 규약
 
 ```
 θ    = atan2(-g.x, -g.y)        화면 평면 중력, 사용자 시점 반시계가 +
@@ -111,7 +125,7 @@ yaw  = -θ
 
 θ는 매 프레임 절대 측정이므로 적분 오차가 없다. 프레임 간 언랩으로 몇 바퀴든 추적되고, 캘리브레이션이 필요 없다. 화면 평면 중력 성분이 임계 미만이면(폰을 눕히면) 롤이 관측되지 않으므로 방위를 동결하고 경고한다.
 
-## 5. 모드 3의 연구적 자리
+## 5. 기울기 조향의 연구적 자리
 
 폰 롤이 몸을 세계에 고정하므로, 사람이 **손의 자세로 절대 방위를 안다.**
 
@@ -123,7 +137,7 @@ yaw  = -θ
 
 | 층 | 있는 것 | 없는 것 |
 | --- | --- | --- |
-| 자극 | 씬 7개, 블라인드 | seoul 실행 씬 |
+| 자극 | 합성 씬 7개, 블라인드 | 도시 실행 씬 |
 | 입력 | 키보드, 화면 터치, **기울기 조향**, 홀드 전진 | 좌우 스와이프, 모드 배타 선택 |
 | 상태 | `ProbeHeading` — 방위·주의·`MovementFrame{Body, World}` | 출발축 |
 | 감지 | `SemanticSpaceMap`, `RayBoundaryProbe` | — |

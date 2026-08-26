@@ -9,7 +9,7 @@
 ```
 origin/main
   └─ main
-       └─ infra/heading-model   (+11, 미푸시)
+       └─ infra/heading-model   (+12, 미푸시)
 ```
 
 ## 2. `infra/heading-model`에 담긴 것
@@ -25,8 +25,9 @@ origin/main
 | `81cdecd` | 릴리스에서 설정 메뉴가 안 눌리던 것 수정 |
 | `b68edb1` | 홀드 전진 + 개발 빌드 서명 수정 |
 | `e3fe843` | 발소리 진동 (`HapticSignalRenderer`) |
-| — | 실험자용 빌드 (`PROBE_EXPERIMENTER`) + 릴리스 스크립트 수정 |
-| — | 이 문서를 포함한 문서 갱신 |
+| `ccc764c` | 실험자용 빌드 (`PROBE_EXPERIMENTER`) + 릴리스 스크립트 수정 |
+| `c9d5d9c` | 문서 갱신 |
+| `6ef016c` | 도시 환경이 드러낼 부채와 다음 순서 |
 
 **미커밋** — 이 작업과 무관하게 세션 전부터 dirty였던 `ProjectSettings.asset`(빌드마다 버전 코드가 오른다)과 `Assets/Resources.meta`.
 
@@ -100,7 +101,7 @@ EditMode 191/191.
 
 **절대 지시가 델타를 이긴다.** `ProbeInputFrame.HeadingAbsolute`는 스위프 각도와 같은 규칙을 따른다. 그래서 폰과 엄지가 같은 몸을 두고 싸우지 않고, **모드 3분기 없이도** 기울기 조향이 성립한다. 모드 배타 선택은 조건 기록이 필요해질 때 하면 된다.
 
-**해소된 부채 — `BlindModeOverlay`.** 502줄에서 361줄로 줄었고 설정 메뉴가 `ProbeSettingsMenu`로 나갔다. 아직 blind 상태·키보드 입력·HUD·미니맵 넷을 겸한다.
+**해소된 부채 — `BlindModeOverlay`.** 502줄에서 364줄로 줄었고 설정 메뉴가 `ProbeSettingsMenu`로 나갔다. 아직 blind 상태·키보드 입력·HUD·미니맵 넷을 겸한다.
 
 **참가자가 조건을 바꿀 수 있다.** 릴리스 메뉴의 `WALK`와 `TILT STEERING`은 참가자도 누를 수 있다. 블라인드 해제만 컴파일 제외되어 있다. 현재 운용(실험자가 세팅 후 건넴)에서는 문제없다고 판단했다. 참가자 단독 시행을 시작하면 다시 봐야 한다.
 

@@ -38,7 +38,7 @@ CityGen3D로 생성한 실제 도시 공간을 보행자 관점의 semantic 공�
 | 신호 의도와 버스 | 완료 | 모듈은 `SignalIntent`를 내고 렌더러가 받는다 (`FeedbackSignalBus`) |
 | 신호 카탈로그 | 완료 | 파형·주파수·거칠기·거리별 컷오프를 asset으로. 점 단위 상위 폴백 |
 | 절차적 오디오 렌더러 | 완료 | 클립을 런타임 합성, 공간화 보이스 풀, 지속음 저역 필터 |
-| 촉각 렌더러 | 미구현 | `ISignalRenderer` 하나 추가하면 붙는다 |
+| 촉각 렌더러 | 완료 | `HapticSignalRenderer`. 자기운동 채널만 진동으로 (`locomotion`) |
 
 ### 피드백 모듈
 
@@ -46,6 +46,7 @@ CityGen3D로 생성한 실제 도시 공간을 보행자 관점의 semantic 공�
 | --- | --- | --- | --- |
 | `probe.egocentric-sweep` | **ON** | 연구 대상 | 자기중심 좌우 스위프. 몸 기준 각도로 경계를 훑고 거리를 답한다 |
 | `semantic.audio` | OFF | 프로토타입 | 접근·진입·경계 안내. 도시에서 중첩 레이어마다 울려 스위프를 묻어서 꺼둔다 |
+| `locomotion.step` | **ON** | 부가 | 걸은 거리마다 발소리와 진동. 시뮬레이션이 주지 않는 자기운동 단서 |
 
 ### 실행과 조작
 
@@ -53,12 +54,16 @@ CityGen3D로 생성한 실제 도시 공간을 보행자 관점의 semantic 공�
 | --- | --- | --- |
 | 입력 라우터 | 완료 | 소스가 프레임을 채우고 라우터가 병합. 플랫폼이 아니라 **존재 여부**로 고른다 |
 | 키보드·마우스 소스 | 완료 | 이동·시선 |
+| 기울기 조향 소스 | 완료 | 폰 롤을 절대 방위로. 가로가 북, 반시계 90°가 서 (`DeviceTiltInputSource`) |
+| 이동 기준틀 | 완료 | 몸 기준 / 방위 기준 (`MovementFrame`) |
 | 터치 소스 | 완료 | 좌반부 보행·회전, 우반부 조준·사거리, 다중 탭 명령. mm 단위라 기기 무관 |
-| 블라인드 화면과 디버그 HUD | 완료 | 상태·미니맵·화면 설정 메뉴. 디버그 요소는 개발 빌드 한정 |
+| 블라인드 화면과 디버그 HUD | 완료 | 상태·미니맵. 디버그 요소는 개발 빌드와 실험자 빌드 한정 |
+| 설정 메뉴 | 완료 | `ProbeSettingsMenu`. 씬 이동, 이동 기준틀, 기울기 조향 |
 | 실험 CSV 로그 | 완료 | 위치·분류·레이어·신호·토글·기기 정보 |
 | 합성 테스트베드 | 완료 | 정답을 아는 자극 7종 (`Assets/Testbed`) |
-| Android 빌드 | 완료 | 테스트베드·도시 APK. 실기에서 10 Hz 유지 확인 |
-| 씬 전환 | 미구현 | 폰에서 자극을 바꾸려면 재설치가 필요하다 |
+| Android 빌드 | 완료 | 테스트베드는 개발 APK·참가자 AAB·실험자 AAB 세 갈래. 도시는 개발 APK뿐 |
+| 씬 전환 | 완료 | 설정 메뉴에서 자극을 바꾼다 |
+| 벽 막기 | 미구현 | 이동을 막는 것은 실험 구역 사각형뿐. 경계를 통과할 수 있다 |
 | 사용자 실험을 통한 신호 검증 | 미실시 | 음향 패턴과 confidence 값 검증 필요 |
 
 `Unknown`은 반드시 데이터가 없는 상태를 뜻하지 않습니다. 원본 CityGen 피처는 존재하지만 아직 현재의 네 보행 의미 중 하나로 정의되지 않은 경우가 대부분입니다.
@@ -95,6 +100,15 @@ NYC의 보행 semantic 분포입니다.
 0.1 m 격자로 피처 내부 중복을 제거해 분석하면, 원본 피처는 전체 실험 영역의 약 88.72%를 덮습니다. 어떤 원본 피처도 덮지 않는 영역은 약 11.28%이고, 현재 네 보행 semantic 중 하나가 정의된 합집합 영역은 약 18.82%입니다. 클래스와 semantic은 서로 겹칠 수 있으므로 개별 점유율을 단순 합산할 수 없습니다.
 
 클래스별 컴포넌트 수, 피처 수, 삼각형 수와 누적 투영 면적의 전체 표는 [SeoulCityHall_256m_SourceClassStatistics.csv](Assets/Generated/Semantics/SeoulCityHall_256m_SourceClassStatistics.csv)에 생성됩니다. 이 CSV의 투영 면적은 피처 간 겹침을 포함합니다.
+
+## 설계 원칙
+
+구현이 따르는 규칙 넷입니다. 자세한 것은 [Docs/ImplementationAxes.md](Docs/ImplementationAxes.md)에 있고, 새 기능을 어느 층에 붙일지도 거기서 정합니다.
+
+- **모듈은 소리를 내지 않고 의도를 낸다.** 무엇을 언제 말할지(모듈)와 어떻게 들릴지(카탈로그)가 갈라져 있어야 같은 모듈을 네 가지 소리로 들려주는 실험이 성립합니다.
+- **기준틀은 한 벌이고 적용처가 그중 하나를 고른다.** 이동용 방위와 피드백용 방위를 따로 저장하면 어느 것이 진짜인지 알 수 없게 됩니다.
+- **판정은 컴파일러가 아니라 기기에게 묻는다.** `SystemInfo.deviceType`이지 `#if UNITY_ANDROID`가 아닙니다. 테스트가 전부 PC에서 도는데 컴파일 분기는 PC에서 검증할 수 없는 코드를 만듭니다.
+- **기기 접근과 판단을 나눈다.** 제스처·롤 계산·보행 리듬은 Unity 입력 API를 쓰지 않는 순수 클래스에 있습니다. 검은 화면을 들고 폰에서 디버깅할 수 없고, 부호가 뒤집힌 것은 "참가자가 길을 못 찾는다"로만 나타나기 때문입니다.
 
 ## 처리 파이프라인
 
@@ -154,6 +168,8 @@ CityGen 데이터를 다시 Process 또는 Generate했다면 semantic map도 다
 | `N` | 미니맵 표시/숨김 |
 | `M` | 전체 256 m / 주변 40 m 지도 전환 |
 | `C` | CityGen 원본 클래스 / 보행 semantic 지도 전환 |
+| `V` | 소리 세트(카탈로그) 순환 |
+| `Z` / `X` / `F` | 기울기 조향 흉내 — 좌 굴림 / 우 굴림 / 눕히기 (에디터 전용) |
 
 #### 터치
 
@@ -165,11 +181,16 @@ CityGen 데이터를 다시 Process 또는 Generate했다면 semantic map도 다
 | 좌반부 | 좌·우 드래그 | 몸 회전 |
 | 우반부 | 좌·우 드래그 | 스위프 각도 (절대 매핑, ±30 mm ↔ ±90°) |
 | 우반부 | 위·아래 드래그 | 사거리 |
-| 전체 | 두 손가락 탭 | 스위프 정면 복귀 |
-| 전체 | 세 손가락 탭 | `semantic.audio` 모듈 토글 |
-| 전체 | 네 손가락 탭 | 블라인드 토글 (개발 빌드 한정) |
+| 전체 | 세 손가락 탭 | 스위프 정면 복귀 |
+| 전체 | 네 손가락 이상 탭 | `semantic.audio` 모듈 토글 |
 
-한 손가락 탭은 오작동을 막기 위해 아무 동작도 하지 않습니다. 현재 좌우 스틱은 **동시에 쓸 수 없습니다** — 손가락이 둘 이상이면 탭 후보로 넘어갑니다.
+두 손가락은 걷기와 조준을 함께 하는 평범한 그립이므로 탭은 세 손가락부터 셉니다. 좌우 스틱은 **동시에 씁니다** — 걸으면서 훑는 것이 실험이 보려는 동작이라 둘을 번갈아 쓰게 만들면 조작 방식을 측정하게 됩니다. 블라인드를 끄는 탭은 없습니다. 설정 메뉴에 있고 참가자 빌드에서는 컴파일 제외됩니다.
+
+### 기울기 조향
+
+설정 메뉴에서 켜면 **폰의 자세가 몸 방위를 정합니다.** 가로로 들면 북, 핸들 돌리듯 반시계 90°면 서입니다. 중력의 화면평면 성분이 매 프레임 절대 측정이므로 캘리브레이션도 드리프트도 없습니다. 눕히면 읽을 것이 없어져 방위가 멈추고 메뉴가 그렇게 알립니다.
+
+켜져 있는 동안 전진은 **왼쪽 화면을 누르고 있기**입니다. 굴리는 중에 엄지 이동거리를 유지하기 어렵고, 속도가 일정하면 이동거리가 곧 경과 시간이 되어 변수가 하나 줄어듭니다.
 
 Play 시작 시 화면은 블라인드 상태입니다. 디버그 화면은 Editor 또는 Development Build에서 현재 위치, 위·경도, heading, 현재 원본 클래스와 semantic, 겹친 모든 레이어, 가장 가까운 다른 피처, 스위프 상태와 카탈로그를 표시합니다.
 
@@ -181,10 +202,10 @@ Play 시작 시 화면은 블라인드 상태입니다. 디버그 화면은 Edit
 
 | 카탈로그 | revision | 부호화 |
 | --- | ---: | --- |
-| `C002_DIRECTION_RANGE` | 4 | 방향과 거리 |
-| `C003_PULSE_RANGE` | 2 | 펄스 간격으로 거리 |
-| `C004_PITCH_RANGE` | 2 | 음높이로 거리 |
-| `C101_PULSE_CATEGORY` | 2 | 펄스로 범주 구분 — **현재 씬 기본값** |
+| `C002_DIRECTION_RANGE` | 5 | 방향과 거리 |
+| `C003_PULSE_RANGE` | 3 | 펄스 간격으로 거리 |
+| `C004_PITCH_RANGE` | 3 | 음높이로 거리 |
+| `C101_PULSE_CATEGORY` | 3 | 펄스로 범주 구분 — **현재 씬 기본값** |
 
 파형·기본 주파수·거칠기·지속 시간·거리별 저역 컷오프가 asset에 들어 있고, 클립은 런타임에 합성합니다. 신호 ID는 점 단위로 상위 폴백하므로 `probe.hit.sidewalk`가 정의돼 있지 않으면 `probe.hit`으로 내려갑니다.
 
@@ -192,7 +213,7 @@ Play 시작 시 화면은 블라인드 상태입니다. 디버그 화면은 Edit
 
 ### 기록
 
-런타임 CSV는 `Application.persistentDataPath/PedestrianProbe`에 저장됩니다. 시간, 월드 XYZ, 위·경도, heading, semantic, `source_class`, 현재 겹친 의미와 원본 클래스, 피처 ID, confidence, 이벤트와 상세, `map_version`, `database_id`, 그리고 **`signal_catalog`와 `signal_catalog_revision`** 을 기록합니다.
+런타임 CSV는 `Application.persistentDataPath/PedestrianProbe`에 저장됩니다. 시간, 월드 XYZ, 위·경도, 몸 방위와 주의 방위(`heading_deg` · `gaze_bearing_deg` · `gaze_offset_deg`), semantic, `source_class`, 현재 겹친 의미와 원본 클래스, 피처 ID, confidence, 이벤트와 상세, `map_version`, `database_id`, 그리고 **`signal_catalog`와 `signal_catalog_revision`** 을 기록합니다.
 
 마지막 두 열이 있어야 세션이 "어디를 걸었는가"뿐 아니라 **"무엇을 듣고 있었는가"** 를 말합니다. 카탈로그가 경쟁 조건이므로 이것 없이는 세션을 비교할 수 없습니다. 카탈로그는 런타임에 바뀔 수 있어 매 행마다 현재 값을 씁니다.
 
@@ -217,16 +238,17 @@ Play 시작 시 화면은 블라인드 상태입니다. 디버그 화면은 Edit
 
 ### 실행 환경
 
-- 폰에서 세션 중 자극을 바꿀 수 없습니다. 씬 전환이 미구현이라 재설치가 필요합니다.
-- 터치에서 좌우 스틱을 동시에 쓸 수 없습니다. 걸으면서 훑는 동작이 안 됩니다.
+- **이동을 막는 것이 실험 구역 사각형뿐입니다.** 스위프가 2 m 앞에 경계가 있다고 답해도 걸어서 통과할 수 있습니다. `SemanticSpaceKind`에 통행 불가라는 종류가 없어서, 무엇을 막을지부터 정해야 합니다.
+- **스위프가 첫 경계 하나만 봅니다.** 복도에서는 가장자리가 하나뿐이라 드러나지 않았지만, 거리에서는 "연석 2.1 → 차도 2.4 → 건너편 9.7"이 정보의 대부분입니다.
 - 클립을 44.1 kHz로 합성하는데 실기는 24 kHz로 믹싱합니다. 지속음 루프 이음매가 어긋날 조건이지만 청취상 문제는 보고되지 않았습니다.
-- 테스트베드 APK가 497 MB입니다. 그리는 것이 하나도 없는데 CityGen 아트가 `Resources` 경유로 딸려옵니다.
+- 개발 APK가 500 MB를 넘습니다. 그리는 것이 하나도 없는데 CityGen 아트가 `Resources` 경유로 딸려옵니다. 릴리스 AAB는 그것을 털어내 38 MB입니다.
+- 도시 빌드가 개발 APK 하나뿐입니다. 서명도 `Resources` 제외도 없어 545 MB이고 Play에 올릴 수 없습니다.
 
 ## 다음 단계
 
-우선순위 순입니다.
+연구 쪽 우선순위입니다. 엔지니어링 순서는 [Docs/BranchMap.md](Docs/BranchMap.md) 8절에 따로 있습니다.
 
-1. **실험 profile** — 모듈이 둘이고 조건을 표현할 수단이 없습니다. 계획은 "모듈이 두 개 이상 생기면"으로 미뤄두었고, 그 조건이 충족됐습니다.
+1. **실험 profile** — 모듈이 셋인데 조건을 표현할 수단이 기본값밖에 없습니다. 계획은 "모듈이 두 개 이상 생기면"으로 미뤄두었고, 그 조건은 진작 충족됐습니다.
 2. **EXP-SIG-00** — 신호 자체의 변별을 먼저 확인합니다. 통과하지 못하면 이후 어떤 결과도 "신호를 못 알아들은 것"과 "공간을 못 읽은 것"을 구분할 수 없습니다.
 3. **의미 확장** — 원본 `sourceClass`를 유지한 채 OSM tag와 형상으로 보행 가능 영역, 광장, 녹지, 건물 진입부를 구분합니다. `Unknown` 90%를 줄이는 일입니다.
 4. **다음 피드백 모듈** — 계획의 `fb-02` 이후. 경계 흐름, 교차로 위상, 기준축, 사용자 랜드마크, 관계 재생.
@@ -266,6 +288,8 @@ Play 시작 시 화면은 블라인드 상태입니다. 디버그 화면은 Edit
 | `Assets/Scripts/Runtime/Signals/SignalClipFactory.cs` | 클립 절차적 합성 |
 | `Assets/Scripts/Runtime/EgocentricSweepProbe.cs` | 자기중심 스위프 모듈 |
 | `Assets/Scripts/Runtime/SemanticAudioGuide.cs` | 의미 공간 음향 안내 (기본 OFF) |
+| `Assets/Scripts/Runtime/LocomotionStepFeedback.cs` | 발소리. 거리로 세는 보행 리듬 (순수 `StepCadence`) |
+| `Assets/Scripts/Runtime/Signals/HapticSignalRenderer.cs` | 자기운동을 진동으로 |
 
 **실행과 조작**
 
@@ -274,12 +298,27 @@ Play 시작 시 화면은 블라인드 상태입니다. 디버그 화면은 Edit
 | `Assets/Scripts/Runtime/PedestrianProbeRuntime.cs` | 씬의 부품을 맵에서 조립 |
 | `Assets/Scripts/Runtime/Input/ProbeInputRouter.cs` | 소스 병합과 명령 전달 |
 | `Assets/Scripts/Runtime/Input/BlindTouchGestures.cs` | 터치 제스처 인식 (순수, 테스트 가능) |
+| `Assets/Scripts/Runtime/Input/RollSteering.cs` | 중력에서 절대 방위 (순수, 테스트 가능) |
+| `Assets/Scripts/Runtime/Input/DeviceTiltInputSource.cs` | 중력 센서 접근 |
+| `Assets/Scripts/Runtime/ProbeHeading.cs` | 몸 방위·주의 방위·이동 기준틀 |
+| `Assets/Scripts/Runtime/Settings/ProbeSettingsMenu.cs` | 실험자용 화면 설정 메뉴 |
 | `Assets/Scripts/Runtime/Platform/ProbeSessionPlatform.cs` | 핸드헬드 설정과 입력 소스 부착 |
 | `Assets/Scripts/Runtime/BlindModeOverlay.cs` | 블라인드 화면, 디버그 HUD, 터치 메뉴 |
 | `Assets/Scripts/Runtime/SemanticSessionLogger.cs` | 실험 CSV 기록 |
 | `Assets/Editor/PedestrianFreeCamSetup.cs` | 플레이어와 런타임 설정 |
 | `Assets/Editor/Testbed/SyntheticTestMaps.cs` | 정답이 알려진 합성 자극 정의 |
-| `Assets/Editor/Build/AndroidTestbedBuild.cs` | 테스트베드 APK |
+| `Assets/Editor/Build/AndroidTestbedBuild.cs` | 테스트베드 개발 APK · 참가자 AAB · 실험자 AAB |
+| `Assets/Editor/Build/AndroidVibratePermission.cs` | 생성된 매니페스트에 진동 권한 추가 |
 | `Assets/Editor/Build/AndroidCityBuild.cs` | 도시 APK |
 
-계획 문서는 `Docs/`에 있습니다. Unity Project 창에서 읽는 짧은 실행 안내는 `Assets/PedestrianProbe_README.md`에 있습니다.
+## 문서
+
+| 문서 | 내용 |
+| --- | --- |
+| [Docs/ImplementationAxes.md](Docs/ImplementationAxes.md) | 층 구조와 설계 선택지가 코드 어디에 꽂히는지. **새 기능을 붙이기 전에 먼저 봅니다** |
+| [Docs/NonvisualSpatialCognitionDesignSpace.md](Docs/NonvisualSpatialCognitionDesignSpace.md) | 무엇을 만들 수 있는지 — 접근 A~G와 경쟁 가설 |
+| [Docs/FeedbackSignalSystemPlan.md](Docs/FeedbackSignalSystemPlan.md) | 신호 채널과 부호화 축 배정 |
+| [Docs/ModularImplementationAndExperimentPlan.md](Docs/ModularImplementationAndExperimentPlan.md) | 브랜치 규칙과 모듈 추가 절차 |
+| [Docs/BranchMap.md](Docs/BranchMap.md) | 현재 브랜치, 검증 현황, 부채, 다음 순서 |
+
+에디터에서 읽는 짧은 실행 안내는 `Assets/PedestrianProbe_README.md`에 있습니다.
